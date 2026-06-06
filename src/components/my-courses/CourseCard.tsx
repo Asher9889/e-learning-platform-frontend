@@ -35,7 +35,7 @@ export function CourseCard({
         )}
 
         {/* INSTRUCTOR VIEW */}
-        {role === "instructor" && (
+        {role === "teacher" && (
           <>
             <p className="text-sm text-muted-foreground">
               Students: {course.students}

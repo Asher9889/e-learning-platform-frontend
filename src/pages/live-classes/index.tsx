@@ -12,7 +12,7 @@ export default function LiveClassesPage() {
 //     useSelector(
 //       (state: RootState) => state.auth.user?.role
 //     ) || "student";
-const role: UserRole = 'instructor';
+const role: UserRole = 'teacher';
 
   const [upcoming, setUpcoming] = useState([
     {

@@ -8,7 +8,7 @@ export function QuickActions({ role }: { role: string }) {
       </h2>
 
       <div className="flex flex-wrap gap-2">
-        {role === "instructor" ? (
+        {role === "teacher" ? (
           <>
             <Button>+ Create Course</Button>
             <Button variant="outline">

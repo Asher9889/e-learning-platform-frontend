@@ -3,7 +3,7 @@ import type { UserRole } from "@/types/user";
 
 export function LiveStats({ role }: { role: UserRole }) {
   const stats =
-    role === "instructor"
+    role === "teacher"
       ? [
           { title: "Today's Classes", value: "3" },
           { title: "Upcoming Sessions", value: "8" },

@@ -13,7 +13,7 @@ export function UpcomingClasses({
   classes,
   onAddClass,
 }: { role: UserRole , classes: any[]; onAddClass: (data: any) => void }) {
-  const isInstructor = role === "instructor";
+  const isTeacher = role === "teacher";
 
   return (
     <Card>
@@ -22,7 +22,7 @@ export function UpcomingClasses({
           Upcoming Classes
         </CardTitle>
 
-        {isInstructor && (
+        {isTeacher && (
           <ScheduleClassDialog
             onAddClass={onAddClass}
           />
@@ -47,12 +47,12 @@ export function UpcomingClasses({
 
             <Button
               variant={
-                isInstructor
+                isTeacher
                   ? "outline"
                   : "default"
               }
             >
-              {isInstructor
+              {isTeacher
                 ? "Edit"
                 : "Join"}
             </Button>

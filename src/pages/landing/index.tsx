@@ -44,7 +44,7 @@
 //                         course={{
 //                             title: 'React Native Mastery',
 //                             thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=500',
-//                             instructor: 'Anubhav Srivastava',
+//                             teacher: 'Anubhav Srivastava',
 //                             category: 'Mobile Development',
 //                             level: 'Advanced',
 //                             rating: 4.8,
@@ -59,7 +59,7 @@
 //                         course={{
 //                             title: 'Next.js Full Stack',
 //                             thumbnail: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?q=80&w=500',
-//                             instructor: 'Mentor',
+//                             teacher: 'Mentor',
 //                             category: 'Web Development',
 //                             level: 'Intermediate',
 //                             rating: 4.7,
@@ -132,7 +132,7 @@ const MODULES = [
     {
         icon: '👥',
         title: 'User Management',
-        desc: 'Secure registration, login, and role-based access for students, instructors, and admins. Profile management with password reset included.',
+        desc: 'Secure registration, login, and role-based access for students, teachers, and admins. Profile management with password reset included.',
     },
     {
         icon: '📚',
@@ -173,7 +173,7 @@ const BENEFITS = [
 const SECURITY_FEATURES = [
     { label: 'JWT Authentication', detail: 'Secure token-based login for all users' },
     { label: 'HTTPS / SSL Encryption', detail: 'All data transmitted is fully encrypted' },
-    { label: 'Role-Based Access Control', detail: 'Students, instructors, and admins have separate permissions' },
+    { label: 'Role-Based Access Control', detail: 'Students, teachers, and admins have separate permissions' },
     { label: 'Multi-Factor Authentication', detail: 'OTP via email / SMS for additional account security' },
     { label: 'Secure Payment Gateway', detail: 'PCI-DSS compliant — no card details stored on server' },
     { label: 'Session Management', detail: 'Auto-logout and secure session handling' },
@@ -376,7 +376,7 @@ export default function LandingPage() {
 
                     {/* Subtext */}
                     <p className="text-base md:text-lg max-w-[520px] mx-auto mb-10 leading-relaxed" style={{ color: t.textMuted }}>
-                        A complete digital learning experience — live classes, smart assessments, real-time progress tracking, and secure access for students, instructors, and administrators.
+                        A complete digital learning experience — live classes, smart assessments, real-time progress tracking, and secure access for students, teachers, and administrators.
                     </p>
 
                     {/* CTAs */}
@@ -501,7 +501,7 @@ export default function LandingPage() {
                             Live Classes That Feel Real
                         </h2>
                         <p style={{ fontSize: 15, color: t.textMuted, lineHeight: 1.7, marginBottom: 32 }}>
-                            Our virtual classroom brings the energy of a real class online. Instructors can share their screen, answer questions live, and keep students engaged — all in your browser.
+                            Our virtual classroom brings the energy of a real class online. Teachers can share their screen, answer questions live, and keep students engaged — all in your browser.
                         </p>
 
                         {[

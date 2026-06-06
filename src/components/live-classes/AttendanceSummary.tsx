@@ -9,20 +9,20 @@ import type { UserRole } from "@/types/user";
 
 
 export function AttendanceSummary({ role }: { role: UserRole }) {
-  const isInstructor = role === "instructor";
+  const isTeacher = role === "teacher";
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          {isInstructor
+          {isTeacher
             ? "Attendance Overview"
             : "My Attendance"}
         </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {isInstructor ? (
+        {isTeacher ? (
           <>
             <div>
               <p className="text-sm text-muted-foreground">

@@ -6,7 +6,7 @@ import type { UserRole } from "@/types/user";
 
 
 export function LiveClassHeader({ role , onAddClass }: { role: UserRole; onAddClass: (data: any) => void }) {
-  const isInstructor = role === "instructor";
+  const isTeacher = role === "teacher";
 
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -16,14 +16,14 @@ export function LiveClassHeader({ role , onAddClass }: { role: UserRole; onAddCl
         </h1>
 
         <p className="text-muted-foreground">
-          {isInstructor
+          {isTeacher
             ? "Manage your live sessions and students."
             : "Join live sessions and track attendance."}
         </p>
       </div>
 
       <div className="flex gap-2">
-        {isInstructor ? (
+        {isTeacher ? (
           <>
              <ScheduleClassDialog
             onAddClass={onAddClass}

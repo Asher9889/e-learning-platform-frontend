@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export function StatsGrid({ role }: { role: string }) {
   const stats =
-    role === "instructor"
+    role === "teacher"
       ? [
           { title: "Students", value: "120" },
           { title: "Courses", value: "8" },

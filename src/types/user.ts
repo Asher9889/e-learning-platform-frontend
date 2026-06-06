@@ -5,10 +5,10 @@ export interface UserData {
     createdAt: string;
     updatedAt: string;
 }
-export type UserRole = "admin" | "instructor" | "student";
+export type UserRole = "admin" | "teacher" | "student";
 
 export interface LoginCredentials {
-  username: string;
+  email: string;
   password: string;
 }
 

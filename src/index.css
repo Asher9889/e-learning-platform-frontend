@@ -104,7 +104,7 @@
   --color-sidebar-active: var(--sidebar-active);
 
   --color-student: var(--student);
-  --color-instructor: var(--instructor);
+  --color-teacher: var(--teacher);
   --color-admin: var(--admin);
 
 }
@@ -182,7 +182,7 @@
 
   /* Roles */
   --student: oklch(0.72 0.14 230);
-  --instructor: oklch(0.62 0.18 290);
+  --teacher: oklch(0.62 0.18 290);
   --admin: oklch(0.65 0.22 25);
 }
 
@@ -238,7 +238,7 @@
 
   /* Roles */
   --student: oklch(0.82 0.14 230);
-  --instructor: oklch(0.72 0.18 290);
+  --teacher: oklch(0.72 0.18 290);
   --admin: oklch(0.75 0.18 25);
 }
 

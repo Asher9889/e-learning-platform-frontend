@@ -5,7 +5,7 @@ export function CoursesStats({
   courses,
 }: any) {
   const stats =
-    role === "instructor"
+    role === "teacher"
       ? [
           {
             title: "Total Courses",

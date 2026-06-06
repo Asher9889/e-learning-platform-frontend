@@ -13,7 +13,7 @@ interface MenuItem {
 }
 // Menu configuration based on roles
 const MENU_CONFIG: Record<UserRole, MenuItem[]> = {
-  instructor: [
+  teacher: [
     { title: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { title: "My Courses", icon: BookOpen, href: "/courses" },
     { title: "Live Classes", icon: Video, href: "/live-classes" },

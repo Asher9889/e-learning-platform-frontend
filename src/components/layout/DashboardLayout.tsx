@@ -16,8 +16,8 @@ import { DashboardHeader } from "../headers/DashboardHeader";
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
  const user = useSelector((state: any) => state.auth);
  const isAuthenticated = user?.isAuthenticated;
-  // const role: UserRole | null = isAuthenticated ? user?.user?.role : null;
-  const role: UserRole | null = 'instructor'
+  const role: UserRole | null = isAuthenticated ? user?.user?.role : null;
+  // const role: UserRole | null = 'teacher'
  console.log(user,"user",isAuthenticated,"isAuthenticated",role,"role")
   const location = useLocation();
   return (

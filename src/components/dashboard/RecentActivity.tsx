@@ -1,6 +1,6 @@
 export function RecentActivity({ role }: { role: string }) {
   const data =
-    role === "instructor"
+    role === "teacher"
       ? [
           "5 students joined React course",
           "New assignment submitted",

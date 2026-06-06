@@ -6,8 +6,10 @@ import { Bell, Search } from "lucide-react";
 import { SidebarTrigger } from "../ui/sidebar";
 import ThemeToggle from "../toggle/ThemeToggle";
 import { Input } from "../ui/input";
+import { useLogout } from "@/hooks/useLogout";
 
 export const DashboardHeader = () => {
+   const handleLogout = useLogout();
   return (
     <>
       <header className="sticky top-0  border-b px-4 py-3 flex items-center justify-between z-40">
@@ -40,7 +42,7 @@ export const DashboardHeader = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem className="text-red-600">Logout</DropdownMenuItem>
+              <DropdownMenuItem className="text-red-600" onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

@@ -4,7 +4,7 @@ import { loginSuccess } from '../store/slices/authSlice';
 import { loginUser } from '../services/authService';
 
 export const useLogin = () => {
-      const queryClient = useQueryClient();
+  //     const queryClient = useQueryClient();
   const dispatch = useDispatch();
   
   return useMutation({
@@ -13,9 +13,10 @@ export const useLogin = () => {
       // API response milne par Redux update karein
       console.log(data,"adsasdasd")
       // 2. Store user in React Query cache
-      queryClient.setQueryData(['user'], data?.data?.user);
-      dispatch(loginSuccess(data?.data?.user));
-      localStorage.setItem('token', data.token);
+      // queryClient.setQueryData(['user'], data?.data?.user);
+      dispatch(loginSuccess([]));
+      // localStorage.setItem('token', data.token);
     }
+    
   });
 };

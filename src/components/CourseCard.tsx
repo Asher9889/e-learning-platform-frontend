@@ -45,9 +45,9 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onClick }) => {
         <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
           <div className="flex items-center gap-2 text-sm text-[#B8B8D0]">
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#6C63FF] to-[#FF6B6B] flex items-center justify-center text-xs font-bold text-white">
-              {getInitials(course.instructor)}
+              {getInitials(course.teacher)}
             </div>
-            <span className="truncate max-w-[120px]">{course.instructor}</span>
+            <span className="truncate max-w-[120px]">{course.teacher}</span>
           </div>
           <div className="text-xl font-extrabold text-white font-['Sora']">
             <sup className="text-sm vertical-top mt-1">₹</sup>{course.price.toLocaleString()}

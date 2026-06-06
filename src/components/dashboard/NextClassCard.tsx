@@ -18,7 +18,7 @@ export function NextClassCard({ role }: { role: string }) {
         </p>
 
         <Button className="w-full">
-          {role === "instructor"
+          {role === "teacher"
             ? "Start Class"
             : "Join Class"}
         </Button>

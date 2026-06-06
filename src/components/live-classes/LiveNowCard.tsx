@@ -6,7 +6,7 @@ import type { UserRole } from "@/types/user";
 
 
 export function LiveNowCard({ role }: { role: UserRole }) {
-  const isInstructor = role === "instructor";
+  const isTeacher = role === "teacher";
 
   return (
     <Card>
@@ -24,7 +24,7 @@ export function LiveNowCard({ role }: { role: UserRole }) {
         </p>
 
         <div className="mt-4 flex flex-wrap gap-4 text-sm">
-          {isInstructor ? (
+          {isTeacher ? (
             <>
               <span>👨‍🎓 67 Students Watching</span>
               <span>💬 24 Messages</span>
@@ -32,7 +32,7 @@ export function LiveNowCard({ role }: { role: UserRole }) {
             </>
           ) : (
             <>
-              <span>👨‍🏫 Instructor: John Doe</span>
+              <span>👨‍🏫 Teacher: John Doe</span>
               <span>👨‍🎓 67 Students Online</span>
             </>
           )}
@@ -40,12 +40,12 @@ export function LiveNowCard({ role }: { role: UserRole }) {
 
         <div className="mt-6 flex gap-2">
           <Button>
-            {isInstructor
+            {isTeacher
               ? "Manage Session"
               : "Join Session"}
           </Button>
 
-          {isInstructor && (
+          {isTeacher && (
             <Button variant="destructive">
               End Session
             </Button>

@@ -6,10 +6,12 @@ import {
   Settings,
   BarChart3,
   Award,
+  GraduationCap,
+  UserPlus,
 } from "lucide-react";
 
 export const menus = {
-  instructor: [
+  teacher: [
     { title: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
     { title: "My Courses", icon: BookOpen, href: "/courses" },
     { title: "Live Classes", icon: Video, href: "/live-classes" },
@@ -28,9 +30,11 @@ export const menus = {
   ],
 
   admin: [
-    { title: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
-    { title: "Users", icon: User, href: "/admin/users" },
-    { title: "Settings", icon: Settings, href: "/admin/settings" },
+    { title: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
+    { title: "Users", icon: User, href: "/users" },
+    { title: "Enroll Teacher", icon: UserPlus, href: "/enroll-teacher" },
+    { title: "Enroll Student", icon: GraduationCap, href: "/enroll-student" },
+    { title: "Settings", icon: Settings, href: "/settings" },
   ],
 };
 

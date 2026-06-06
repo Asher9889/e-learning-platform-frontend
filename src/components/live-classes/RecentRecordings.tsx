@@ -24,13 +24,13 @@ const recordings = [
 export function RecentRecordings({
   role,
 }: { role: UserRole }) {
-  const isInstructor = role === "instructor";
+  const isTeacher = role === "teacher";
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          {isInstructor
+          {isTeacher
             ? "Recent Recordings"
             : "Class Recordings"}
         </CardTitle>
@@ -51,7 +51,7 @@ export function RecentRecordings({
                 Duration: {item.duration}
               </p>
 
-              {isInstructor && (
+              {isTeacher && (
                 <p className="text-xs text-muted-foreground">
                   {item.views} Views
                 </p>
@@ -59,7 +59,7 @@ export function RecentRecordings({
             </div>
 
             <div className="flex gap-2">
-              {isInstructor ? (
+              {isTeacher ? (
                 <>
                   <Button
                     variant="secondary"

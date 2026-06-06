@@ -13,17 +13,17 @@ export default function MyCoursesPage() {
     (state: RootState) => state.auth.user?.role
   );
 
-//   const role =  "instructor" //user?.role || "student";
+//   const role =  "teacher" //user?.role || "student";
 
-  // same data structure but extended for instructor use
+  // same data structure but extended for teacher use
   const [courses] = useState([
     {
       id: 1,
       title: "React Masterclass",
       progress: 60,
 
-      // instructor data
-      instructor: "John Doe",
+      // teacher data
+      teacher: "John Doe",
       students: 120,
       revenue: 5000,
 
@@ -33,7 +33,7 @@ export default function MyCoursesPage() {
       id: 2,
       title: "Redux Toolkit",
       progress: 30,
-      instructor: "Jane Smith",
+      teacher: "Jane Smith",
       students: 80,
       revenue: 3000,
       duration: "8h",
@@ -42,7 +42,7 @@ export default function MyCoursesPage() {
       id: 3,
       title: "Node.js Basics",
       progress: 80,
-      instructor: "Alex",
+      teacher: "Alex",
       students: 200,
       revenue: 8000,
       duration: "10h",
