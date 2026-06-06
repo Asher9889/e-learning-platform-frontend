@@ -1,9 +1,8 @@
-import type { AuthState } from '@/types/user';
+import type { IAuthState, IUserState } from '@/types';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-// User ka type define karein
 
-const initialState: AuthState = {
-  user: null,
+const initialState: IAuthState = {
+  user:  null,
   isAuthenticated: false,
 };
 
@@ -11,9 +10,9 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // Ye raha loginSuccess action
-    loginSuccess: (state, action: PayloadAction<any>) => {
-        console.log(state,"Login successful, user data:", action); // Debugging ke liye
+
+    loginSuccess: (state, action: PayloadAction<IUserState>) => {
+      console.log(state,"Login successful, user data:", action); 
       state.user = action.payload;
       state.isAuthenticated = true;
     },

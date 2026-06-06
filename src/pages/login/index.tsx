@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useId } from 'react';
 import { useNavigate } from 'react-router-dom';
 import loginbackground from '../../assets/images/loginPage/loginBackground.webp';
@@ -100,26 +98,8 @@ const LoginPage: React.FC = () => {
   const [regError, setRegError] = useState('');
   const [regSuccess, setRegSuccess] = useState('');
 
- const loginMutation = useLogin();
+  const loginMutation = useLogin();
   const navigate = useNavigate();
-
-  // ── Login handler ────────────────────────────────────────────────────────
-  // const handleLogin = async (e: React.FormEvent) => {
-  //   // e.preventDefault();
-  //   // if (!email.trim() || !password) { setError('Please fill in all fields.'); return; }
-  //   // setLoading(true);
-  //   // setError('');
-  //   // const res = await login({ email: email.trim(), password });
-  //   // setLoading(false);
-  //   // if (res.success) {
-  //   //   const user = JSON.parse(localStorage.getItem('elearning_user') || '{}');
-  //   //   navigate(authService.getDashboardPath(user.role));
-  //   // } else {
-  //   //   setError(res.message || 'Login failed. Please try again.');
-  //   // }
-  //     e.preventDefault();
-  //   login({ username: email.trim(), password }); // Yahan API hit hoti hai!
-  // };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,7 +110,7 @@ const LoginPage: React.FC = () => {
     }
     try {
       await loginMutation.mutateAsync({
-        username: email.trim(),
+        email: email.trim(),
         password,
       });
 
@@ -214,7 +194,7 @@ const LoginPage: React.FC = () => {
           {/* Tab switcher */}
           <div className="flex bg-gray-800 border-b border-white/10">
             <Button
-            unstyled
+              unstyled
               onClick={switchToLogin}
               className={`flex-1 py-3 text-sm font-semibold tracking-wider uppercase transition-all
                 ${!isSignUp ? 'text-white border-b-2 border-blue-500 bg-blue-600/10' : 'text-white/40 hover:text-white/70'}`}
@@ -222,7 +202,7 @@ const LoginPage: React.FC = () => {
               Sign In
             </Button>
             <Button
-            unstyled
+              unstyled
               onClick={switchToSignUp}
               className={`flex-1 py-3 text-sm font-semibold tracking-wider uppercase transition-all
                 ${isSignUp ? 'text-white border-b-2 border-blue-500 bg-blue-600/10' : 'text-white/40 hover:text-white/70'}`}

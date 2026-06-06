@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {  Video } from "lucide-react";
 import { ScheduleClassDialog } from "./ScheduleClassDialog";
-import type { UserRole } from "@/types/user";
+import type { UserRole } from "@/types/user.types";
 
 
 

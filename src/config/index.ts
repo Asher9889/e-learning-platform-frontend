@@ -1,4 +1,5 @@
-import envs from "./env";
-import api from "./axiosInstance";
+import envConfig from "./envConfig";
+import api from "./axios";
+import queryClient from "./queryClient";
 
-export { envs, api }
+export { envConfig, api, queryClient }

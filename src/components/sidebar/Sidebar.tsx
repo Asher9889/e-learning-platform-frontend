@@ -4,7 +4,7 @@ import {
   Users, BarChart3, Award, User 
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import type { UserRole } from '@/types/user';
+import type { UserRole } from '@/types/user.types';
 // Menu item structure
 interface MenuItem {
   title: string;

@@ -4,7 +4,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { UserRole } from "@/types/user";
+import type { UserRole } from "@/types/user.types";
 
 
 
