@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import type { UserRole } from "@/types/user";
+import type { UserRole } from "@/types/user.types";
 
 export function LiveStats({ role }: { role: UserRole }) {
   const stats =

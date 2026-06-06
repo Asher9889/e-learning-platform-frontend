@@ -1,10 +1,8 @@
-// src/services/auth.service.ts
-import envs from '@/config/env';
-import type { LoginCredentials } from '@/types/user';
+import { envConfig} from '@/config';
+import type { LoginCredentials } from '@/types';
 import axios from 'axios';
 
-// Vite environment variable access
-const API_BASE = envs.baseURL;
+const API_BASE = envConfig.baseURL;
 
 export const loginUser = async (credentials: LoginCredentials) => {
   const { data } = await axios.post(`${API_BASE}/auth/login`, credentials);

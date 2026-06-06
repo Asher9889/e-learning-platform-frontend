@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScheduleClassDialog } from "./ScheduleClassDialog";
-import type { UserRole } from "@/types/user";
+import type { UserRole } from "@/types/user.types";
 
 export function UpcomingClasses({
   role,

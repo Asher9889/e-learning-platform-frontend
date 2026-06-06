@@ -1,6 +1,6 @@
-const envs = {
+const envConfig = {
     baseURL: import.meta.env.VITE_API_BASE_URL,
 }
 
 
-export default envs;
+export default envConfig;

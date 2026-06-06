@@ -9,7 +9,7 @@ import { TooltipProvider } from "../ui/tooltip";
 import { Link, useLocation } from "react-router-dom";
 import { menus } from "@/mockData/menu";
 import { useSelector } from "react-redux";
-import type { UserRole } from "@/types/user";
+import type { UserRole } from "@/types/user.types";
 import { DashboardHeader } from "../headers/DashboardHeader";
 
 

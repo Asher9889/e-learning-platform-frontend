@@ -5,7 +5,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import type { UserRole } from "@/types/user";
+import type { UserRole } from "@/types/user.types";
 const recordings = [
   {
     id: 1,
