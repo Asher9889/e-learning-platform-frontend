@@ -15,13 +15,13 @@ api.interceptors.response.use((response) => response,
 
       try {
         // Refresh token cookie automatically jayegi
-        await api.post('/auth/refresh-token');
+        // await api.post('/auth/refresh-token');
 
-        // Original request retry
-        return api(originalRequest);
+        // // Original request retry
+        // return api(originalRequest);
       } catch (refreshError) {
-        window.location.href = '/login';
-        return Promise.reject(refreshError);
+        // window.location.href = '/login';
+        // return Promise.reject(refreshError);
       }
     }
 

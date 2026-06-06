@@ -1,10 +1,9 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
-import { loginSuccess } from '../store/slices/authSlice';
-import { loginUser } from '../services/authService';
+import { loginSuccess } from '../../../store/slices/authSlice';
+import { loginUser } from '../api/login.api';
 
 export const useLogin = () => {
-  //     const queryClient = useQueryClient();
   const dispatch = useDispatch();
   
   return useMutation({

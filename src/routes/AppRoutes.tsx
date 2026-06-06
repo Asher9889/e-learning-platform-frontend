@@ -4,7 +4,7 @@ import { PATHS } from './routes.config';
 
 // Pages
 import LandingPage from '../pages/landing';
-import Login from '../pages/login';
+import Login from '../pages/Login';
 import DashboardPage from '../pages/dashboard';
 
 // Layouts
