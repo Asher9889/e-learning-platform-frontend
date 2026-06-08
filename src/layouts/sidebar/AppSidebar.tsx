@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarMenu,
@@ -14,6 +15,8 @@ import { useAppSelector } from "@/store/hooks";
 
 import { SIDEBAR_ITEMS } from "./sidebar.config";
 import type { TUserRole } from "@/constants/user/user.constant";
+import AppSidebarHeader from "./AppSidebarHeader";
+import AppSidebarFooter from "./AppSidebarFooter";
 
 export function AppSidebar() {
     const location = useLocation();
@@ -32,6 +35,7 @@ export function AppSidebar() {
 
     return (
         <Sidebar>
+            <AppSidebarHeader />
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupContent>
@@ -55,6 +59,8 @@ export function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
+            {/* Footer */}
+            <AppSidebarFooter />
         </Sidebar>
     );
 }
