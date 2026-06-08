@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { initializeApp } from './bootstrap/initializeApp';
 import './App.css'
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes';
 
 function App() {
 
@@ -9,10 +11,8 @@ function App() {
   }, []);
 
   return (
-    <>
-      App
-    </>
-  )
+    <RouterProvider router={router} />
+  );
 }
 
 export default App
