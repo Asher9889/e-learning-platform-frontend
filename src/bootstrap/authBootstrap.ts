@@ -11,4 +11,4 @@ export const authBootstrap = async () => {
     } catch {
       store.dispatch(unauthenticated());
     }
-  };
+};
