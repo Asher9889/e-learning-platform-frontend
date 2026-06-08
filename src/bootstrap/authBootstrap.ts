@@ -8,6 +8,7 @@ export const authBootstrap = async () => {
       const user = await authService.getMe();
       store.dispatch(authenticated());
       store.dispatch(setUser(user));
+
     } catch {
       store.dispatch(unauthenticated());
     }

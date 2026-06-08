@@ -1,10 +1,9 @@
-import {
-    createBrowserRouter,
-} from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 
 import ProtectedRoute from "./ProtectedRoute";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import LoginPage from "@/pages/Login";
+import PublicRoute from "./PublicRoute";
 // import DashboardPage from "@/pages/dashboard/DashboardPage";
 // import CoursesPage from "@/pages/courses/CoursesPage";
 // import ClassesPage from "@/pages/classes/ClassesPage";
@@ -14,9 +13,15 @@ import LoginPage from "@/pages/Login";
 
 export const router = createBrowserRouter([
     {
-        path: "/login",
-        element: <LoginPage />,
-        // element: <div className="bg-red-400 w-full h-full m-auto">Login Page</div>,
+        element: <PublicRoute />,
+
+        children: [
+            {
+                path: "/login",
+                element: <LoginPage />,
+                
+            },
+        ],
     },
 
     {
@@ -32,15 +37,15 @@ export const router = createBrowserRouter([
                         element: <div className="bg-blue-400 w-full h-full m-auto">Dashboard Page</div>,
                     },
 
-                        {
-                            path: "/courses",
-                            element: <div className="bg-green-400 w-full h-full m-auto">Courses Page</div>,
-                        },
+                    {
+                        path: "/courses",
+                        element: <div className="bg-green-400 w-full h-full m-auto">Courses Page</div>,
+                    },
 
-                        {
-                            path: "/classes",
-                            element: <div className="bg-yellow-400 w-full h-full m-auto">Classes Page</div>,
-                        },
+                    {
+                        path: "/classes",
+                        element: <div className="bg-yellow-400 w-full h-full m-auto">Classes Page</div>,
+                    },
 
                     {
                         path: "/assignments",
