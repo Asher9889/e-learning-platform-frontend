@@ -1,8 +1,9 @@
 import { Outlet } from "react-router-dom";
 
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 import { AppSidebar } from "./sidebar/AppSidebar";
+import AppHeader from "./header/AppHeader";
 
 export default function AuthenticatedLayout() {
   return (
@@ -11,7 +12,7 @@ export default function AuthenticatedLayout() {
       <AppSidebar />
 
       <main className="flex-1">
-        <SidebarTrigger />
+        <AppHeader  />
         <Outlet />
       </main>
 

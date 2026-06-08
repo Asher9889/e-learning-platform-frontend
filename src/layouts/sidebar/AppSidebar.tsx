@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarMenu,
@@ -34,7 +33,7 @@ export function AppSidebar() {
     const menus = getSidebarItems(user.role);
 
     return (
-        <Sidebar>
+        <Sidebar collapsible="icon">
             <AppSidebarHeader />
             <SidebarContent>
                 <SidebarGroup>

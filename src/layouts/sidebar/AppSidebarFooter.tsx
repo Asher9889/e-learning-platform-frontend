@@ -148,23 +148,6 @@ const AppSidebarFooter = ({ className }: AppSidebarFooterProps) => {
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
-
-      {/* Plan CTA Banner */}
-      {/* <div className="mx-3 mb-3 mt-1 rounded-xl bg-gradient-to-br from-sidebar-primary/10 via-sidebar-primary/5 to-transparent p-3 border border-sidebar-primary/20">
-        <div className="flex items-start gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary/20 text-sidebar-primary">
-            <Sparkles className="h-4 w-4" />
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-xs font-semibold text-sidebar-foreground">
-              Pro Plan Active
-            </span>
-            <span className="text-[11px] leading-relaxed text-sidebar-foreground/60">
-              Your plan renews on Dec 15, 2026
-            </span>
-          </div>
-        </div>
-      </div> */}
     </SidebarFooter>
   );
 };
