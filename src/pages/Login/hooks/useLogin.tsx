@@ -4,9 +4,7 @@ import loginSchema, { type TLoginSchema } from "../schema/login.schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 // import { authCheckedAuthenticated } from "@/store/slices/auth.slice";
-import { useNavigate } from "react-router-dom";
 export function useLogin(){
-    const navigate = useNavigate()
 
     const { handleSubmit, formState, setValue, register} = useForm<TLoginSchema>({
         resolver: zodResolver(loginSchema),
@@ -24,7 +22,10 @@ export function useLogin(){
         mutationKey: ["login"],
         onSuccess: (data) => {
             // dispatch(authCheckedAuthenticated();
-            navigate("/", { replace: true })
+            // navigate("/", { replace: true })
+        },
+        onError: (error) => {
+            console.error("Login failed:", error);
         }
     })
 

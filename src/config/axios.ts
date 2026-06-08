@@ -52,8 +52,9 @@ api.interceptors.response.use(
     }
 
     // Normalize all other errors
-      const responseData = error.response.data as { message?: string } | undefined;
-      const message: string = responseData?.message || "Something went wrong";
+    const responseData = error.response.data as { message?: string, errors?: any[], success: boolean, statusCode: number };
+    console.log("Error response data:", responseData);
+    const message = responseData?.message || "Something went wrong";
 
     return Promise.reject(new Error(message));
   }
