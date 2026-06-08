@@ -10,7 +10,7 @@ const AppSidebarHeader = ({ className }: AppSidebarHeaderProps) => {
     const { state } = useSidebar();
 
     return (
-        <SidebarHeader className={cn("border-b border-sidebar-border/50", className)}>
+        <SidebarHeader className={cn("border-b border-sidebar-border/50 h-16", className)}>
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton >
