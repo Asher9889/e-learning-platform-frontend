@@ -19,7 +19,7 @@ const AppSidebarHeader = ({ className }: AppSidebarHeaderProps) => {
 
                         {/* Brand */}
                         {state === "expanded" &&
-                            <div className="flex flex-col gap-0.5 leading-none">
+                            <div className="flex flex-col gap-0.5 leading-none py-4">
                                 <span className="font-semibold tracking-tight text-sidebar-foreground">
                                     E-Learning
                                 </span>
