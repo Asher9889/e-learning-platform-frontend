@@ -11,7 +11,7 @@ export function useLogin(){
     const { handleSubmit, formState, setValue, register} = useForm<TLoginSchema>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
-            username: "",
+            email: "",
             password: ""
         },
         reValidateMode: "onChange",
@@ -24,7 +24,7 @@ export function useLogin(){
         mutationKey: ["login"],
         onSuccess: (data) => {
             // dispatch(authCheckedAuthenticated();
-            navigate("/", { replace: true })
+            navigate("/dashboard", { replace: true })
         }
     })
 
