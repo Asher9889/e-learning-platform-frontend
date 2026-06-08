@@ -23,7 +23,7 @@ export function AppSidebar() {
     if (!user) {
         return null;
     }
-
+console.log(SIDEBAR_ITEMS,"SIDEBAR_ITEMS")
     const getSidebarItems = (role: TUserRole) => {
         return SIDEBAR_ITEMS.filter(item => item.roles.includes(role));
     };

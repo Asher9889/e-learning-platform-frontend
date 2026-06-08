@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import ThemeToggle from "../common/ThemeToggle";
 import { useNavigate } from "react-router-dom";
 
-export function PublicHeader() {
+export function Header() {
   const navigate = useNavigate();
  
 

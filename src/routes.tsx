@@ -6,7 +6,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import LoginPage from "@/pages/Login";
 import HomePage from "./pages/Home";
-import PublicLayout from "#components/layout/PublicLayout";
+import  DashboardPage from "./pages/dashboard";
 // import DashboardPage from "@/pages/dashboard/DashboardPage";
 // import CoursesPage from "@/pages/courses/CoursesPage";
 // import ClassesPage from "@/pages/classes/ClassesPage";
@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
     },
     {
         path: "/",
-        element: <PublicLayout><HomePage /></PublicLayout>,
+        element: <HomePage />,
         // element: <div className="bg-red-400 w-full h-full m-auto">Login Page</div>,
     },
 
@@ -36,7 +36,7 @@ export const router = createBrowserRouter([
                 children: [
                     {
                         path: "/dashboard",
-                        element: <div className="bg-blue-400 w-full h-full m-auto">Dashboard Page</div>,
+                        element:  <DashboardPage />,
                     },
 
                         {
