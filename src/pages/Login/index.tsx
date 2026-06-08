@@ -57,14 +57,14 @@ const LoginPage = () => {
                                     <Input
                                         placeholder="name@company.com"
                                         className="pl-10 h-11 bg-muted/30 border-input/60 focus:bg-background transition-all"
-                                        {...register("username", {onChange : () => {
+                                        {...register("email", {onChange : () => {
                                             if(isError) reset();
                                         }})}
                                         autoComplete="username"
                                     />
                                     {
-                                        formState.errors.username && (
-                                            <p className="text-red-500 text-xs font-mono p-2">{formState.errors.username.message}</p>
+                                        formState.errors.email && (
+                                            <p className="text-red-500 text-xs font-mono p-2">{formState.errors.email.message}</p>
                                         )
                                     }
                                 </div>

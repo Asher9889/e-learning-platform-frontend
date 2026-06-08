@@ -13,8 +13,7 @@ const authSlice = createSlice({
   initialState,
 
   reducers: {
-    authenticated: ( state, action: PayloadAction<IUserState>) => {
-      state.user = action.payload;
+    authenticated: (state) => {
       state.status = AUTH_STATUS.AUTHENTICATED;
     },
 
@@ -27,6 +26,10 @@ const authSlice = createSlice({
       state.user = null;
       state.status = AUTH_STATUS.UNAUTHENTICATED;
     },
+
+    setUser: (state, action: PayloadAction<IUserState>) => {
+      state.user = action.payload;
+    }
   }
 });
 
@@ -34,6 +37,7 @@ export const {
   authenticated,
   unauthenticated,
   logout,
+  setUser
 } = authSlice.actions;
 
 export default authSlice.reducer;
