@@ -46,12 +46,10 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
-  unstyled = false,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
-    unstyled?: boolean
   }) {
   const Comp = asChild ? Slot.Root : "button"
 
@@ -60,8 +58,7 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-       className={cn( !unstyled && buttonVariants({ variant, size }),
-        className)}
+      className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
   )

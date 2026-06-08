@@ -17,6 +17,10 @@ const authSlice = createSlice({
       state.status = AUTH_STATUS.AUTHENTICATED;
     },
 
+    authChecking: (state) => {
+      state.status = AUTH_STATUS.CHECKING;
+    },
+
     unauthenticated: ( state) => {
       state.user = null;
       state.status = AUTH_STATUS.UNAUTHENTICATED;
@@ -27,7 +31,7 @@ const authSlice = createSlice({
       state.status = AUTH_STATUS.UNAUTHENTICATED;
     },
 
-    setUser: (state, action: PayloadAction<IUserState>) => {
+    setUser: (state, action: PayloadAction<IUserState | null>) => {
       state.user = action.payload;
     }
   }
@@ -37,7 +41,8 @@ export const {
   authenticated,
   unauthenticated,
   logout,
-  setUser
+  setUser,
+  authChecking
 } = authSlice.actions;
 
 export default authSlice.reducer;
