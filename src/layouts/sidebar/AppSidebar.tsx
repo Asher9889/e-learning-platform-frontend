@@ -21,11 +21,13 @@ export function AppSidebar() {
     const location = useLocation();
 
     const user = useAppSelector(state => state.auth.user);
+    console.log("AppSidebar rendering. User:", user);
 
     if (!user) {
+        console.log("AppSidebar returning null because user is falsy");
         return null;
     }
-
+console.log(SIDEBAR_ITEMS,"SIDEBAR_ITEMS")
     const getSidebarItems = (role: TUserRole) => {
         return SIDEBAR_ITEMS.filter(item => item.roles.includes(role));
     };

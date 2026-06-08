@@ -72,6 +72,7 @@ const AppHeader = ({
   routeTree = defaultRouteTree,
   currentPath = ["Courses", "All Courses"],
 }: AppHeaderProps) => {
+
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {

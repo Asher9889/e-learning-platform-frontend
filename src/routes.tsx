@@ -4,6 +4,8 @@ import ProtectedRoute from "./ProtectedRoute";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import LoginPage from "@/pages/Login";
 import PublicRoute from "./PublicRoute";
+import HomePage from "./pages/Home";
+import  DashboardPage from "./pages/dashboard";
 // import DashboardPage from "@/pages/dashboard/DashboardPage";
 // import CoursesPage from "@/pages/courses/CoursesPage";
 // import ClassesPage from "@/pages/classes/ClassesPage";
@@ -23,6 +25,11 @@ export const router = createBrowserRouter([
             },
         ],
     },
+    {
+        path: "/",
+        element: <HomePage />,
+        // element: <div className="bg-red-400 w-full h-full m-auto">Login Page</div>,
+    },
 
     {
         element: <ProtectedRoute />,
@@ -34,7 +41,7 @@ export const router = createBrowserRouter([
                 children: [
                     {
                         path: "/dashboard",
-                        element: <div className="bg-blue-400 w-full h-full m-auto">Dashboard Page</div>,
+                        element:  <DashboardPage />,
                     },
 
                     {
@@ -60,6 +67,16 @@ export const router = createBrowserRouter([
                     {
                         path: "/profile",
                         element: <div className="bg-indigo-400 w-full h-full m-auto">Profile Page</div>,
+                        //  element: <ProfilePage />,
+                    },
+                    {
+                        path: "/teachers",
+                        element: <div className="bg-indigo-900 w-full h-full m-auto">Teachers Page</div>,
+                        //  element: <ProfilePage />,
+                    },
+                    {
+                        path: "/enroll-student",
+                        element: <div className="bg-pink-900 w-full h-full m-auto">Enroll Student Page</div>,
                         //  element: <ProfilePage />,
                     },
                 ],

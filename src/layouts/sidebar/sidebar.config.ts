@@ -55,4 +55,14 @@ export const SIDEBAR_ITEMS = [
       USER_ROLE.STUDENT,
     ],
   },
+  {
+    title: "Enroll Student",
+    path: "/enroll-student",
+    icon: Video,
+    roles: [
+      USER_ROLE.ADMIN,
+      USER_ROLE.TEACHER,
+      USER_ROLE.STUDENT,
+    ],
+  },
 ];

@@ -1,0 +1,59 @@
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { StatsGrid } from "@/components/dashboard/StatsGrid";
+import { QuickActions } from "@/components/dashboard/QuickActions";
+import { NextClassCard } from "@/components/dashboard/NextClassCard";
+import { RecentActivity } from "@/components/dashboard/RecentActivity";
+import { TeacherPanel } from "@/components/dashboard/TeacherPanel";
+import { StudentPanel } from "@/components/dashboard/StudentPanel";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+import { useGetUser } from "./hooks/useGetUser";
+import { useEffect } from "react";
+
+
+export default function DashboardPage() {
+  const getUserMutation = useGetUser();
+//   const queryClient = useQueryClient();
+
+// const user = queryClient.getQueryData(['user']);
+
+// const userCache = useQueryCache(['user']);
+
+// // read
+// const user = userCache.get();
+// console.log(user,"user data in dashboard")
+  const role =
+    useSelector(
+      (state: RootState) => state.auth.user?.role
+    ) ;
+    useEffect(()=>{
+      const response =  getUserMutation.mutateAsync();
+      console.log(response, 'response');
+    },[])
+    console.log(role,"aaaaaadasdasd")
+// const role: string = 'teacher';
+  return (
+    <div className="space-y-6 p-4 md:p-6">
+      <DashboardHeader role={role} />
+
+      <StatsGrid role={role} />
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-6">
+          <NextClassCard role={role} />
+
+          {role === "TEACHER" ? (
+            <TeacherPanel />
+          ) : (
+            <StudentPanel />
+          )}
+        </div>
+
+        <div className="space-y-6">
+          <QuickActions role={role} />
+          <RecentActivity role={role} />
+        </div>
+      </div>
+    </div>
+  );
+}

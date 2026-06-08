@@ -8,7 +8,7 @@ import { useState } from 'react';
 
 const LoginPage = () => {
 
-    const [showPassword, setShowPassword] = useState<Boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const { handleLogin, handleSubmit, formState, register, mutate: { isPending, isError, error, reset } } = useLogin();
 
     return (
@@ -25,12 +25,18 @@ const LoginPage = () => {
                 </div>
 
                 <div className="relative z-10 p-12 text-white max-w-lg">
-                    <div className="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/20 backdrop-blur-sm border border-primary/30 text-primary">
-                        <ShieldCheck className="w-8 h-8" />
+                    <div className="mb-6 flex  items-center align-center gap-4 justify-start">
+                        {/* Icon ka container */}
+                        <div className="w-16 h-16 mb-4 rounded-2xl bg-primary/20 backdrop-blur-sm border border-primary/30 text-primary flex items-center justify-center">
+                            <ShieldCheck className="w-8 h-8" />
+                        </div>
+
+                        {/* Text Content */}
+                        <h1 className="text-4xl font-bold tracking-tight">
+                            E-Learning
+                        </h1>
                     </div>
-                    <h1 className="text-4xl font-bold tracking-tight mb-4">
-                        E-Learning Management System
-                    </h1>
+
                     <p className="text-zinc-300 text-lg leading-relaxed">
                         Secure, efficient, and intelligent face recognition access control system.
                         Monitor your premises with state-of-the-art AI technology.
@@ -83,9 +89,11 @@ const LoginPage = () => {
                                         id="password"
                                         type={showPassword ? "text" : "password"}
                                         className="pl-10 pr-10 h-11 bg-muted/30 border-input/60 focus:bg-background transition-all"
-                                        {...register("password", {onChange : () => {
-                                            if(isError) reset();
-                                        }})}
+                                        {...register("password", {
+                                            onChange: () => {
+                                                if (isError) reset();
+                                            }
+                                        })}
                                         autoComplete="current-password"
                                     />
                                     <button
