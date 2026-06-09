@@ -8,15 +8,14 @@ import { useTeachers } from "./hooks/useTeachers";
 
 export default function StudentsPage() {
 const navigate = useNavigate();
-const {
-    teachers,
-    isLoading,
-    isError,
-  } = useTeachers();
-  console.log(teachers,"teachers1213213132")
+const {data, isLoading, isError } = useTeachers();
+
+  const teachers = data?.teachers || [];
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
+  
 
   if (isError) {
     return (

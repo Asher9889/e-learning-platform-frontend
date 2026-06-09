@@ -1,3 +1,4 @@
+import type { TUserStatus } from "@/constants/user/user.constant";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { z } from "zod";
 
@@ -129,6 +130,27 @@ export type TeacherEnrollFormInput =
   z.input<
     typeof teacherEnrollSchema
   >;
+
+export type TeacherDataFromApi = Omit<
+  TeacherEnrollFormInput,
+  "confirmPassword" | "personalInfo"
+> & {
+  role: "TEACHER";
+  createdAt: string;
+  updatedAt: string;
+  status: TUserStatus;
+
+  personalInfo: Omit<
+    TeacherEnrollFormInput["personalInfo"],
+    "profileImage"
+  > & {
+    profileImage: string;
+  };
+};
+ export type TeachersListResponse = {
+  teachers: TeacherDataFromApi[];
+  totalTeachers: number;
+};
 
 // Parsed values (after transforms)
 export type TeacherEnrollFormOutput =
