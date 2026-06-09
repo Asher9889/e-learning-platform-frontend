@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import ProtectedRoute from "./ProtectedRoute";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import TeacherLiveClassPage from "@/components/live-classes";
 import LoginPage from "@/pages/Login";
 import PublicRoute from "./PublicRoute";
 import HomePage from "./pages/Home";
@@ -51,7 +52,7 @@ export const router = createBrowserRouter([
 
                     {
                         path: "/classes",
-                        element: <div className="bg-yellow-400 w-full h-full m-auto">Classes Page</div>,
+                        element: <TeacherLiveClassPage />,
                     },
 
                     {

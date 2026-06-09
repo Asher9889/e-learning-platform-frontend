@@ -36,14 +36,14 @@ export function HeroSection({ scrollTo }: HeroSectionProps) {
                 {/* CTAs */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Button
-                        unstyled
+                        
                         className="px-8 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:opacity-90 transition-opacity"
                         onClick={() => scrollTo('contact')}
                     >
                         Start Your Journey →
                     </Button>
                     <Button
-                        unstyled
+                        
                         className="px-8 py-3 rounded-xl border border-border text-foreground font-semibold transition-all hover:border-blue-600/35 dark:hover:border-blue-500/50"
                         onClick={() => scrollTo('features')}
                     >

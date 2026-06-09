@@ -18,7 +18,7 @@ export function ContactSection() {
                     </p>
 
                     <div className="flex gap-3.5 justify-center flex-wrap mb-9">
-                        <Button unstyled className="btn-primary-glow" style={{ animationDuration: '4s' }}>
+                        <Button  className="btn-primary-glow" style={{ animationDuration: '4s' }}>
                             Request a Demo
                         </Button>
                         <a

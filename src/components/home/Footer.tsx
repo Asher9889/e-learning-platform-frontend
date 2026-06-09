@@ -16,7 +16,7 @@ export function Footer({ scrollTo }: HomeFooterProps) {
             <div className="flex gap-5">
                 {['Features', 'Live Classes', 'Security', 'Contact'].map((link) => (
                     <Button
-                        unstyled
+                        
                         key={link}
                         className="text-[13px] text-muted-foreground hover:text-foreground transition-colors"
                         onClick={() => scrollTo(link.toLowerCase().replace(' ', ''))}
