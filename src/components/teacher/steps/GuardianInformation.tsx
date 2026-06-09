@@ -27,6 +27,7 @@ export default function GuardianInformation() {
         <Label htmlFor="GuardianPhone">Guardian Phone</Label>
         <Input
           placeholder="Guardian Phone"
+           maxLength={10}
           {...register(
             "roleInfo.guardianPhoneNumber"
           )}

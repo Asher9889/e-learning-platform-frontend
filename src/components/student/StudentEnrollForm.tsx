@@ -14,6 +14,8 @@ import GuardianInformation from "./steps/GuardianInformation";
 import ReviewSubmit from "./steps/ReviewSubmit";
 import EnrollmentStepper from "./EnrollmentStepper";
 import StepNavigation from "./StepNavigation";
+import { useUploadAvatar } from "@/pages/Teacher/hooks/useUploadAvtar";
+import { useCreateStudent } from "@/pages/Student/hooks/useCreateStudent";
 
 const steps = ["Account", "Personal", "Address", "Student", "Guardian", "Review"];
 const stepFields: Record<number, string[]> = {
@@ -25,7 +27,12 @@ const stepFields: Record<number, string[]> = {
 };
 export default function StudentEnrollForm() {
   const [currentStep, setCurrentStep] = useState(0);
-
+  const {
+    handleCreateStudent,
+  } = useCreateStudent();
+  const {
+    uploadAvatarAsync,
+  } = useUploadAvatar();
   // ✅ useForm ko Input type do — raw form values (phoneNumber: string)
   const methods = useForm<StudentEnrollFormInput, unknown, StudentEnrollFormOutput>({
     resolver: zodResolver(studentEnrollSchema),
@@ -33,11 +40,37 @@ export default function StudentEnrollForm() {
   });
 
   // ✅ onSubmit ko Output type milta hai — transform ke baad (phoneNumber: string E.164)
-  const onSubmit = (values: StudentEnrollFormOutput) => {
-    console.log("form data:", values);
-    console.log("phoneNumber (E.164):", values.phoneNumber); // +919876543210
-  };
+  // const onSubmit = (values: StudentEnrollFormOutput) => {
+  //   console.log("form data:", values);
+  //   console.log("phoneNumber (E.164):", values.phoneNumber); // +919876543210
+  // };
 
+  const onSubmit = async (
+    values: StudentEnrollFormOutput
+  ) => {
+    let avatarUrl = "";
+
+    if (
+      values.personalInfo.profileImage
+    ) {
+      const uploadResponse =
+        await uploadAvatarAsync(
+          values.personalInfo.profileImage
+        );
+
+      avatarUrl =
+        uploadResponse?.url;
+    }
+
+
+    handleCreateStudent({
+      ...values,
+      personalInfo: {
+        ...values.personalInfo,
+        profileImage: avatarUrl
+      },
+    });
+  };
   const renderStep = () => {
     switch (currentStep) {
       case 0: return <AccountInformation />;
@@ -49,38 +82,55 @@ export default function StudentEnrollForm() {
       default: return null;
     }
   };
-const nextStep = async () => {
-  const fields = stepFields[currentStep];
+  const nextStep = async () => {
+    const fields = stepFields[currentStep];
 
-  const isValid = await methods.trigger(fields as any);
+    const isValid = await methods.trigger(fields as any);
 
-  if (!isValid) return;
+    if (!isValid) return;
 
-  if (
-    currentStep === 0 &&
-    methods.getValues("password") !==
+    if (
+      currentStep === 0 &&
+      methods.getValues("password") !==
       methods.getValues("confirmPassword")
-  ) {
-    methods.setError("confirmPassword", {
-      type: "manual",
-      message: "Passwords do not match",
-    });
+    ) {
+      methods.setError("confirmPassword", {
+        type: "manual",
+        message: "Passwords do not match",
+      });
 
-    return;
-  }
+      return;
+    }
 
-  setCurrentStep((p) => p + 1);
-};
+    setCurrentStep((p) => p + 1);
+  };
   return (
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(onSubmit, (errors) => {
           console.log("ERRORS:", errors);
         })}
-        className="flex flex-col h-[calc(100vh-180px)]"
+        autoComplete="off"
+        className="flex flex-col h-[calc(100vh-250px)]"
       >
+        <input
+          type="text"
+          name="username"
+          autoComplete="username"
+          style={{ display: "none" }}
+          tabIndex={-1}
+          readOnly
+        />
+        <input
+          type="password"
+          name="password"
+          autoComplete="current-password"
+          style={{ display: "none" }}
+          tabIndex={-1}
+          readOnly
+        />
         <div className="mb-6">
-          <EnrollmentStepper currentStep={currentStep} steps={steps} />
+          <EnrollmentStepper currentStep={currentStep} steps={steps} onNext={() => nextStep()} onPrevious={() => setCurrentStep((p) => p - 1)} />
         </div>
 
         <div className="flex-1 overflow-y-auto">

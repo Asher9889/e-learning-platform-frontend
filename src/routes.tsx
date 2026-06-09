@@ -11,6 +11,7 @@ import PublicRoute from "./PublicRoute";
 import StudentsPage from "./pages/Student";
 import EnrollStudentPage from "#components/student/EnrollStudentPage";
 import TeachersPage from "./pages/Teacher";
+import AddTeacher from "#components/teacher/AddTeacher";
 // import DashboardPage from "@/pages/dashboard/DashboardPage";
 // import CoursesPage from "@/pages/courses/CoursesPage";
 // import ClassesPage from "@/pages/classes/ClassesPage";
@@ -105,7 +106,7 @@ export const router = createBrowserRouter([
                             },
                             {
                                 path: "new",
-                                element: <h1>EnrollStudentPage </h1>,
+                                element: <AddTeacher />,
                             },
                             {
                                 path: ":id",

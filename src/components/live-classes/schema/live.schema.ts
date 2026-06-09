@@ -1,4 +1,3 @@
-import { CLASS_STATUS } from "@/constants/live-class/live-class.constants";
 import { z } from "zod";
 
 export const scheduleLiveClassSchema = z.object({

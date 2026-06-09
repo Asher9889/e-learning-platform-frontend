@@ -27,12 +27,11 @@ export function AppSidebar() {
         console.log("AppSidebar returning null because user is falsy");
         return null;
     }
-console.log(SIDEBAR_ITEMS,"SIDEBAR_ITEMS")
     const getSidebarItems = (role: TUserRole) => {
         return SIDEBAR_ITEMS.filter(item => item.roles.includes(role));
     };
 
-    const menus = getSidebarItems(user.role);
+    const menus = getSidebarItems(user?.role);
 
     return (
         <Sidebar collapsible="icon">
