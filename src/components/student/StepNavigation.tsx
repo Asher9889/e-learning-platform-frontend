@@ -1,32 +1,30 @@
 import { Button } from "@/components/ui/button";
 
 interface Props {
-  step: number;
+  currentStep: number;
   totalSteps: number;
   onNext: () => void;
   onPrevious: () => void;
-  isLastStep: boolean;
 }
 
-export function StepNavigation({
-  step,
+export default function StepNavigation({
+  currentStep,
   totalSteps,
   onNext,
   onPrevious,
-  isLastStep,
 }: Props) {
   return (
-    <div className="flex justify-between pt-8">
+    <div className="flex justify-between">
       <Button
         variant="outline"
-        disabled={step === 0}
-        onClick={onPrevious}
         type="button"
+        disabled={currentStep === 0}
+        onClick={onPrevious}
       >
         Previous
       </Button>
 
-      {isLastStep ? (
+      {currentStep === totalSteps - 1 ? (
         <Button type="submit">
           Enroll Student
         </Button>

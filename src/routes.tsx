@@ -4,9 +4,11 @@ import ProtectedRoute from "./ProtectedRoute";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import LoginPage from "@/pages/Login";
 import HomePage from "./pages/Home";
-import  DashboardPage from "./pages/Dashboard";
+import DashboardPage from "./pages/Dashboard";
 import PublicRoute from "./PublicRoute";
-import StudentsPage from "./pages/EnrollStudent";
+import StudentsPage from "./pages/Student";
+import EnrollStudentPage from "#components/student/EnrollStudentPage";
+import TeachersPage from "./pages/Teacher";
 // import DashboardPage from "@/pages/dashboard/DashboardPage";
 // import CoursesPage from "@/pages/courses/CoursesPage";
 // import ClassesPage from "@/pages/classes/ClassesPage";
@@ -22,7 +24,7 @@ export const router = createBrowserRouter([
             {
                 path: "/login",
                 element: <LoginPage />,
-                
+
             },
         ],
     },
@@ -42,7 +44,7 @@ export const router = createBrowserRouter([
                 children: [
                     {
                         path: "/dashboard",
-                        element:  <DashboardPage />,
+                        element: <DashboardPage />,
                     },
 
                     {
@@ -70,9 +72,48 @@ export const router = createBrowserRouter([
                         element: <div className="bg-indigo-400 w-full h-full m-auto">Profile Page</div>,
                         //  element: <ProfilePage />,
                     },
-                     {
-                        path: "/enroll-student",
-                        element: <StudentsPage />,
+                    {
+                        path: "/student",
+                        children: [
+                            {
+                                index: true,
+                                element: <StudentsPage />,
+                            },
+                            {
+                                path: "new",
+                                element: <EnrollStudentPage />,
+                            },
+                            {
+                                path: ":id",
+                                element: <h1>"StudentDetailsPage</h1>,
+                            },
+                            {
+                                path: ":id/edit",
+                                element: <h1>"EditStudentPage</h1>,
+                            },
+                        ],
+                        //  element: <ProfilePage />,
+                    },
+                      {
+                        path: "/teachers",
+                        children: [
+                            {
+                                index: true,
+                                element: <TeachersPage />,
+                            },
+                            {
+                                path: "new",
+                                element: <h1>EnrollStudentPage </h1>,
+                            },
+                            {
+                                path: ":id",
+                                element: <h1>"StudentDetailsPage</h1>,
+                            },
+                            {
+                                path: ":id/edit",
+                                element: <h1>"EditStudentPage</h1>,
+                            },
+                        ],
                         //  element: <ProfilePage />,
                     },
                 ],

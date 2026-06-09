@@ -1,5 +1,8 @@
 // types.ts
 
+import type { StudentEnrollFormData } from "@/pages/EnrollStudent/schema/student.schema";
+import type { UseFormReturn } from "react-hook-form";
+
 export interface Student {
   id: string;
   name: string;
@@ -8,4 +11,9 @@ export interface Student {
   batch: string;
   rollNumber: string;
   status: "active" | "inactive";
+}
+
+
+export interface StepProps {
+  form: UseFormReturn<StudentEnrollFormData>;
 }

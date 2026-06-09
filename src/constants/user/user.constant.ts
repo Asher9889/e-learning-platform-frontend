@@ -41,13 +41,13 @@ interface IStudentRoleInfo {
 
 // Main user state interface
 export interface IUserState {
-  id: string;
+  // id: string;
 
   email: string;
-  phoneNumber?: string;
+  phoneNumber: string;
 
-  role: TUserRole;
-  status: TUserStatus;
+  // role: TUserRole;
+  // status: TUserStatus;
 
   personalInfo: {
     name: string;
