@@ -80,7 +80,7 @@ export const router = createBrowserRouter([
                                 element: <StudentsPage />,
                             },
                             {
-                                path: "new",
+                                path: "add",
                                 element: <EnrollStudentPage />,
                             },
                             {

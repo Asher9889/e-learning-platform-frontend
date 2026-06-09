@@ -10,7 +10,7 @@ const navigate = useNavigate();
   return (
     <div className="space-y-6 p-6">
       <StudentHeader
-        onAddStudent={() => navigate("new")}
+        onAddStudent={() => navigate("add")}
       />
       <StudentsTable students={students} />
     </div>
