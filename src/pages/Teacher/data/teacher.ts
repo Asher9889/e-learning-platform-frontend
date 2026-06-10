@@ -1,0 +1,67 @@
+import type { Teacher } from "@/types/teacher.type";
+
+export const teachers: Teacher[] = [
+  {
+    id: "1",
+    name: "Dr. Rajesh Kumar",
+    email: "rajesh.kumar@gmail.com",
+    phone: "9876543210",
+    qualification: "Ph.D. Computer Science",
+    specialization: "Data Structures & Algorithms",
+    experienceYears: 12,
+    joiningDate: "2022-07-15",
+    status: "active",
+  },
+  {
+    id: "2",
+    name: "Neha Singh",
+    email: "neha.singh@gmail.com",
+    phone: "9876543211",
+    qualification: "M.Tech Information Technology",
+    specialization: "Web Development",
+    experienceYears: 8,
+    joiningDate: "2023-01-10",
+    status: "active",
+  },
+  {
+    id: "3",
+    name: "Amit Verma",
+    email: "amit.verma@gmail.com",
+    phone: "9876543212",
+    qualification: "MCA",
+    specialization: "Database Management Systems",
+    experienceYears: 6,
+    joiningDate: "2021-08-20",
+    status: "active",
+  },
+  {
+    id: "4",
+    name: "Priyanka Sharma",
+    email: "priyanka.sharma@gmail.com",
+    phone: "9876543213",
+    qualification: "M.Tech Computer Science",
+    specialization: "Artificial Intelligence",
+    experienceYears: 9,
+    joiningDate: "2020-06-12",
+    status: "inactive",
+  },
+  {
+    id: "5",
+    name: "Sanjay Gupta",
+    email: "sanjay.gupta@gmail.com",
+    phone: "9876543214",
+    qualification: "Ph.D. Mathematics",
+    specialization: "Discrete Mathematics",
+    experienceYears: 15,
+    joiningDate: "2019-04-05",
+    status: "active",
+  },
+];
+
+export const TEACHER_ENROLL_STEPS = [
+  "Account",
+  "Personal",
+  "Address",
+  "Professional",
+  "Review",
+];

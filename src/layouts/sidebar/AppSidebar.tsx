@@ -16,23 +16,32 @@ import { SIDEBAR_ITEMS } from "./sidebar.config";
 import type { TUserRole } from "@/constants/user/user.constant";
 import AppSidebarHeader from "./AppSidebarHeader";
 import AppSidebarFooter from "./AppSidebarFooter";
+import { useLogout } from "./hooks/useLogout";
 
 export function AppSidebar() {
     const location = useLocation();
 
     const user = useAppSelector(state => state.auth.user);
+    const mutation = useLogout();
+
+    const handleLogout = () => {
+        mutation.mutate();
+    }
+
+
     console.log("AppSidebar rendering. User:", user);
 
     if (!user) {
         console.log("AppSidebar returning null because user is falsy");
         return null;
     }
-console.log(SIDEBAR_ITEMS,"SIDEBAR_ITEMS")
     const getSidebarItems = (role: TUserRole) => {
         return SIDEBAR_ITEMS.filter(item => item.roles.includes(role));
     };
 
-    const menus = getSidebarItems(user.role);
+    const menus = getSidebarItems(user?.role);
+
+
 
     return (
         <Sidebar collapsible="icon">
@@ -61,7 +70,7 @@ console.log(SIDEBAR_ITEMS,"SIDEBAR_ITEMS")
                 </SidebarGroup>
             </SidebarContent>
             {/* Footer */}
-            <AppSidebarFooter />
+            <AppSidebarFooter logout={handleLogout} />
         </Sidebar>
     );
 }

@@ -26,10 +26,9 @@ export default function AccountInformation() {
 
       <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="student-mail">Email address</Label>
+          <Label htmlFor="Email">Email address</Label>
           <Input
-            placeholder="name@company.com"
-            autoComplete="new-password" 
+            placeholder="Email"
             {...register("email")}
           />
 
@@ -42,7 +41,7 @@ export default function AccountInformation() {
           <Label htmlFor="PhoneNumber">Phone Number</Label>
           <Input
             placeholder="Phone Number"
-            maxLength={10}
+             maxLength={10}
             {...register("phoneNumber")}
           />
           <p className="text-red-500 text-sm">

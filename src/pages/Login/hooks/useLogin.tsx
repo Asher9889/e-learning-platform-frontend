@@ -28,8 +28,7 @@ export function useLogin(){
         mutationKey: ["login"],
         onSuccess: () => {
             dispatch(authenticated());
-            navigate("/dashboard", { replace: true });
-            
+            navigate("/dashboard", { replace: true });  
         },
         onError: (error) => {
             console.error("Login failed:", error);

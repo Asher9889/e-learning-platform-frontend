@@ -31,8 +31,14 @@ export const studentEnrollSchema = z
       dateOfBirth: z
         .string()
         .nonempty("Date of birth is required"),
-      gender: z.enum(["male", "female", "other"]),
-      profileImage: z.string().optional(),
+      gender: z.enum(["MALE", "FEMALE", "OTHER"]),
+       profileImage: z
+        .union([
+          z.instanceof(File),
+          z.string(),
+        ])
+        .optional(),
+
 
       address: z.object({
         line1: z.string().optional(),

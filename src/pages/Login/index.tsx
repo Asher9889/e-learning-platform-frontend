@@ -6,6 +6,7 @@ import { Lock, Mail, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { useLogin } from './hooks/useLogin';
 import { useState } from 'react';
 
+
 const LoginPage = () => {
 
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -57,6 +58,7 @@ const LoginPage = () => {
                     <form onSubmit={handleSubmit(handleLogin)} className="space-y-6">
                         <div className="space-y-4">
                             <div className="space-y-2">
+
                                 <Label htmlFor="username">Email address</Label>
                                 <div className="relative group">
                                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />

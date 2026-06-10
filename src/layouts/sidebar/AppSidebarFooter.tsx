@@ -26,9 +26,10 @@ import { cn } from "#lib/utils";
 
 interface AppSidebarFooterProps {
   className?: string;
+  logout: () => void;
 }
 
-const AppSidebarFooter = ({ className }: AppSidebarFooterProps) => {
+const AppSidebarFooter = ({ className, logout }: AppSidebarFooterProps) => {
   const user = {
     name: "Alex Morgan",
     email: "alex.morgan@university.edu",
@@ -139,6 +140,7 @@ const AppSidebarFooter = ({ className }: AppSidebarFooterProps) => {
 
               {/* Logout */}
               <DropdownMenuItem 
+                onClick={logout}
                 className="gap-2.5 rounded-lg px-2 py-2.5 text-sm font-medium text-destructive focus:text-destructive cursor-pointer focus:bg-destructive/10"
               >
                 <LogOut className="h-4 w-4" />

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import type { StudentEnrollFormInput } from "@/pages/Student/schema/student.schema";
 import { AvatarUpload } from "./AvatarUpload";
 import { Label } from "#components/ui/label";
+import { useEffect } from "react";
 
 export default function PersonalInformation() {
   const {
@@ -13,8 +14,13 @@ export default function PersonalInformation() {
     formState: { errors },
   } =
     useFormContext<StudentEnrollFormInput>();
-    const image = watch("personalInfo.profileImage");
   console.log(errors, "errorserrorserrors")
+const image = watch("personalInfo.profileImage");
+
+console.log(image);
+  useEffect(() => {
+  register("personalInfo.profileImage");
+}, [register]);
   return (
     <div className="grid md:grid-cols-2 gap-4">
 
@@ -22,7 +28,7 @@ export default function PersonalInformation() {
       <div className="md:col-span-2 flex flex-col ">
         <div className="md:col-span-2 flex justify-start ">
           <AvatarUpload
-            value ={image}
+          value={image}
             onFileChange={(file) => {
               const uploadedFile = file?.file;
 
