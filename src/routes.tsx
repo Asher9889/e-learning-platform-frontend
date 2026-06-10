@@ -12,6 +12,7 @@ import StudentsPage from "./pages/Student";
 import EnrollStudentPage from "#components/student/EnrollStudentPage";
 import TeachersPage from "./pages/Teacher";
 import AddTeacher from "#components/teacher/AddTeacher";
+import ClassesPage from "./pages/Classes";
 // import DashboardPage from "@/pages/dashboard/DashboardPage";
 // import CoursesPage from "@/pages/courses/CoursesPage";
 // import ClassesPage from "@/pages/classes/ClassesPage";
@@ -56,7 +57,7 @@ export const router = createBrowserRouter([
                     },
 
                     {
-                        path: "/classes",
+                        path: "/live-classes",
                         element: <TeacherLiveClassPage />,
                     },
 
@@ -117,6 +118,11 @@ export const router = createBrowserRouter([
                                 element: <h1>"EditStudentPage</h1>,
                             },
                         ],
+                        //  element: <ProfilePage />,
+                    },
+                     {
+                        path: "/classes",
+                        element: <ClassesPage />,
                         //  element: <ProfilePage />,
                     },
                 ],

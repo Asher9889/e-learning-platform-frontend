@@ -25,13 +25,18 @@ export default function StepNavigation({
       </Button>
 
       {currentStep === totalSteps - 1 ? (
-        <Button type="submit">
+        <Button type="submit"  onClick={() =>
+    console.log("SUBMIT BUTTON CLICK debugging")
+  }>
           Enroll Student
         </Button>
       ) : (
         <Button
           type="button"
-          onClick={onNext}
+          onClick={(e) => {
+             e.preventDefault();
+            onNext();
+            }}
         >
           Next
         </Button>
