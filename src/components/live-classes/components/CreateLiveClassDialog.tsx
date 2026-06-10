@@ -44,18 +44,12 @@ const CreateLiveClassDialog = ({ onSuccess }: CreateLiveClassDialogProps) => {
   const [open, setOpen] = useState(false);
   // const createMutation = useCreateLiveClass();
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<TStartLiveClassInput>({
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<TStartLiveClassInput>({
     resolver: zodResolver(startLiveClassSchema),
     defaultValues: {
       durationMinutes: 60,
       maxParticipants: 50,
-      isRecordingEnabled: true,
+      isRecordingEnabled: false,
       isChatEnabled: true,
       isScreenShareAllowed: true,
     },
@@ -214,7 +208,7 @@ const CreateLiveClassDialog = ({ onSuccess }: CreateLiveClassDialogProps) => {
               className="gap-2"
             >
               <Video className="h-4 w-4" />
-              Create & Schedule
+              Go Live
             </Button>
           </div>
         </form>
