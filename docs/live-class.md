@@ -14,3 +14,26 @@
   "isScreenShareAllowed": true
 }
 ```
+## Step 1: Teacher Clicks Start
+
+Teacher
+   ↓
+Start Class
+   ↓
+Backend
+   ↓
+Create LiveKit Room
+   ↓
+Mongo Save
+   ↓
+Teacher Gets Token
+   ↓
+Teacher Joins Room
+   ↓
+Camera + Mic Publish
+   ↓
+Students Join
+   ↓
+LiveKit Relays Media
+   ↓
+Students Receive Video
