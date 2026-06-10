@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { createStudent } from "../api/student.api";
 import { studentEnrollSchema, type StudentEnrollFormInput, type StudentEnrollFormOutput } from "../schema/student.schema";
+import { sileo } from "sileo";
 
 
 export function useCreateStudent() {
@@ -45,6 +46,13 @@ export function useCreateStudent() {
       console.error(
         "Teacher creation failed:",
         error
+      );
+      sileo.error(
+       {
+        title: "Student creation failed",
+        description:
+          error.message || "An error occurred while creating the student. Please try again.",
+       }
       );
     },
   });
