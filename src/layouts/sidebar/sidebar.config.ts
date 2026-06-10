@@ -4,6 +4,8 @@ import {
   Video,
   Users,
   ClipboardCheck,
+  School,
+  GraduationCap,
 } from "lucide-react";
 
 import { USER_ROLE } from "@/constants/user/user.constant";
@@ -36,7 +38,7 @@ export const SIDEBAR_ITEMS = [
 
   {
     title: "Live Classes",
-    path: "/classes",
+    path: "/live-classes",
     icon: Video,
     roles: [
       USER_ROLE.ADMIN,
@@ -58,7 +60,17 @@ export const SIDEBAR_ITEMS = [
   {
     title: "Student",
     path: "/student",
-    icon: Video,
+    icon: GraduationCap,
+    roles: [
+      USER_ROLE.ADMIN,
+      USER_ROLE.TEACHER,
+      USER_ROLE.STUDENT,
+    ],
+  },
+  {
+    title: "Classes & Subjects",
+    path: "/classes",
+    icon: School,
     roles: [
       USER_ROLE.ADMIN,
       USER_ROLE.TEACHER,

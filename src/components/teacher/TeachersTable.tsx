@@ -18,11 +18,6 @@ interface Props {
 export function TeachersTable({
   teachers,
 }: Props) {
-
-
-  console.log(teachers, "teachers")
-
-
   return (
     <div className="rounded-lg border">
       <Table>

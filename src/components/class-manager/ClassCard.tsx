@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Pencil, Trash2, GraduationCap, Calendar } from "lucide-react";
+import { capitalizeFirstLetter } from "@/utils/helper";
 
 interface ClassCardProps {
   classData: Class;
@@ -33,7 +34,7 @@ export function ClassCard({ classData, onEdit, onDelete }: ClassCardProps) {
               <GraduationCap className="w-5 h-5 text-primary" />
             </div>
             <div className="space-y-1">
-              <CardTitle className="text-lg leading-tight">{classData.name}</CardTitle>
+              <CardTitle className="text-lg leading-tight">{capitalizeFirstLetter(classData.name)}</CardTitle>
               <CardDescription className="flex items-center gap-3 text-xs">
                 <span className="inline-flex items-center gap-1">
                   <Calendar className="w-3 h-3" />

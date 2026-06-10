@@ -6,14 +6,13 @@ import TeacherLiveClassPage from "@/components/live-classes";
 import LoginPage from "@/pages/Login";
 
 import HomePage from "./pages/Home";
-import DashboardPage from "./pages/Dashboard";
+import DashboardPage from "./pages/dashboard";
 import PublicRoute from "./PublicRoute";
 import StudentsPage from "./pages/Student";
 import EnrollStudentPage from "#components/student/EnrollStudentPage";
 import TeachersPage from "./pages/Teacher";
 import AddTeacher from "#components/teacher/AddTeacher";
-import Classes from "@/pages/Classes";
-
+import ClassesPage from "./pages/Classes";
 // import DashboardPage from "@/pages/dashboard/DashboardPage";
 // import CoursesPage from "@/pages/courses/CoursesPage";
 // import ClassesPage from "@/pages/classes/ClassesPage";
@@ -121,10 +120,11 @@ export const router = createBrowserRouter([
                         ],
                         //  element: <ProfilePage />,
                     },
-                    {
+                     {
                         path: "/classes",
-                        element: <Classes />,
-                    }
+                        element: <ClassesPage />,
+                        //  element: <ProfilePage />,
+                    },
                 ],
             },
         ],

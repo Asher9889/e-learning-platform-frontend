@@ -1,7 +1,6 @@
 // hooks/useSections.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { mockApi } from "../mock-api";
-import type { CreateSectionInput, UpdateSectionInput } from "../types";
 
 const CLASSES_KEY = ["classes"] as const;
 

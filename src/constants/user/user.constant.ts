@@ -17,6 +17,8 @@ export const GENDER = {
   OTHER: "OTHER"
 } as const;
 
+
+
 export type TUserStatus = typeof USER_STATUS[keyof typeof USER_STATUS];
 export type TGender = typeof GENDER[keyof typeof GENDER];
 export type TUserRole = typeof USER_ROLE[keyof typeof USER_ROLE];
@@ -70,4 +72,17 @@ export interface IUserState {
   createdAt: string;
   updatedAt: string;
 
+}
+
+export interface ISection {
+  id: string;
+  sectionName: string;
+  strength: number;
+}
+
+export interface IClass {
+  id: string;
+  className: string;
+  strength: number;
+  sections: ISection[];
 }

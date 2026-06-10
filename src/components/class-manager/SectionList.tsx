@@ -4,7 +4,6 @@ import { SectionCard } from "./SectionCard";
 import { SectionForm } from "./SectionForm";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useCreateSection, useUpdateSection, useDeleteSection } from "@/pages/Classes/hooks/useSections";
 import { ChevronDown, Plus, Users } from "lucide-react";
 import {
   AlertDialog,
@@ -16,6 +15,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import type { CreateSectionInput, UpdateSectionInput } from "@/pages/Classes/schema/class.schema";
+import { useCreateSection } from "@/pages/Classes/hooks/useCreateSection";
+import { useUpdateSection } from "@/pages/Classes/hooks/useUpdateSection";
+import { useUpdateClass } from "@/pages/Classes/hooks/useUpdateClass";
+import { useDeleteSection } from "@/pages/Classes/hooks/useDeleteSection";
 
 interface SectionListProps {
   sections: Section[];
@@ -27,37 +31,70 @@ export function SectionList({ sections, classId }: SectionListProps) {
   const [showForm, setShowForm] = useState(false);
   const [editingSection, setEditingSection] = useState<Section | null>(null);
   const [deletingSection, setDeletingSection] = useState<Section | null>(null);
-
+  console.log(sections,"sectionssections",classId,"editingSection",editingSection)
+const {
+  createSectionAsync,
+  isCreating,
+} = useCreateSection();
+const {
+  updateSectionAsync,
+  isUpdating,
+} = useUpdateSection();
+const {
+  deleteSectionAsync,
+  isDeleting,
+} = useDeleteSection();
   const createSection = useCreateSection();
   const updateSection = useUpdateSection();
   const deleteSection = useDeleteSection();
+console.log(isDeleting,"isDeleting")
+  const handleCreate = async (data: CreateSectionInput) => {
+   console.log("response",data)
 
-  const handleCreate = (data: { classId: string; name: string; strength: number }) => {
-    createSection.mutate(data, {
-      onSuccess: () => {
-        setShowForm(false);
-      },
-    });
+    const response = await createSectionAsync(data);
+     if(response){
+     setEditingSection(null);
+   }
+   console.log(response,"response",data)
+    // createSection.mutate(data, {
+    //   onSuccess: () => {
+    //     setShowForm(false);
+    //   },
+    // });
   };
 
-  const handleUpdate = (data: { id: string; classId: string; name: string; strength: number }) => {
-    updateSection.mutate(data, {
-      onSuccess: () => {
-        setEditingSection(null);
-      },
-    });
+  const handleUpdate = async (data: UpdateSectionInput) => {
+    console.log(data,"handleUpdate updateSection")
+    const response = await updateSectionAsync(data);
+   console.log(response,"response",data)
+   if(response){
+     setEditingSection(null);
+   }
+    // updateSection.mutate(data, {
+    //   onSuccess: () => {
+    //     setEditingSection(null);
+    //   },
+    // });
   };
 
-  const handleDelete = () => {
+
+  const handleDelete = async() => {
     if (!deletingSection) return;
-    deleteSection.mutate(
-      { classId, sectionId: deletingSection.id },
-      {
-        onSuccess: () => {
-          setDeletingSection(null);
-        },
-      }
-    );
+    console.log(deletingSection,"deletingSectiondeletingSectiondeletingSection",classId)
+    await deleteSectionAsync({
+    classId: classId,
+    id: deletingSection._id,
+  });
+
+  setDeletingSection(null);
+    // deleteSection.mutate(
+    //   { classId, sectionId: deletingSection.id },
+    //   {
+    //     onSuccess: () => {
+    //       setDeletingSection(null);
+    //     },
+    //   }
+    // );
   };
 
   return (
@@ -84,6 +121,7 @@ export function SectionList({ sections, classId }: SectionListProps) {
               <SectionCard
                 key={section.id}
                 section={section}
+                data={editingSection}
                 onEdit={setEditingSection}
                 onDelete={setDeletingSection}
               />

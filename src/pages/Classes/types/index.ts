@@ -1,7 +1,11 @@
-// types/index.ts
-
+// // types/index.ts
+// export interface CreateSectionInput {
+//   classId: string;
+//   name: string;
+//   strength: number
+// }
 export interface Section {
-  id: string;
+  _id: string;
   name: string;
   strength: number;
   classId: string;
@@ -21,26 +25,22 @@ export interface Class {
   updatedAt: string;
 }
 
-export interface CreateClassInput {
-  name: string;
-  description: string;
-  grade: string;
-  academicYear: string;
-}
 
-export interface UpdateClassInput extends Partial<CreateClassInput> {
-  id: string;
-}
+// export interface Class {
+//   id: string;
+//   name: string;
+//   description: string;
+//   grade: string;
+//   academicYear: string;
+//   totalStrength: number;
+//   createdAt: string;
+//   updatedAt: string;
+//   sections: Section[];
+// }
 
-export interface CreateSectionInput {
-  name: string;
-  strength: number;
-  classId: string;
-}
 
-export interface UpdateSectionInput extends Partial<Omit<CreateSectionInput, 'classId'>> {
-  id: string;
-  classId: string;
-}
+
+
+
 
 export type DialogMode = 'create' | 'edit';

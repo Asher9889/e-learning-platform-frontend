@@ -49,12 +49,12 @@ const stepFields: Record<number, string[]> = {
 export default function TeacherEnrollForm() {
     const [currentStep, setCurrentStep] = useState(0);
     const {
-        
+
         handleCreateTeacher,
     } = useCreateTeacher();
     const {
-  uploadAvatarAsync,
-} = useUploadAvatar();
+        uploadAvatarAsync,
+    } = useUploadAvatar();
     // ✅ useForm ko Input type do — raw form values (phoneNumber: string)
     const methods = useForm<TeacherEnrollFormInput, unknown, TeacherEnrollFormOutput>({
         resolver: zodResolver(teacherEnrollSchema),
@@ -70,31 +70,31 @@ export default function TeacherEnrollForm() {
     //     )
     // };
     const onSubmit = async (
-  values: TeacherEnrollFormOutput
-) => {
-  let avatarUrl = "";
+        values: TeacherEnrollFormOutput
+    ) => {
+        let avatarUrl = "";
 
-  if (
-    values.personalInfo.profileImage
-  ) {
-    const uploadResponse =
-      await uploadAvatarAsync(
-        values.personalInfo.profileImage
-      );
+        if (
+            values.personalInfo.profileImage
+        ) {
+            const uploadResponse =
+                await uploadAvatarAsync(
+                    values.personalInfo.profileImage
+                );
 
-    avatarUrl =
-      uploadResponse?.url;
-  }
+            avatarUrl =
+                uploadResponse?.url;
+        }
 
 
-  handleCreateTeacher({
-    ...values,
-    personalInfo: {
-      ...values.personalInfo,
-      profileImage: avatarUrl
-    },
-  });
-};
+        handleCreateTeacher({
+            ...values,
+            personalInfo: {
+                ...values.personalInfo,
+                profileImage: avatarUrl
+            },
+        });
+    };
 
     const renderStep = () => {
         switch (currentStep) {
@@ -102,7 +102,6 @@ export default function TeacherEnrollForm() {
             case 1: return <PersonalInformation />;
             case 2: return <AddressInformation />;
             case 3: return <TeacherInformation />;
-
             case 4: return <ReviewSubmit />;
             default: return null;
         }
@@ -135,8 +134,25 @@ export default function TeacherEnrollForm() {
                 onSubmit={methods.handleSubmit(onSubmit, (errors) => {
                     console.log("ERRORS:", errors);
                 })}
+                autoComplete="off"
                 className="flex flex-col h-[calc(100vh-250px)]"
             >
+                <input
+                    type="text"
+                    name="username"
+                    autoComplete="username"
+                    style={{ display: "none" }}
+                    tabIndex={-1}
+                    readOnly
+                />
+                <input
+                    type="password"
+                    name="password"
+                    autoComplete="current-password"
+                    style={{ display: "none" }}
+                    tabIndex={-1}
+                    readOnly
+                />
                 <div className="mb-6">
                     <EnrollmentStepper currentStep={currentStep} steps={steps} onNext={() => nextStep()} onPrevious={() => setCurrentStep((p) => p - 1)} />
                 </div>

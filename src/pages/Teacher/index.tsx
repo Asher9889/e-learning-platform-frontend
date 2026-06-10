@@ -4,7 +4,7 @@
 import { useNavigate } from "react-router-dom";
 import { TeacherHeader } from "#components/teacher/TeacherHeader";
 import { TeachersTable } from "#components/teacher/TeachersTable";
-import { useTeachers } from "./hooks/useTeachers";
+import { useTeachers } from "./hooks/useTeachersList";
 
 export default function StudentsPage() {
 const navigate = useNavigate();

@@ -4,7 +4,7 @@ import { ClassList } from "@/components/class-manager/ClassList";
 import { ClassForm } from "@/components/class-manager/ClassForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useClasses, useCreateClass, useUpdateClass, useDeleteClass } from "@/pages/Classes/hooks/useClasses";
+import { useClasses } from "@/pages/Classes/hooks/useClasses";
 import { Plus, Search, GraduationCap, Loader2 } from "lucide-react";
 import {
   AlertDialog,
@@ -16,44 +16,84 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import type { ClassFormData } from "./schema/class.schema";
+import { useCreateClass } from "./hooks/useCreateClass";
+import { useGetClasses } from "./hooks/useGetClasses";
+import { useUpdateClass } from "./hooks/useUpdateClass";
+import { useDeleteClass } from "./hooks/useDeleteClass";
 
 export default function ClassManager() {
-  const { data: classes = [], isLoading } = useClasses();
+  // const { data: classes = [], isLoading } = useClasses();
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+  } = useGetClasses();
+const classes = data?.classes || [];
+  console.log(classes,"classes")
   const createClass = useCreateClass();
   const updateClass = useUpdateClass();
   const deleteClass = useDeleteClass();
-
+const {
+  createClassAsync,
+  isCreating,
+} = useCreateClass();
+const {
+  updateClassAsync,
+  isUpdating: isUpdatingClass,
+} = useUpdateClass();
+const {
+  deleteClassAsync,
+  isDeleting,
+} = useDeleteClass();
   const [searchQuery, setSearchQuery] = useState("");
   const [showClassForm, setShowClassForm] = useState(false);
   const [editingClass, setEditingClass] = useState<Class | null>(null);
   const [deletingClass, setDeletingClass] = useState<Class | null>(null);
 
-  const filteredClasses = classes.filter((c) =>
+  const filteredClasses = classes?.filter((c) =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.grade.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.academicYear.includes(searchQuery)
   );
 
-  const totalStudents = classes.reduce((sum, c) => sum + c.totalStrength, 0);
-  const totalSections = classes.reduce((sum, c) => sum + c.sections.length, 0);
+  const totalStudents = classes?.reduce((sum, c) => sum + c.totalStrength, 0);
+  const totalSections = classes?.reduce((sum, c) => sum + c.sections.length, 0);
 
-  const handleCreateClass = (data: { name: string; description: string; grade: string; academicYear: string }) => {
-    createClass.mutate(data, {
-      onSuccess: () => setShowClassForm(false),
-    });
+  const handleCreateClass = async (data: ClassFormData) => {
+   const response = await createClassAsync(data);
+   console.log(response,"response")
+    // createClass.mutate(data, {
+    //   onSuccess: () => setShowClassForm(false),
+    // });
   };
 
-  const handleUpdateClass = (data: { id: string; name: string; description: string; grade: string; academicYear: string }) => {
-    updateClass.mutate(data, {
-      onSuccess: () => setEditingClass(null),
-    });
+  
+  const handleUpdateClass = async (data: ClassFormData) => {
+    const response = await updateClassAsync(data);
+   console.log(response,"response handleUpdateClass")
+if(response){setEditingClass(null);};
+    
   };
 
-  const handleDeleteClass = () => {
+  const handleDeleteClass = async() => {
     if (!deletingClass) return;
-    deleteClass.mutate(deletingClass.id, {
-      onSuccess: () => setDeletingClass(null),
-    });
+
+    console.log(deletingClass,"deletingClassdeletingClass")
+     try {
+    const response =
+      await deleteClassAsync(deletingClass?.id);
+
+    console.log(response);
+
+    setDeletingClass(null);
+  } catch (error) {
+    console.error(error);
+  }
+    // deleteClass.mutate(deletingClass.id, {
+    //   onSuccess: () => setDeletingClass(null),
+    // });
   };
 
   return (

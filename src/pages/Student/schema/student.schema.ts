@@ -1,3 +1,4 @@
+import type { TUserStatus } from "@/constants/user/user.constant";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { z } from "zod";
 
@@ -84,5 +85,26 @@ export const studentEnrollSchema = z
 // ✅ Input type  — useForm mein use karo (raw form values, phoneNumber: string)
 export type StudentEnrollFormInput = z.input<typeof studentEnrollSchema>;
 
+
+export type StudentDataFromApi = Omit<
+  StudentEnrollFormInput,
+  "confirmPassword" | "personalInfo"
+> & {
+  role: "TEACHER";
+  createdAt: string;
+  updatedAt: string;
+  status: TUserStatus;
+
+  personalInfo: Omit<
+    StudentEnrollFormInput["personalInfo"],
+    "profileImage"
+  > & {
+    profileImage: string;
+  };
+};
+ export type StudentsListResponse = {
+  students: StudentDataFromApi[];
+  totalStudents: number;
+};
 // ✅ Output type — onSubmit mein use karo (after transform, phoneNumber: string)
 export type StudentEnrollFormOutput = z.output<typeof studentEnrollSchema>;
