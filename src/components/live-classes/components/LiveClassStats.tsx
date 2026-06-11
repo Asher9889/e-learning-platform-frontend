@@ -12,7 +12,7 @@ interface LiveClassStatsProps {
   stats: Stats;
 }
 
-export const LiveClassStats = ({ stats }: LiveClassStatsProps) => {
+const LiveClassStats = ({ stats }: LiveClassStatsProps) => {
   const items = [
     {
       label: "Total Classes",
@@ -66,3 +66,5 @@ export const LiveClassStats = ({ stats }: LiveClassStatsProps) => {
     </div>
   );
 };
+
+export default LiveClassStats;

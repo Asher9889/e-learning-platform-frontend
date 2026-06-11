@@ -40,5 +40,8 @@ export const joinLiveClassSchema = z.object({
 export type TScheduledLiveClass = z.infer<typeof scheduleLiveClassSchema>;
 
 
+
+
+
 export type TStartLiveClassInput = z.infer<typeof startLiveClassSchema>;
 export type TJoinLiveClassInput = z.infer<typeof joinLiveClassSchema>;

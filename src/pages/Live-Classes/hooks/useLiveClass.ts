@@ -9,6 +9,8 @@ export const useUpcomingLiveClasses = () => {
   });
 };
 
+
+
 export const useLiveClass = (id: string) => {
   return useQuery({
     queryKey: ["live-classes", id],

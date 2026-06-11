@@ -1,3 +1,5 @@
+import type { Method } from "axios";
+
 const apiEndpoints = {
     AUTH: {
         LOGIN: {
@@ -36,6 +38,32 @@ const apiEndpoints = {
         },
        
     },
+    LIVE_CLASSES: {
+        UPCOMING: {
+            url: "/live-classes",
+            method: "GET" as Method
+        },
+        GET_BY_ID: (id: string) => ({
+            url: `/live-classes/${id}`,
+            method: "GET"
+        }),
+        CREATE: {
+            url: "/live-classes",
+            method: "POST"
+        },
+        START: (id: string) => ({
+            url: `/live-classes/${id}/start`,
+            method: "POST"
+        }),
+        JOIN: (id: string) => ({
+            url: `/live-classes/${id}/join`,
+            method: "POST"
+        }),
+        END: (id: string) => ({
+            url: `/live-classes/${id}/end`,
+            method: "POST"
+        }),
+    }
   
 }
 

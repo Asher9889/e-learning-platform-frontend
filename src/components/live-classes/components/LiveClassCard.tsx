@@ -3,16 +3,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { TLiveClass } from "../schema/live.schema";
+import type { ILiveSession } from "../../../pages/Live-Classes/types";
 
 interface LiveClassCardProps {
-  liveClass: TLiveClass;
+  liveClass: ILiveSession;
   onStart?: (id: string) => void;
   onJoin?: (id: string) => void;
   variant?: "UPCOMING" | "LIVE" | "ENDED";
 }
 
-export const LiveClassCard = ({
+const LiveClassCard = ({
   liveClass,
   onStart,
   onJoin,
@@ -20,6 +20,8 @@ export const LiveClassCard = ({
 }: LiveClassCardProps) => {
   const isLive = variant === "LIVE";
   const isUpcoming = variant === "UPCOMING";
+
+  const scheduledAt = liveClass.scheduledAt ? new Date(liveClass.scheduledAt) : null;
 
   return (
     <Card
@@ -57,7 +59,7 @@ export const LiveClassCard = ({
               {liveClass.title}
             </h3>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              {liveClass.subject}
+              {liveClass.subject.name}
             </p>
           </div>
         </div>
@@ -71,7 +73,7 @@ export const LiveClassCard = ({
         <div className="mb-4 flex flex-wrap gap-2">
           <div className="flex items-center gap-1 rounded-md bg-muted/60 px-2 py-1 text-[11px] text-muted-foreground">
             <Calendar className="h-3 w-3" />
-            {new Date(liveClass.scheduledAt).toLocaleDateString("en-US", {
+            {scheduledAt?.toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
               hour: "2-digit",
@@ -120,3 +122,5 @@ export const LiveClassCard = ({
     </Card>
   );
 };
+
+export default LiveClassCard;

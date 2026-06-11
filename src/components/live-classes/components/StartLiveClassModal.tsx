@@ -10,16 +10,16 @@ import {
 import { Button } from "#components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 // import { useStartLiveClass } from "../hooks/useLiveClass";
-import type { TLiveClass } from "../schema/live.schema";
+import type { ILiveSession } from "../../../pages/Live-Classes/types";
 
 interface StartLiveClassModalProps {
-  liveClass: TLiveClass;
+  liveClass: ILiveSession;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onStarted?: (url: string) => void;
 }
 
-export const StartLiveClassModal = ({
+const StartLiveClassModal = ({
   liveClass,
   open,
   onOpenChange,
@@ -152,3 +152,5 @@ export const StartLiveClassModal = ({
     </Dialog>
   );
 };
+
+export default StartLiveClassModal;

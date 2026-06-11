@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { startLiveClassSchema, type TStartLiveClassInput } from "../schema/live.schema";
+import { startLiveClassSchema, type TStartLiveClassInput } from "../../../pages/Live-Classes/schema/live.schema";
 // import { useCreateLiveClass } from "../hooks/useLiveClass";
 
 interface CreateLiveClassDialogProps {
@@ -125,7 +125,7 @@ const CreateLiveClassDialog = ({ onSuccess }: CreateLiveClassDialogProps) => {
               id="description"
               placeholder="Brief overview of what will be covered..."
               {...register("description")}
-              className="min-h-[80px] resize-none"
+              className="min-h-20 resize-none"
             />
           </div>
 

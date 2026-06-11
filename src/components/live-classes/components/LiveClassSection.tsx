@@ -7,7 +7,7 @@ interface LiveClassSectionProps {
   children: ReactNode;
 }
 
-export const LiveClassSection = ({
+const LiveClassSection = ({
   title,
   description,
   action,
@@ -28,3 +28,5 @@ export const LiveClassSection = ({
     </div>
   );
 };
+
+export default LiveClassSection;

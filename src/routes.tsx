@@ -2,7 +2,6 @@ import { createBrowserRouter } from "react-router-dom";
 
 import ProtectedRoute from "./ProtectedRoute";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
-import TeacherLiveClassPage from "@/components/live-classes";
 import LoginPage from "@/pages/Login";
 
 import HomePage from "./pages/Home";
@@ -13,6 +12,7 @@ import EnrollStudentPage from "#components/student/EnrollStudentPage";
 import TeachersPage from "./pages/Teacher";
 import AddTeacher from "#components/teacher/AddTeacher";
 import Classes from "@/pages/Classes";
+import LiveClassPage from "./pages/Live-Classes";
 
 // import DashboardPage from "@/pages/dashboard/DashboardPage";
 // import CoursesPage from "@/pages/courses/CoursesPage";
@@ -59,7 +59,7 @@ export const router = createBrowserRouter([
 
                     {
                         path: "/live-classes",
-                        element: <TeacherLiveClassPage />,
+                        element: <LiveClassPage />,
                     },
 
                     {

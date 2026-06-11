@@ -5,7 +5,7 @@ interface EmptyLiveClassStateProps {
   onCreate?: () => void;
 }
 
-export const EmptyLiveClassState = ({ onCreate }: EmptyLiveClassStateProps) => {
+const EmptyLiveClassState = ({ onCreate }: EmptyLiveClassStateProps) => {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-muted/20 px-8 py-16 text-center">
       <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 mb-4">
@@ -26,3 +26,5 @@ export const EmptyLiveClassState = ({ onCreate }: EmptyLiveClassStateProps) => {
     </div>
   );
 };
+
+export default EmptyLiveClassState;
