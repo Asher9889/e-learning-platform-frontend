@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import { USER_ROLE } from "@/constants/user/user.constant";
 import RouteOutlet from "./routeOutlet";
+import ActiveLive from "./pages/Live-Classes/ActiveLiveClass";
+import ActiveLiveClass from "./pages/Live-Classes/ActiveLiveClass";
 
 export const APP_ROUTES: AppRoutes = {
   dashboard: {
@@ -62,13 +64,38 @@ export const APP_ROUTES: AppRoutes = {
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
   },
 
+  // liveClasses: {
+  //   title: "Live Classes",
+  //   path: "/live-classes",
+  //   icon: Video,
+  //   element: LiveClassPage,
+  //   showInSidebar: true,
+  //   roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+  //   children: [
+  //     {
+  //       path: ":roomName/class-room",
+  //       element: () => <div className="bg-red-600">Live Class Room</div>,
+  //     }
+  //   ]
+  // },
+
   liveClasses: {
     title: "Live Classes",
     path: "/live-classes",
     icon: Video,
-    element: LiveClassPage,
+    element: RouteOutlet,
     showInSidebar: true,
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+    children: [
+       {
+        path: undefined,
+        element: LiveClassPage,
+      },
+      {
+        path: ":roomName/class-room",
+        element: ActiveLiveClass,
+      }
+    ]
   },
 
   assignments: {

@@ -29,9 +29,6 @@ export function AppSidebar() {
         mutation.mutate();
     }
 
-
-    console.log("AppSidebar rendering. User:", user);
-
     if (!user) {
         console.log("AppSidebar returning null because user is falsy");
         return null;

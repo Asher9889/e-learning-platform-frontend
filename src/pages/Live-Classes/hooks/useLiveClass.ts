@@ -10,6 +10,13 @@ export const useUpcomingLiveClasses = () => {
 };
 
 
+export const useActiveLiveClasses = () => {
+  return useQuery({
+    queryKey: ["live-classes", "active"],
+    queryFn: () => liveClassApi.getActive(),
+  });
+}
+
 
 export const useLiveClass = (id: string) => {
   return useQuery({
@@ -28,14 +35,13 @@ export const useCreateLiveClass = () => {
 
 export const useStartLiveClass = () => {
   return useMutation({
-    mutationFn: (id: string) =>
-      liveClassApi.start(id),
+    mutationFn: (id: string) => liveClassApi.start(id),
   });
 };
 
 export const useJoinLiveClass = () => {
   return useMutation({
-    mutationFn: ({id,data}: {id: string; data: TJoinLiveClassInput}) => liveClassApi.join(id, data),
+    mutationFn: (roomName: string) => liveClassApi.join(roomName),
   });
 };
 

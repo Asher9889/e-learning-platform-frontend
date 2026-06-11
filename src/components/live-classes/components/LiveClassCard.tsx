@@ -8,7 +8,7 @@ import type { ILiveSession } from "../../../pages/Live-Classes/types";
 interface LiveClassCardProps {
   liveClass: ILiveSession;
   onStart?: (id: string) => void;
-  onJoin?: (id: string) => void;
+  onJoin?: (roomName: string) => void;
   variant?: "UPCOMING" | "LIVE" | "ENDED";
 }
 
@@ -23,6 +23,7 @@ const LiveClassCard = ({
 
   const scheduledAt = liveClass.scheduledAt ? new Date(liveClass.scheduledAt) : null;
 
+  console.log("LiveClassCard Rendered", { liveClass, variant });
   return (
     <Card
       className={cn(
@@ -105,8 +106,9 @@ const LiveClassCard = ({
             <Button
               size="sm"
               variant="destructive"
-              className="h-8 flex-1 gap-1.5 text-xs font-medium"
-              onClick={() => onJoin(liveClass.id)}
+              className="h-8 flex-1 gap-1.5 text-xs font-medium cursor-pointer"
+              
+              onClick={() => onJoin(liveClass?.roomName!)}
             >
               <Video className="h-3.5 w-3.5" />
               Join Room

@@ -6,5 +6,11 @@ import LiveClassStats from "./components/LiveClassStats";
 import StartLiveClassModal from "./components/StartLiveClassModal";
 
 
+import RoomContent from "./live-ui/RoomContent";
+
+export {
+    RoomContent
+};
+
 
 export { StartLiveClassModal, LiveClassStats, LiveClassSection, LiveClassCard, CreateLiveClassDialog, EmptyLiveClassState };

@@ -2,7 +2,11 @@ import { useState } from "react";
 // import { useUpcomingLiveClasses } from "./hooks/useLiveClass";
 import type { ILiveSession } from "@/pages/Live-Classes/types/index";
 import { LiveClassStats, LiveClassSection, LiveClassCard, CreateLiveClassDialog, StartLiveClassModal, EmptyLiveClassState } from "@/components/live-classes";
-import { useUpcomingLiveClasses } from "./hooks/useLiveClass";
+import { useActiveLiveClasses, useStartLiveClass, useUpcomingLiveClasses } from "./hooks/useLiveClass";
+import { queryClient } from "@/config";
+import { sileo } from "sileo";
+import { useNavigate } from "react-router-dom";
+import { set } from "zod";
 
 
 const dummyStats = {
@@ -13,7 +17,20 @@ const dummyStats = {
 };
 
 export default function LiveClassPage() {
-    const { data: upcomingClassess, isLoading } = useUpcomingLiveClasses();
+    const { data: upcomingClassesData , isLoading:upcomingSessionLoading } = useUpcomingLiveClasses();
+    const startLiveClassMutation = useStartLiveClass();
+    
+    const { data: activeClassesData, isLoading:activeSessionLoading } = useActiveLiveClasses();
+    const navigate = useNavigate();
+
+    console.log("Active Classes Data:", activeClassesData);
+
+
+    const upcomingClasses = upcomingClassesData?.sessions ?? [];
+    const upcomingClassesPagination = upcomingClassesData?.pagination;
+
+    const activeClasses = activeClassesData?.sessions ?? [];
+
 
     const [selectedClass, setSelectedClass] = useState<ILiveSession | null>(null);
 
@@ -24,121 +41,158 @@ export default function LiveClassPage() {
         setStartModalOpen(true);
     };
 
-    const handleStarted = (url: string) => {
-        console.log("Live class started at:", url);
+
+    const handleLiveClassStarted = () => {
+        // console.log("Live class started at:", url);
+        startLiveClassMutation.mutate(selectedClass?.id || "", {
+            onSuccess: async (data) => {
+                setStartModalOpen(false);
+                await queryClient.invalidateQueries({queryKey: ["live-classes", "upcoming"]});
+                await queryClient.invalidateQueries({queryKey: ["live-classes", "active"]});
+                console.log("Live class started successfully:", data);
+                sileo.success({
+                    title: "Live Class Started",
+                    description: "Your live class is now active. Students can join using the link.",
+                });
+                const route = `/live-classes/${data.roomName}/class-room`;
+
+                setTimeout(() => {
+                    navigate(route); // Navigate to the live class details or dashboard page
+                }, 3000); // Delay navigation to allow the success toast to be seen
+                // Promise.resolve().then(() => {
+                //     navigate(`/live-classes/${data.roomName}/class-room`); // Navigate to the live class details or dashboard page
+                // }); // Ensure this runs after the success toast
+
+                // navigate(`/live-classes/${data.roomName}/class-room`); // Navigate to the live class details or dashboard page
+                // navigate(`/live-classes/${data.roomName}/class-room`); // Navigate to the live class details or dashboard page
+                
+            }, 
+            onError: (error) => {
+                sileo.error({
+                    title: "Failed to Start",
+                    description: error.message ||  "An error occurred while starting the live class. Please try again.",
+                })
+                console.error("Failed to start live class:", error);
+                // Optionally show an error message to the user
+            },
+        });
     };
 
+    const handleLiveClassJoin = (roomName: string) => {
+        navigate(`/live-classes/${roomName}/class-room`);
+        // Implement join logic, e.g., navigate to the live class room or open a modal
+    };
     /**
      * Mock Data
      */
     // const isLoading = false;
 
-    const upcomingClasses: ILiveSession[] = [
-        // {
-        //     id: "live-1",
-        //     title: "React Fundamentals",
-        //     description: "Learn components, props, state and hooks.",
-        //     subject: {
-        //         id: "3456789",
-        //         name: "Frontend Development"
-        //     },
+    // const upcomingClasses: ILiveSession[] = [
+    //     // {
+    //     //     id: "live-1",
+    //     //     title: "React Fundamentals",
+    //     //     description: "Learn components, props, state and hooks.",
+    //     //     subject: {
+    //     //         id: "3456789",
+    //     //         name: "Frontend Development"
+    //     //     },
 
-        //     roomName: "room-123",
-        //     teacher: {
-        //         id: "teacher-1",
-        //         name: "John Doe",
-        //         profileImage: "https://example.com/teacher.jpg"
-        //     },
+    //     //     roomName: "room-123",
+    //     //     teacher: {
+    //     //         id: "teacher-1",
+    //     //         name: "John Doe",
+    //     //         profileImage: "https://example.com/teacher.jpg"
+    //     //     },
 
-        //     startedAt: null,
-        //     endedAt: null,
+    //     //     startedAt: null,
+    //     //     endedAt: null,
 
-        //     scheduledAt: "2026-06-10T10:00:00.000Z",
+    //     //     scheduledAt: "2026-06-10T10:00:00.000Z",
 
-        //     durationMinutes: 60,
-        //     maxParticipants: 50,
+    //     //     durationMinutes: 60,
+    //     //     maxParticipants: 50,
 
-        //     isRecordingEnabled: true,
-        //     isChatEnabled: true,
-        //     isScreenShareAllowed: true,
+    //     //     isRecordingEnabled: true,
+    //     //     isChatEnabled: true,
+    //     //     isScreenShareAllowed: true,
 
-        //     status: "SCHEDULED",
+    //     //     status: "SCHEDULED",
 
-        //     createdBy: "teacher-1",
+    //     //     createdBy: "teacher-1",
 
-        //     createdAt: "2026-06-01T10:00:00.000Z",
-        //     updatedAt: "2026-06-01T10:00:00.000Z",
-        // },
+    //     //     createdAt: "2026-06-01T10:00:00.000Z",
+    //     //     updatedAt: "2026-06-01T10:00:00.000Z",
+    //     // },
 
-        // {
-        //     id: "live-2",
-        //     title: "Advanced TypeScript",
-        //     description:
-        //         "Generics, utility types and advanced patterns.",
-        //     subject:{
-        //         id: "3456789",
-        //         name: "Frontend Development"
-        //     },
-        //     teacher: {
-        //         id: "teacher-1",
-        //         name: "John Doe",
-        //         profileImage: "https://example.com/teacher.jpg"
-        //     },
+    //     // {
+    //     //     id: "live-2",
+    //     //     title: "Advanced TypeScript",
+    //     //     description:
+    //     //         "Generics, utility types and advanced patterns.",
+    //     //     subject:{
+    //     //         id: "3456789",
+    //     //         name: "Frontend Development"
+    //     //     },
+    //     //     teacher: {
+    //     //         id: "teacher-1",
+    //     //         name: "John Doe",
+    //     //         profileImage: "https://example.com/teacher.jpg"
+    //     //     },
 
-        //     roomName: "room-456",
+    //     //     roomName: "room-456",
 
-        //     startedAt: null,
-        //     endedAt: null,
+    //     //     startedAt: null,
+    //     //     endedAt: null,
 
-        //     scheduledAt: "2026-06-11T14:00:00.000Z",
+    //     //     scheduledAt: "2026-06-11T14:00:00.000Z",
 
-        //     durationMinutes: 90,
-        //     maxParticipants: 100,
+    //     //     durationMinutes: 90,
+    //     //     maxParticipants: 100,
 
-        //     isRecordingEnabled: true,
-        //     isChatEnabled: true,
-        //     isScreenShareAllowed: true,
+    //     //     isRecordingEnabled: true,
+    //     //     isChatEnabled: true,
+    //     //     isScreenShareAllowed: true,
 
-        //     status: "SCHEDULED",
+    //     //     status: "SCHEDULED",
 
-        //     createdBy: "teacher-1",
+    //     //     createdBy: "teacher-1",
 
-        //     createdAt: "2026-06-01T10:00:00.000Z",
-        //     updatedAt: "2026-06-01T10:00:00.000Z",
-        // },
-    ];
+    //     //     createdAt: "2026-06-01T10:00:00.000Z",
+    //     //     updatedAt: "2026-06-01T10:00:00.000Z",
+    //     // },
+    // ];
 
-    const activeClasses: ILiveSession[] = [
-        {
-            id: "live-active-1",
+    // const activeClasses: ILiveSession[] = [
+    //     // {
+    //     //     id: "live-active-1",
 
-            title: "Database Design",
-            description:
-                "Currently discussing indexing and query optimization.",
+    //     //     title: "Database Design",
+    //     //     description:
+    //     //         "Currently discussing indexing and query optimization.",
 
-            subject: "Database Systems",
+    //     //     subject: "Database Systems",
 
-            scheduledAt: "2026-06-08T09:00:00.000Z",
+    //     //     scheduledAt: "2026-06-08T09:00:00.000Z",
 
-            durationMinutes: 60,
-            maxParticipants: 60,
+    //     //     durationMinutes: 60,
+    //     //     maxParticipants: 60,
 
-            isRecordingEnabled: true,
-            isChatEnabled: true,
-            isScreenShareAllowed: true,
+    //     //     isRecordingEnabled: true,
+    //     //     isChatEnabled: true,
+    //     //     isScreenShareAllowed: true,
 
-            status: "LIVE",
+    //     //     status: "LIVE",
 
-            meetingUrl: "https://live.example.com/room-123",
+    //     //     meetingUrl: "https://live.example.com/room-123",
 
-            passcode: "ABC123",
+    //     //     passcode: "ABC123",
 
-            createdBy: "teacher-1",
+    //     //     createdBy: "teacher-1",
 
-            createdAt: "2026-06-01T10:00:00.000Z",
-            updatedAt: "2026-06-08T09:00:00.000Z",
-        },
-    ];
+    //     //     createdAt: "2026-06-01T10:00:00.000Z",
+    //     //     updatedAt: "2026-06-08T09:00:00.000Z",
+    //     // },
+    // ];
 
     return (
         <div className="space-y-8 p-6" >
@@ -172,7 +226,7 @@ export default function LiveClassPage() {
                     ) : null
                 }
             >
-                {isLoading ? (
+                {upcomingSessionLoading ? (
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" >
                         {[1, 2, 3].map((i) => (
                             <div key={i} className="h-50 w-full rounded-xl bg-muted animate-pulse" />
@@ -219,6 +273,7 @@ export default function LiveClassPage() {
                                 key={liveClass.id}
                                 liveClass={liveClass}
                                 variant="LIVE"
+                                onJoin={handleLiveClassJoin}
                             />
                         ))}
                     </div>
@@ -231,7 +286,7 @@ export default function LiveClassPage() {
                     liveClass={selectedClass}
                     open={startModalOpen}
                     onOpenChange={setStartModalOpen}
-                    onStarted={handleStarted}
+                    onStarted={handleLiveClassStarted}
                 />
             )}
         </div>

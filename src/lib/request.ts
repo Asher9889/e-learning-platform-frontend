@@ -13,10 +13,10 @@ export async function apiRequest<TResponse, TData = unknown>({url, method = "GET
     url,
     method,
     data,
-    params,
+    params
   });
 
-  return response.data;
+  return response.data as TResponse;
 }
 
 export default apiRequest;

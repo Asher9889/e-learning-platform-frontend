@@ -43,7 +43,13 @@ const apiEndpoints = {
     LIVE_CLASSES: {
         UPCOMING: {
             url: "/live-classes",
-            method: "GET" as Method
+            method: "GET" as Method,
+            params: { status: "SCHEDULED" }
+        },
+        ACTIVE: {
+            url: "/live-classes",
+            method: "GET" as Method,
+            params: { status: "LIVE" }
         },
         GET_BY_ID: (id: string) => ({
             url: `/live-classes/${id}`,

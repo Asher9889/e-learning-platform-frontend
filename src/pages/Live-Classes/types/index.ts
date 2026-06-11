@@ -1,6 +1,14 @@
 import type { TClassStatus } from "@/constants/live-class/live-class.constants";
 
 
+export interface IBaseApiResponse<TData> {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: TData;
+  errors: string[];
+}
+
 export interface ILiveSessionSubject {
   id: string;
   name: string;
@@ -39,4 +47,39 @@ export interface ILiveSession {
 
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IActiveLiveSession {
+  liveSession: ILiveSession;
+  liveKit: {
+    token: string;
+    roomName: string;
+    serverURL: string;
+  }
+}
+
+
+export interface IUpcomingLiveClassesResponse {
+  sessions: ILiveSession[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  }
+}
+
+export interface IJoinLiveClassResponse {
+  liveClass: {
+    id: string,
+    roomName: string,
+    participantName: string,
+    participantId: string,
+    participantRole: string
+  },
+  liveKit: {
+    token: string,
+    roomName: string,
+    serverURL: string,
+  },
 }

@@ -11,6 +11,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server : {
+    allowedHosts: ["cc59-2409-40e3-40f7-9300-9db7-5cad-c1bf-18f7.ngrok-free.app"]
+  }
   // server: {
   //   proxy: {
   //     "/api": {
