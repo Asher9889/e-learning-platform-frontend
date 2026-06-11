@@ -6,7 +6,7 @@ import HomePage from "@/pages/Home";
 import PublicRoute from "@/PublicRoute";
 import type { AppRoutes, ChildRoute } from "./types/route.type";
 import LiveClassPage from "@/pages/Live-Classes";
-import DashboardPage from "@/pages/dashboard";
+import DashboardPage from "@/pages/Dashboard";
 import StudentsPage from "@/pages/Student";
 import EnrollStudentPage from "@/components/student/EnrollStudentPage";
 import TeachersPage from "@/pages/Teacher";
