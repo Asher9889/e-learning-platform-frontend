@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Pencil, Trash2, GraduationCap, Calendar } from "lucide-react";
+import { capitalizeFirstLetter } from "@/utils/helper";
 
 interface ClassCardProps {
   classData: Class;
@@ -33,7 +34,7 @@ export function ClassCard({ classData, onEdit, onDelete }: ClassCardProps) {
               <GraduationCap className="w-5 h-5 text-primary" />
             </div>
             <div className="space-y-1">
-              <CardTitle className="text-lg leading-tight">{classData.name}</CardTitle>
+              <CardTitle className="text-lg leading-tight">{capitalizeFirstLetter(classData.name)}</CardTitle>
               <CardDescription className="flex items-center gap-3 text-xs">
                 <span className="inline-flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
@@ -45,7 +46,7 @@ export function ClassCard({ classData, onEdit, onDelete }: ClassCardProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <StrengthBadge strength={classData.totalStrength} size="md" />
+            <StrengthBadge strength={classData.totalStrength} size="lg" />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -55,14 +56,14 @@ export function ClassCard({ classData, onEdit, onDelete }: ClassCardProps) {
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => onEdit(classData)} className="gap-2 cursor-pointer">
                   <Pencil className="h-4 w-4" />
-                  Edit Class
+                  Edit Subject
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => onDelete(classData)} 
                   className="gap-2 cursor-pointer text-destructive focus:text-destructive"
                 >
                   <Trash2 className="h-4 w-4" />
-                  Delete Class
+                  Delete Subject
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

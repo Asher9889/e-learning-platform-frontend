@@ -11,12 +11,13 @@ import {
 } from "@/components/ui/sidebar";
 
 import { useAppSelector } from "@/store/hooks";
-
-import { SIDEBAR_ITEMS } from "./sidebar.config";
+// import { APP_ROUTES } from "@/routes/appRoutes";
+// import { APP_ROUTES } from "./sidebar.config";
 import type { TUserRole } from "@/constants/user/user.constant";
 import AppSidebarHeader from "./AppSidebarHeader";
 import AppSidebarFooter from "./AppSidebarFooter";
 import { useLogout } from "./hooks/useLogout";
+import { APP_ROUTES } from "@/routes";
 
 export function AppSidebar() {
     const location = useLocation();
@@ -35,9 +36,11 @@ export function AppSidebar() {
         console.log("AppSidebar returning null because user is falsy");
         return null;
     }
-    const getSidebarItems = (role: TUserRole) => {
-        return SIDEBAR_ITEMS.filter(item => item.roles.includes(role));
-    };
+  const getSidebarItems = (role: TUserRole) => {
+    return Object.values(APP_ROUTES).filter(item =>
+        item.roles.includes(role)
+    );
+};
 
     const menus = getSidebarItems(user?.role);
 

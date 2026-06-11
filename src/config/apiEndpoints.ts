@@ -15,6 +15,7 @@ const apiEndpoints = {
             method: "POST"
         },
     },
+    
     USERS: {
         ADD_TEACHER: {
             url: "/users/teachers",
@@ -38,6 +39,7 @@ const apiEndpoints = {
         },
        
     },
+
     LIVE_CLASSES: {
         UPCOMING: {
             url: "/live-classes",
@@ -63,7 +65,42 @@ const apiEndpoints = {
             url: `/live-classes/${id}/end`,
             method: "POST"
         }),
-    }
+    },
+
+    CLASSES: {
+        ADD_CLASS: {
+            url: "/classes",
+            method: 'POST'
+        },
+        LIST_CLASSES: {
+            url: "/classes",
+            method: 'GET'
+        },
+        GET_CLASS: {
+            url: "/classes/:id",
+            method: 'GET'
+        },
+        DELETE_CLASS: {
+            url: "/classes/:id",
+            method: 'DELETE'
+        },
+        UPDATE_CLASS: {
+            url: "/classes/:id",
+            method: 'PATCH'
+        },
+        ADD_SECTION: {
+            url: "/classes/:id/sections",
+            method: 'POST'
+        },
+        UPDATE_SECTION : {
+            url: "/classes/:id/sections/:sectionId",
+            method: 'PATCH'
+        },
+        DELETE_SECTION : {
+            url: "/classes/:id/sections/:sectionId",
+            method: 'DELETE'
+        },
+    },
   
 }
 

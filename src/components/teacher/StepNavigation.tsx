@@ -31,7 +31,10 @@ export default function StepNavigation({
       ) : (
         <Button
           type="button"
-          onClick={onNext}
+           onClick={(e) => {
+             e.preventDefault();
+            onNext();
+            }}
         >
           Next
         </Button>

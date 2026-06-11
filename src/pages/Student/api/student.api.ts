@@ -1,6 +1,6 @@
 import { api } from "@/config";
 import { apiEndPoints } from "@/config";
-import type { StudentEnrollFormOutput } from "../schema/student.schema";
+import type { StudentEnrollFormOutput, StudentsListResponse } from "../schema/student.schema";
 
 
 
@@ -14,6 +14,18 @@ export async function createStudent(
     url,
     method,
     data: teacherData,
+  });
+
+  return res.data;
+}
+
+export async function getStudents() {
+  const { url, method } =
+    apiEndPoints.USERS.LIST_STUDENTS;
+
+  const res = await api.request<StudentsListResponse>({
+    url,
+    method,
   });
 
   return res.data;

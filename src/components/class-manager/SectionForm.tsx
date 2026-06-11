@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Section, CreateSectionInput, UpdateSectionInput } from "@/pages/Classes/types/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,11 +30,20 @@ export function SectionForm({
   section,
   isLoading = false,
 }: SectionFormProps) {
+
+  console.log(section,"section SectionForm")
   const isEditing = !!section;
   const [name, setName] = useState(section?.name || "");
   const [strength, setStrength] = useState(section?.strength?.toString() || "");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+ useEffect(() => {
+  if (!isOpen) return;
+
+  setName(section?.name ?? "");
+  setStrength(section?.strength?.toString() ?? "");
+  setErrors({});
+}, [isOpen, section]);
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!name.trim()) newErrors.name = "Section name is required";
@@ -53,7 +62,7 @@ export function SectionForm({
 
     if (isEditing && section) {
       onSubmit({
-        id: section.id,
+        id: section._id,
         classId,
         name: name.trim(),
         strength: Number(strength),
@@ -101,7 +110,7 @@ export function SectionForm({
                 placeholder="e.g., Section A"
                 value={name}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setName(e.target.value?.toUpperCase());
                   if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
                 }}
                 disabled={isLoading}

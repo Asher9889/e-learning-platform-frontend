@@ -49,7 +49,11 @@ export default function StudentEnrollForm() {
     values: StudentEnrollFormOutput
   ) => {
     let avatarUrl = "";
-
+    console.log(
+    "SUBMIT CALLED   debugging",
+    currentStep
+  );
+console.log("asdasdasdasdasd",currentStep)
     if (
       values.personalInfo.profileImage
     ) {
@@ -83,6 +87,7 @@ export default function StudentEnrollForm() {
     }
   };
   const nextStep = async () => {
+    console.log("NEXT STEP debugging", currentStep);
     const fields = stepFields[currentStep];
 
     const isValid = await methods.trigger(fields as any);
@@ -107,9 +112,13 @@ export default function StudentEnrollForm() {
   return (
     <FormProvider {...methods}>
       <form
-        onSubmit={methods.handleSubmit(onSubmit, (errors) => {
-          console.log("ERRORS:", errors);
-        })}
+        // onSubmit={methods.handleSubmit(onSubmit, (errors) => {
+        //   console.log("ERRORS:", errors);
+        // })}
+         onSubmit={(e) => {
+    console.log("FORM SUBMIT debugging");
+    methods.handleSubmit(onSubmit)(e);
+  }}
         autoComplete="off"
         className="flex flex-col h-[calc(100vh-250px)]"
       >
@@ -130,7 +139,9 @@ export default function StudentEnrollForm() {
           readOnly
         />
         <div className="mb-6">
-          <EnrollmentStepper currentStep={currentStep} steps={steps} onNext={() => nextStep()} onPrevious={() => setCurrentStep((p) => p - 1)} />
+          <EnrollmentStepper currentStep={currentStep} steps={steps} onNext={() => nextStep()} onPrevious={() => {
+            // setCurrentStep((p) => p - 1)
+          }} />
         </div>
 
         <div className="flex-1 overflow-y-auto">

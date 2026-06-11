@@ -1,7 +1,6 @@
 // hooks/useClasses.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { mockApi } from "../mock-api";
-import type { CreateClassInput, UpdateClassInput } from "@/pages/Classes/types/index";
 
 const CLASSES_KEY = ["classes"] as const;
 
