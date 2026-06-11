@@ -1,4 +1,4 @@
-import CreateLiveClassDialog from "./components/CreateLiveClassDialog";
+// import CreateLiveClassDialog from "./components/CreateLiveClassDialog";
 import EmptyLiveClassState from "./components/EmptyLiveClassState";
 import LiveClassCard from "./components/LiveClassCard";
 import LiveClassSection from "./components/LiveClassSection";
@@ -7,4 +7,4 @@ import StartLiveClassModal from "./components/StartLiveClassModal";
 
 
 
-export { StartLiveClassModal, LiveClassStats, LiveClassSection, LiveClassCard, CreateLiveClassDialog, EmptyLiveClassState };
+export { StartLiveClassModal, LiveClassStats, LiveClassSection, LiveClassCard, EmptyLiveClassState };

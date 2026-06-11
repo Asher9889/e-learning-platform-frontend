@@ -2,9 +2,9 @@ import { api } from "@/config";
 import { apiEndPoints } from "@/config";
 
 import type {
-  TeacherDataFromApi,
   TeacherEnrollFormOutput,
   TeachersListResponse,
+  TeachersSummary,
 } from "../schema/teacher.schema";
 
 export async function createTeacher(
@@ -27,6 +27,17 @@ export async function getTeachers() {
     apiEndPoints.USERS.LIST_TEACHERS;
 
   const res = await api.request<TeachersListResponse>({
+    url,
+    method,
+  });
+
+  return res.data;
+}
+export async function getTeachersSummary() {
+  const { url, method } =
+    apiEndPoints.USERS.SUMMARY_TEACHERS;
+
+  const res = await api.request<TeachersSummary>({
     url,
     method,
   });

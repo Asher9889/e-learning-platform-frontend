@@ -15,7 +15,7 @@ const apiEndpoints = {
             method: "POST"
         },
     },
-    
+
     USERS: {
         ADD_TEACHER: {
             url: "/users/teachers",
@@ -37,7 +37,11 @@ const apiEndpoints = {
             url: "/uploads/avatar",
             method: 'POST'
         },
-       
+        SUMMARY_TEACHERS:{
+             url: "/users/teachers/summary",
+             method: 'GET'
+        }
+
     },
 
     LIVE_CLASSES: {
@@ -92,16 +96,34 @@ const apiEndpoints = {
             url: "/classes/:id/sections",
             method: 'POST'
         },
-        UPDATE_SECTION : {
+        UPDATE_SECTION: {
             url: "/classes/:id/sections/:sectionId",
             method: 'PATCH'
         },
-        DELETE_SECTION : {
+        DELETE_SECTION: {
             url: "/classes/:id/sections/:sectionId",
             method: 'DELETE'
         },
     },
-  
+    GRADES: {
+        CREATE_GRADE: {
+            url: "/grades",
+            method: 'POST'
+        },
+        LIST_GRADES: {
+            url: "/grades",
+            method: 'GET'
+        },
+        UPDATE_GRADE:{
+            url:"/grades/:id",
+            method:"PATCH"
+        },
+        DELETE_GRADE:{
+            url:"/grades/:id",
+            method:"DELETE"
+        }
+    },
+
 }
 
 export default apiEndpoints;

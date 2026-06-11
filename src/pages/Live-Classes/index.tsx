@@ -1,8 +1,16 @@
 import { useState } from "react";
 // import { useUpcomingLiveClasses } from "./hooks/useLiveClass";
 import type { ILiveSession } from "@/pages/Live-Classes/types/index";
-import { LiveClassStats, LiveClassSection, LiveClassCard, CreateLiveClassDialog, StartLiveClassModal, EmptyLiveClassState } from "@/components/live-classes";
+import { LiveClassStats, LiveClassSection, LiveClassCard, StartLiveClassModal, EmptyLiveClassState } from "@/components/live-classes";
 import { useUpcomingLiveClasses } from "./hooks/useLiveClass";
+import { ButtonGroup, ButtonGroupSeparator } from "#components/ui/button-group";
+import { Button } from "#components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "#components/ui/dialog";
+import StartLiveClassForm from "#components/live-classes/components/StartLiveClassForm";
+import ScheduleLiveClassForm from "#components/live-classes/components/ScheduleLiveClassForm";
+import { useTeachersSummary } from "../Teacher/hooks/useTeachersSummary";
+import { mapToLabelValue } from "@/utils/helper";
+import { useGetGrades } from "../Classes/hooks/useGetGrades";
 
 
 const dummyStats = {
@@ -14,11 +22,19 @@ const dummyStats = {
 
 export default function LiveClassPage() {
     const { data: upcomingClassess, isLoading } = useUpcomingLiveClasses();
+    const {data} = useTeachersSummary()
+const teachers = data?.teachers ?? [];
+ const {
+    data: gradeData
 
+  } = useGetGrades();
+  const allGrades = gradeData?.grades || [];
     const [selectedClass, setSelectedClass] = useState<ILiveSession | null>(null);
-
+    const [open, setOpen] = useState(false);
+    const [modalType, setModalType] = useState<"live" | "schedule">("live");
     const [startModalOpen, setStartModalOpen] = useState(false);
-
+console.log(gradeData,"teachersteachers 3132131321321321231",)
+console.log(teachers,"teachersteachers")
     const handleStart = (liveClass: ILiveSession) => {
         setSelectedClass(liveClass);
         setStartModalOpen(true);
@@ -153,8 +169,67 @@ export default function LiveClassPage() {
                         Schedule, manage, and start your real-time teaching sessions.
                     </p>
                 </div>
+                <ButtonGroup>
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => {
+                            setModalType("live");
+                            setOpen(true);
+                        }}
+                    >
+                        Start New Class
+                    </Button>
 
-                <CreateLiveClassDialog />
+                    <ButtonGroupSeparator />
+
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => {
+                            setModalType("schedule");
+                            setOpen(true);
+                        }}
+                    >
+                        Schedule Class
+                    </Button>
+                </ButtonGroup>
+                <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogContent className="sm:max-w-xl">
+                        <DialogHeader>
+                            <DialogTitle>
+                                {modalType === "live"
+                                    ? "Start Live Class"
+                                    : "Schedule Live Class"}
+                            </DialogTitle>
+
+                            <DialogDescription>
+                                {modalType === "live"
+                                    ? "Start a class immediately."
+                                    : "Schedule a class for later."}
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        {modalType === "live" ? (
+                            <StartLiveClassForm
+                                onSuccess={() => {
+                                    setOpen(false);
+                                }}
+                                 teachersOptions={mapToLabelValue(teachers, "name", "id")} 
+                                 gradeOptions={mapToLabelValue(allGrades, "name", "id")}
+                            />
+                        ) : (
+                            <ScheduleLiveClassForm
+                                onSuccess={() => {
+                                    setOpen(false);
+                                }}
+                                teachersOptions={mapToLabelValue(teachers, "name", "id")} 
+                                gradeOptions={mapToLabelValue(allGrades, "name", "id")}
+                            />
+                        )}
+                    </DialogContent>
+                </Dialog>
+                {/* <CreateLiveClassDialog /> */}
             </div>
 
             {/* Stats */}

@@ -6,7 +6,6 @@ import HomePage from "@/pages/Home";
 import PublicRoute from "@/PublicRoute";
 import type { AppRoutes, ChildRoute } from "./types/route.type";
 import LiveClassPage from "@/pages/Live-Classes";
-import DashboardPage from "@/pages/Dashboard";
 import StudentsPage from "@/pages/Student";
 import EnrollStudentPage from "@/components/student/EnrollStudentPage";
 import TeachersPage from "@/pages/Teacher";
@@ -23,6 +22,7 @@ import {
 } from "lucide-react";
 import { USER_ROLE } from "@/constants/user/user.constant";
 import RouteOutlet from "./routeOutlet";
+import DashboardPage from "./pages/dashboard";
 
 export const APP_ROUTES: AppRoutes = {
   dashboard: {

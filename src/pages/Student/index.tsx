@@ -3,7 +3,7 @@
 import { StudentHeader } from "../../components/student/StudentHeader";
 import { StudentsTable } from "../../components/student/StudentsTable";
 import { useNavigate } from "react-router-dom";
-import { useStudents } from "./hooks/useStudentsLIst";
+import { useStudents } from "./hooks/useStudentsList";
 
 export default function StudentsPage() {
 const navigate = useNavigate();
