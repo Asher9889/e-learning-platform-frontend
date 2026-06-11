@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { type Class } from "@/pages/Classes/types/index";
 import { ClassList } from "@/components/class-manager/ClassList";
-import { ClassForm } from "@/components/class-manager/ClassForm";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useClasses } from "@/pages/Classes/hooks/useClasses";
+// import { useClasses } from "@/pages/Classes/hooks/useClasses";
 import { Plus, Search, GraduationCap, Loader2 } from "lucide-react";
 import {
   AlertDialog,
@@ -21,32 +21,33 @@ import { useCreateClass } from "./hooks/useCreateClass";
 import { useGetClasses } from "./hooks/useGetClasses";
 import { useUpdateClass } from "./hooks/useUpdateClass";
 import { useDeleteClass } from "./hooks/useDeleteClass";
+import { SubjectForm } from "#components/class-manager/SubjectForm";
 
 export default function ClassManager() {
   // const { data: classes = [], isLoading } = useClasses();
   const {
     data,
     isLoading,
-    error,
-    refetch,
+    // error,
+    // refetch,
   } = useGetClasses();
-const classes = data?.classes || [];
-  console.log(classes,"classes")
-  const createClass = useCreateClass();
-  const updateClass = useUpdateClass();
-  const deleteClass = useDeleteClass();
-const {
-  createClassAsync,
-  isCreating,
-} = useCreateClass();
-const {
-  updateClassAsync,
-  isUpdating: isUpdatingClass,
-} = useUpdateClass();
-const {
-  deleteClassAsync,
-  isDeleting,
-} = useDeleteClass();
+  const classes = data?.classes || [];
+  console.log(classes, "classes")
+  // const createClass = useCreateClass();
+  // const updateClass = useUpdateClass();
+  // const deleteClass = useDeleteClass();
+  const {
+    createClassAsync,
+    isCreating,
+  } = useCreateClass();
+  const {
+    updateClassAsync,
+    // isUpdating: isUpdatingClass,
+  } = useUpdateClass();
+  const {
+    deleteClassAsync,
+    isDeleting,
+  } = useDeleteClass();
   const [searchQuery, setSearchQuery] = useState("");
   const [showClassForm, setShowClassForm] = useState(false);
   const [editingClass, setEditingClass] = useState<Class | null>(null);
@@ -62,35 +63,40 @@ const {
   const totalSections = classes?.reduce((sum, c) => sum + c.sections.length, 0);
 
   const handleCreateClass = async (data: ClassFormData) => {
-   const response = await createClassAsync(data);
-   console.log(response,"response")
-    // createClass.mutate(data, {
-    //   onSuccess: () => setShowClassForm(false),
-    // });
+    const response = await createClassAsync(data);
+    console.log(response, "response")
+    if (response) setShowClassForm(false);
+
   };
 
-  
+  console.log(editingClass, "editingClasseditingClasseditingClasseditingClass")
+
   const handleUpdateClass = async (data: ClassFormData) => {
-    const response = await updateClassAsync(data);
-   console.log(response,"response handleUpdateClass")
-if(response){setEditingClass(null);};
-    
+    if (!editingClass) return;
+    console.log(editingClass, "editingClass")
+    const response = await updateClassAsync({
+      ...data,
+      id: editingClass.id,
+    });
+    console.log(response, "response handleUpdateClass")
+    if (response) { setEditingClass(null); };
+
   };
 
-  const handleDeleteClass = async() => {
+  const handleDeleteClass = async () => {
     if (!deletingClass) return;
 
-    console.log(deletingClass,"deletingClassdeletingClass")
-     try {
-    const response =
-      await deleteClassAsync(deletingClass?.id);
+    console.log(deletingClass, "deletingClassdeletingClass")
+    try {
+      const response =
+        await deleteClassAsync(deletingClass?.id);
 
-    console.log(response);
+      console.log(response);
 
-    setDeletingClass(null);
-  } catch (error) {
-    console.error(error);
-  }
+      setDeletingClass(null);
+    } catch (error) {
+      console.error(error);
+    }
     // deleteClass.mutate(deletingClass.id, {
     //   onSuccess: () => setDeletingClass(null),
     // });
@@ -107,7 +113,7 @@ if(response){setEditingClass(null);};
                 <GraduationCap className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">Class Manager</h1>
+                <h1 className="text-xl font-bold text-foreground">Academics Manager</h1>
                 <p className="text-xs text-muted-foreground">
                   {classes.length} {classes.length === 1 ? "class" : "classes"} · {totalSections} {totalSections === 1 ? "section" : "sections"} · {totalStudents} {totalStudents === 1 ? "student" : "students"}
                 </p>
@@ -125,6 +131,10 @@ if(response){setEditingClass(null);};
                 />
               </div>
               <Button onClick={() => setShowClassForm(true)} className="gap-2 shrink-0">
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">New Subject</span>
+              </Button>
+              <Button onClick={() => { }} className="gap-2 shrink-0">
                 <Plus className="h-4 w-4" />
                 <span className="hidden sm:inline">New Class</span>
               </Button>
@@ -151,15 +161,22 @@ if(response){setEditingClass(null);};
       </main>
 
       {/* Create/Edit Class Dialog */}
-      <ClassForm
+      <SubjectForm
         isOpen={showClassForm || !!editingClass}
         onClose={() => {
           setShowClassForm(false);
           setEditingClass(null);
         }}
-        onSubmit={editingClass ? handleUpdateClass : handleCreateClass}
+        onSubmit={(data) => {
+          console.log(data, "editingClasseditingClasseditingClasseditingClass")
+          if (editingClass) {
+            handleUpdateClass(data)
+          } else {
+            handleCreateClass(data)
+          }
+        }}
         classData={editingClass}
-        isLoading={createClass.isPending || updateClass.isPending}
+        isLoading={isCreating}
       />
 
       {/* Delete Confirmation */}
@@ -169,18 +186,18 @@ if(response){setEditingClass(null);};
             <AlertDialogTitle>Delete Class</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete <strong>{deletingClass?.name}</strong>?
-              This will also delete all {deletingClass?.sections.length} section(s) and remove {deletingClass?.totalStrength} students. 
+              This will also delete all {deletingClass?.sections.length} section(s) and remove {deletingClass?.totalStrength} students.
               This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteClass.isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteClass}
-              disabled={deleteClass.isPending}
+              disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteClass.isPending ? "Deleting..." : "Delete Class"}
+              {isDeleting ? "Deleting..." : "Delete Class"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

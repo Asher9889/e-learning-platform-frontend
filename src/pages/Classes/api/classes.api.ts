@@ -29,12 +29,12 @@ export async function getClasses() {
   return res.data;
 }
 
-export async function updateClass(classData: UpdateClassInput) {
+export async function updateClass({id,...classData}: UpdateClassInput) {
   const { url, method } =
     apiEndPoints.CLASSES.UPDATE_CLASS;
 
   const res = await api.request({
-    url: url.replace(":id", classData.id),
+    url: url.replace(":id", id),
     method,
     data: classData,
   });   

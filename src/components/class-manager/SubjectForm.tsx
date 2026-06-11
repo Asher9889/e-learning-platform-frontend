@@ -70,7 +70,7 @@ const ACADEMIC_YEARS = [
   "2027-2028",
 ];
 
-export function ClassForm({
+export function SubjectForm({
   isOpen,
   onClose,
   onSubmit,
@@ -152,13 +152,13 @@ export function ClassForm({
           >
             <DialogHeader>
               <DialogTitle>
-                {isEditing ? "Edit Class" : "Create New Class"}
+                {isEditing ? "Edit Subject" : "Create New Subject"}
               </DialogTitle>
 
               <DialogDescription>
                 {isEditing
-                  ? "Update the class information below."
-                  : "Set up a new class with its basic details."}
+                  ? "Update the Subject information below."
+                  : "Set up a new Subject with its basic details."}
               </DialogDescription>
             </DialogHeader>
 
@@ -167,7 +167,7 @@ export function ClassForm({
 
               <div className="grid gap-2">
                 <Label htmlFor="name">
-                  Class Name <span className="text-destructive">*</span>
+                  Subject Name <span className="text-destructive">*</span>
                 </Label>
 
                 <Input
@@ -299,8 +299,8 @@ export function ClassForm({
                 )}
 
                 {isEditing
-                  ? "Update Class"
-                  : "Create Class"}
+                  ? "Update Subject"
+                  : "Create Subject"}
               </Button>
             </DialogFooter>
           </form>

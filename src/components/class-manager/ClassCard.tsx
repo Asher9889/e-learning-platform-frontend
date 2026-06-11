@@ -46,7 +46,7 @@ export function ClassCard({ classData, onEdit, onDelete }: ClassCardProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <StrengthBadge strength={classData.totalStrength} size="md" />
+            <StrengthBadge strength={classData.totalStrength} size="lg" />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -56,14 +56,14 @@ export function ClassCard({ classData, onEdit, onDelete }: ClassCardProps) {
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => onEdit(classData)} className="gap-2 cursor-pointer">
                   <Pencil className="h-4 w-4" />
-                  Edit Class
+                  Edit Subject
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => onDelete(classData)} 
                   className="gap-2 cursor-pointer text-destructive focus:text-destructive"
                 >
                   <Trash2 className="h-4 w-4" />
-                  Delete Class
+                  Delete Subject
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
