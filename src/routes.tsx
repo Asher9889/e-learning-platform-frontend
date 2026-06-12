@@ -23,8 +23,7 @@ import {
 } from "lucide-react";
 import { USER_ROLE } from "@/constants/user/user.constant";
 import RouteOutlet from "./routeOutlet";
-import ActiveLive from "./pages/Live-Classes/ActiveLiveClass";
-import ActiveLiveClass from "./pages/Live-Classes/ActiveLiveClass";
+import ActiveLiveClassPage from "@/features/live-class/pages/ActiveLiveClassPage";
 
 export const APP_ROUTES: AppRoutes = {
   dashboard: {
@@ -93,7 +92,7 @@ export const APP_ROUTES: AppRoutes = {
       },
       {
         path: ":roomName/class-room",
-        element: ActiveLiveClass,
+        element: ActiveLiveClassPage,
       }
     ]
   },

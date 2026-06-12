@@ -26,6 +26,14 @@ export const useLiveClass = (id: string) => {
   });
 };
 
+export const useLiveClassByRoomName = (roomName: string) => {
+  return useQuery({
+    queryKey: ["live-classes", "room", roomName],
+    queryFn: () => liveClassApi.getByRoomName(roomName),
+    enabled: Boolean(roomName),
+  });
+}
+
 export const useCreateLiveClass = () => {
   return useMutation({
     mutationFn: (data: TStartLiveClassInput) =>

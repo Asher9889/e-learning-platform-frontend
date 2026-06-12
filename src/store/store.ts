@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/auth.slice';
+import liveClassReducer from '@/features/live-class/store/liveClass.slice';
 
 export const store = configureStore({
   reducer: {
-   auth: authReducer
+   auth: authReducer,
+   liveClass: liveClassReducer,
   },
 });
 
