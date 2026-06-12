@@ -178,6 +178,27 @@ export default function LiveClassPage() {
             {/* Stats */}
             <LiveClassStats stats={dummyStats} />
 
+               {/* Active Now */}
+            <LiveClassSection
+                title="Active Now"
+                description="Currently live sessions."
+            >
+                {activeClasses.length === 0 ? (
+                    <EmptyLiveClassState />
+                ) : (
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" >
+                        {activeClasses.map((liveClass) => (
+                            <LiveClassCard
+                                key={liveClass.id}
+                                liveClass={liveClass}
+                                variant="LIVE"
+                                onJoin={handleLiveClassJoin}
+                            />
+                        ))}
+                    </div>
+                )}
+            </LiveClassSection>
+
             {/* Upcoming Classes */}
             <LiveClassSection
                 title="Upcoming Sessions"
@@ -217,27 +238,6 @@ export default function LiveClassPage() {
                                         handleStart(found);
                                     }
                                 }}
-                            />
-                        ))}
-                    </div>
-                )}
-            </LiveClassSection>
-
-            {/* Active Now */}
-            <LiveClassSection
-                title="Active Now"
-                description="Currently live sessions."
-            >
-                {activeClasses.length === 0 ? (
-                    <EmptyLiveClassState />
-                ) : (
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" >
-                        {activeClasses.map((liveClass) => (
-                            <LiveClassCard
-                                key={liveClass.id}
-                                liveClass={liveClass}
-                                variant="LIVE"
-                                onJoin={handleLiveClassJoin}
                             />
                         ))}
                     </div>

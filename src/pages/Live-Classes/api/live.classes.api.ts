@@ -28,7 +28,7 @@ export async function startLiveClass(liveClassData: TStartLiveClassInput) {
   const res = await api.request({
     url,
     method,
-    data: {...liveClassData,status:"LIVE"},
+    data:liveClassData,
   });
 
   return res.data;

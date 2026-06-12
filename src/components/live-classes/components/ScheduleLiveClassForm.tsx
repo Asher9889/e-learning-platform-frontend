@@ -17,13 +17,15 @@ import {
 } from "#components/ui/select";
 
 import {
-  scheduleLiveClassSchema,
-  type TScheduledLiveClass,
-} from "@/pages/Live-Classes/schema/live.schema";
+  startLiveClassSchema,
+  type TStartLiveClassInput,
+} from "@/pages/Live-Classes/schema/live.class.schema";
 import type { Options, Teacher } from "@/pages/Teacher/schema/teacher.schema";
 import { useGetClassSubjectsSummary } from "@/pages/Live-Classes/hooks/useGetClassSubjectsSummary";
 import { useEffect } from "react";
 import { mapToLabelValue } from "@/utils/helper";
+import { useStartLiveClass } from "@/pages/Live-Classes/hooks/useStartLiveClass";
+import { sileo } from "sileo";
 
 interface Props {
   teachersOptions: Options[];
@@ -60,8 +62,8 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, grad
     setValue,
     watch,
     formState: { errors },
-  } = useForm<TScheduledLiveClass>({
-    resolver: zodResolver(scheduleLiveClassSchema),
+  } = useForm<TStartLiveClassInput>({
+    resolver: zodResolver(startLiveClassSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -76,6 +78,10 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, grad
       isScreenShareAllowed: true,
     },
   });
+   const {
+    mutate: startLiveClassMutation,
+    isPending,
+  } = useStartLiveClass();
   const selectedGrade = watch("gradeId");
   const { data: subjectsData } = useGetClassSubjectsSummary(
     true,
@@ -86,10 +92,24 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, grad
   const selectedSubject: any[] = subjectsData || [];
   console.log(subjectsData, "subjectsDatahgfdahgwfdhgafwdgf")
   const subjectDataOptions = mapToLabelValue(selectedSubject, "name", "id") || [];
-  const onSubmit = (data: TScheduledLiveClass) => {
-    console.log(data);
-    onSuccess?.();
-  };
+ const onSubmit = async (data: TStartLiveClassInput) => {
+     console.log(data);
+     startLiveClassMutation({...data,status:"SCHEDULED"}, {
+     onSuccess: (response) => {
+       console.log(response);
+ 
+       onSuccess?.();
+     },
+ 
+     onError: (error) => {
+       console.error(error);
+      sileo.error({
+        title: "Failed to Schedule",
+        description: error.message || "An error occurred while starting the live class. Please try again.",
+    })
+     },
+   });
+   };
 
   return (
     <form
