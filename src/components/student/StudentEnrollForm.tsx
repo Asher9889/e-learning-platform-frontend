@@ -16,23 +16,32 @@ import EnrollmentStepper from "./EnrollmentStepper";
 import StepNavigation from "./StepNavigation";
 import { useUploadAvatar } from "@/pages/Teacher/hooks/useUploadAvtar";
 import { useCreateStudent } from "@/pages/Student/hooks/useCreateStudent";
+import { useGetGrades } from "@/pages/Classes/hooks/useGetGrades";
+import { mapToLabelValue } from "@/utils/helper";
+import { sileo } from "sileo";
+import { useNavigate } from "react-router-dom";
 
 const steps = ["Account", "Personal", "Address", "Student", "Guardian", "Review"];
 const stepFields: Record<number, string[]> = {
   0: ["email", "phoneNumber", "password", "confirmPassword"],
   1: ["personalInfo.name", "personalInfo.dateOfBirth", "personalInfo.gender"],
   2: ["personalInfo.address.line1", "personalInfo.address.city", "personalInfo.address.state", "personalInfo.address.country", "personalInfo.address.zipCode"],
-  3: ["roleInfo.rollNumber", "roleInfo.batch", "roleInfo.admissionDate"],
+  3: ["roleInfo.gradeId", "roleInfo.rollNumber", "roleInfo.batch", "roleInfo.admissionDate"],
   4: ["roleInfo.guardianName", "roleInfo.guardianPhoneNumber"],
 };
 export default function StudentEnrollForm() {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const {
-    handleCreateStudent,
+    mutate: handleCreateStudent,
   } = useCreateStudent();
   const {
     uploadAvatarAsync,
   } = useUploadAvatar();
+  const { data: gradeData } = useGetGrades();
+  const allGrades = gradeData?.grades || [];
+
+  console.log(allGrades, "allGradesallGradesallGradesallGrades")
   // ✅ useForm ko Input type do — raw form values (phoneNumber: string)
   const methods = useForm<StudentEnrollFormInput, unknown, StudentEnrollFormOutput>({
     resolver: zodResolver(studentEnrollSchema),
@@ -49,11 +58,11 @@ export default function StudentEnrollForm() {
     values: StudentEnrollFormOutput
   ) => {
     let avatarUrl = "";
-    console.log(
-    "SUBMIT CALLED   debugging",
-    currentStep
-  );
-console.log("asdasdasdasdasd",currentStep)
+    console.log(values.personalInfo.profileImage,
+      "SUBMIT CALLED   debugging",
+      currentStep
+    );
+    console.log("asdasdasdasdasd", currentStep)
     if (
       values.personalInfo.profileImage
     ) {
@@ -67,20 +76,43 @@ console.log("asdasdasdasdasd",currentStep)
     }
 
 
-    handleCreateStudent({
-      ...values,
-      personalInfo: {
-        ...values.personalInfo,
-        profileImage: avatarUrl
+    handleCreateStudent(
+      {
+        ...values,
+        personalInfo: {
+          ...values.personalInfo,
+          profileImage: avatarUrl,
+        },
       },
-    });
+      {
+        onSuccess: (response) => {
+          sileo.success({
+            title: "Student Created",
+            description:
+              response?.message ||
+              "Student created successfully",
+          });
+          navigate("/student");
+        },
+
+        onError: (error) => {
+          sileo.error({
+            title: "Failed to Create Student",
+            description:
+              error instanceof Error
+                ? error.message
+                : "Something went wrong",
+          });
+        },
+      }
+    );
   };
   const renderStep = () => {
     switch (currentStep) {
       case 0: return <AccountInformation />;
       case 1: return <PersonalInformation />;
       case 2: return <AddressInformation />;
-      case 3: return <StudentInformation />;
+      case 3: return <StudentInformation gradeOptions={mapToLabelValue(allGrades, "name", "id")} />;
       case 4: return <GuardianInformation />;
       case 5: return <ReviewSubmit />;
       default: return null;
@@ -115,10 +147,10 @@ console.log("asdasdasdasdasd",currentStep)
         // onSubmit={methods.handleSubmit(onSubmit, (errors) => {
         //   console.log("ERRORS:", errors);
         // })}
-         onSubmit={(e) => {
-    console.log("FORM SUBMIT debugging");
-    methods.handleSubmit(onSubmit)(e);
-  }}
+        onSubmit={(e) => {
+          console.log("FORM SUBMIT debugging");
+          methods.handleSubmit(onSubmit)(e);
+        }}
         autoComplete="off"
         className="flex flex-col h-[calc(100vh-250px)]"
       >

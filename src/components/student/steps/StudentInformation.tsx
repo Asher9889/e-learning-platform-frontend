@@ -3,13 +3,57 @@ import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import type { StudentEnrollFormInput } from "@/pages/Student/schema/student.schema";
 import { Label } from "#components/ui/label";
-
-export default function StudentInformation() {
-  const { register, formState: { errors } } =
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "#components/ui/select";
+import type { Options } from "@/pages/Teacher/schema/teacher.schema";
+interface Props {
+  gradeOptions: Options[];
+}
+export default function StudentInformation({
+  gradeOptions = [],
+}: Props) {
+  const { register, setValue, formState: { errors } } =
     useFormContext<StudentEnrollFormInput>();
 
   return (
     <div className="grid md:grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="gradeId">Grade</Label>
+
+        <Select
+          onValueChange={(value) =>
+            setValue("roleInfo.gradeId", value, {
+              shouldValidate: true,
+            })
+          }
+          // className={"w-full"}
+
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Grade" />
+          </SelectTrigger>
+
+          <SelectContent>
+            {gradeOptions.map((grade) => (
+              <SelectItem
+                key={grade.value}
+                value={grade.value}
+              >
+                {grade.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <p className="text-red-500 text-sm">
+          {errors.roleInfo?.gradeId?.message}
+        </p>
+      </div>
       <div className="space-y-2">
         <Label htmlFor="RollNumber">Roll Number</Label>
         <Input

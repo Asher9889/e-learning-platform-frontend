@@ -29,7 +29,7 @@ export function useCreateStudent() {
   });
 
   const mutate = useMutation({
-    mutationKey: ["create-teacher"],
+    mutationKey: ["create-student"],
     mutationFn: (data: StudentEnrollFormOutput) =>
       createStudent(data),
 
@@ -64,7 +64,7 @@ export function useCreateStudent() {
   }
 
   return {
-    mutate,
+     mutate: mutate.mutate,
     handleCreateStudent,
 
     handleSubmit,
