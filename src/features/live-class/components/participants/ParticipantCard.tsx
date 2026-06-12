@@ -23,6 +23,8 @@ export function ParticipantCard({
     .toUpperCase()
     .slice(0, 2);
 
+    console.log("[ParticipantCard] participant:", participant);
+
   return (
     <div
       className={cn(

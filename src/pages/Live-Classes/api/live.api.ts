@@ -5,7 +5,7 @@ import type { IActiveLiveSession, IBaseApiResponse, IJoinLiveClassResponse, ILiv
 import apiRequest from "@/lib/request";
 import type { Method } from "axios";
 
-const { UPCOMING, START, ACTIVE, GET_BY_ROOM_NAME } = apiEndPoints.LIVE_CLASSES; 
+const { UPCOMING, START, ACTIVE, GET_BY_ROOM_NAME, JOIN } = apiEndPoints.LIVE_CLASSES; 
 
 export const liveClassApi = {
 
@@ -25,8 +25,8 @@ export const liveClassApi = {
     }),
 
   join: (roomName: string) => apiRequest<IJoinLiveClassResponse>({
-      url: `/live-classes/${roomName}/join`,
-      method: "POST",
+      url: JOIN(roomName).url,
+      method: JOIN(roomName).method as Method,
     }),
 
   end: (id: string) => apiRequest<ILiveSession>({url: `/live-classes/${id}/end`, method: "POST"}),

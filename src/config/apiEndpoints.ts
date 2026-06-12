@@ -71,8 +71,8 @@ const apiEndpoints = {
             url: `/live-classes/${id}/start`,
             method: "POST"
         }),
-        JOIN: (id: string) => ({
-            url: `/live-classes/${id}/join`,
+        JOIN: (roomName: string) => ({
+            url: `/live-classes/${roomName}/join`,
             method: "POST"
         }),
         END: (id: string) => ({

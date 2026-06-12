@@ -10,18 +10,14 @@ import { useMemo, useState } from "react";
 
 export function ParticipantSidebar() {
   const dispatch = useAppDispatch();
-  const participantsOpen = useAppSelector(
-    (state) => state.liveClass.participantsOpen
-  );
-  const teacherIdentity = useAppSelector(
-    (state) => state.liveClass.teacherIdentity
-  );
-  const participantIdentity = useAppSelector(
-    (state) => state.liveClass.participantIdentity
-  );
+  const participantsOpen = useAppSelector((state) => state.liveClass.participantsOpen);
+  const teacherIdentity = useAppSelector((state) => state.liveClass.teacherIdentity);
+  const participantIdentity = useAppSelector((state) => state.liveClass.participantIdentity);
 
   const liveKitParticipants = useParticipants();
   const [searchQuery, setSearchQuery] = useState("");
+
+  console.log("[ParticipantSidebar] liveKitParticipants:", liveKitParticipants);
 
   const participants = useMemo(() => {
     return liveKitParticipants
@@ -29,9 +25,7 @@ export function ParticipantSidebar() {
         identity: p.identity,
         name: p.name || p.identity,
         avatar: p.metadata ? extractAvatar(p.metadata) : undefined,
-        role: (p.identity === teacherIdentity
-          ? "teacher"
-          : "student") as "teacher" | "student",
+        role: (p.identity === teacherIdentity ? "TEACHER" : "STUDENT") as "TEACHER" | "STUDENT",
         isMuted: p.isMicrophoneEnabled === false,
         isCameraOff: p.isCameraEnabled === false,
         handRaised: false,

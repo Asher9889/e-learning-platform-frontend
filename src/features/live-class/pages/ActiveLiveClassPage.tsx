@@ -1,24 +1,22 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Room } from "livekit-client";
-import { LiveKitRoom } from "@livekit/components-react";
+import { LiveKitRoom, VideoConference } from "@livekit/components-react";
 import { useLiveClassRoom } from "@/features/live-class/hooks/useLiveClassRoom";
 import { ClassroomLayout } from "@/features/live-class/layouts/ClassroomLayout";
 import { LoadingState } from "@/features/live-class/components/shared/LoadingState";
 import { ErrorState } from "@/features/live-class/components/shared/ErrorState";
-import { useLiveClass, useLiveClassByRoomName } from "@/pages/Live-Classes/hooks/useLiveClass";
-
+import { useLiveClassByRoomName } from "@/pages/Live-Classes/hooks/useLiveClass";
+import "@livekit/components-styles";
 export default function ActiveLiveClassPage() {
   const { roomName } = useParams<{ roomName: string }>();
-
 
   if (!roomName) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-background">
         <ErrorState
           title="Failed to join"
-          message={"Could not connect to the live class due to invalid room name. Please try with correct room name again."}
-          onRetry={() => roomName && joinRoom(roomName)}
+          message="Could not connect to the live class due to invalid room name. Please try with correct room name again."
         />
       </div>
     )
@@ -27,19 +25,9 @@ export default function ActiveLiveClassPage() {
   const [room] = useState(() => new Room());
 
   const { data: liveSession } = useLiveClassByRoomName(roomName);
-  console.log("Live Session Data:", liveSession);
-  // const teacherIdentity = liveSession?.liveSession?.teacher?.id ?? liveSession?.liveSession?.createdBy ?? null;
-  const teacherIdentity = liveSession?.liveSession?.teacher!;
+  const teacherIdentity = liveSession?.teacher!;
 
-  const { connectionParams, isJoining, error, joinRoom } = useLiveClassRoom(room, teacherIdentity);
-
-  useEffect(() => {
-    if (!roomName || !teacherIdentity) {
-      return;
-    }
-
-    joinRoom(roomName);
-  }, [roomName, teacherIdentity, joinRoom]);
+  const { connectionParams, isJoining, error, retry } = useLiveClassRoom(room, teacherIdentity, roomName);
 
   if (isJoining) {
     return (
@@ -55,7 +43,7 @@ export default function ActiveLiveClassPage() {
         <ErrorState
           title="Failed to join"
           message={error.message || "Could not connect to the live class. Please try again."}
-          onRetry={() => roomName && joinRoom(roomName)}
+          onRetry={retry}
         />
       </div>
     );
@@ -68,11 +56,12 @@ export default function ActiveLiveClassPage() {
       connect={!!connectionParams}
       room={room}
       options={{
-        adaptiveStream: { pixelDropping: true },
+        adaptiveStream: true,
         dynacast: true,
       }}
     >
       <ClassroomLayout />
+      {/* <VideoConference /> */}
     </LiveKitRoom>
   );
 }

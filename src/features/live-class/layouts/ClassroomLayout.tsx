@@ -21,9 +21,7 @@ export function ClassroomLayout() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isTablet = useMediaQuery("(max-width: 1024px)");
   const chatOpen = useAppSelector((state) => state.liveClass.chatOpen);
-  const participantsOpen = useAppSelector(
-    (state) => state.liveClass.participantsOpen
-  );
+  const participantsOpen = useAppSelector((state) => state.liveClass.participantsOpen);
 
   const showSidePanels = !isTablet && (chatOpen || participantsOpen);
 
