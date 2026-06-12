@@ -56,7 +56,7 @@ const apiEndpoints = {
             params: { status: "LIVE" }
         },
         GET_BY_ROOM_NAME: (roomName: string) => ({
-            url: `/live-classes/room/${roomName}`,
+            url: `/live-classes/roomName/${roomName}`,
             method: "GET" as Method,
         }),
         GET_BY_ID: (id: string) => ({

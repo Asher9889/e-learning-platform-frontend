@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { ChatMessage, ChatTab } from "../types";
+import type { ChatMessage, ChatTab, ITeacherIdentity } from "../types";
 
 interface LiveClassState {
   roomName: string | null;
@@ -10,9 +10,9 @@ interface LiveClassState {
   handRaised: boolean;
   messages: ChatMessage[];
   isRecording: boolean;
-  participantRole: "teacher" | "student" | null;
+  participantRole: "TEACHER" | "STUDENT" | "ADMIN" | null;
   participantIdentity: string | null;
-  teacherIdentity: string | null;
+  teacherIdentity: ITeacherIdentity | null;
   participantCount: number;
 }
 
@@ -30,7 +30,7 @@ const initialState: LiveClassState = {
   teacherIdentity: null,
   participantCount: 0,
 };
-
+ 
 const liveClassSlice = createSlice({
   name: "liveClass",
   initialState,
@@ -67,15 +67,15 @@ const liveClassSlice = createSlice({
     },
     setParticipantRole(
       state,
-      action: PayloadAction<"teacher" | "student" | null>
+      action: PayloadAction<"TEACHER" | "STUDENT" | "ADMIN" | null>
     ) {
       state.participantRole = action.payload;
     },
     setParticipantIdentity(state, action: PayloadAction<string | null>) {
       state.participantIdentity = action.payload;
     },
-    setTeacherIdentity(state, action: PayloadAction<string | null>) {
-      state.teacherIdentity = action.payload;
+    setTeacherIdentity(state, action: PayloadAction<ITeacherIdentity>) {
+      state.teacherIdentity = action.payload; 
     },
     setParticipantCount(state, action: PayloadAction<number>) {
       state.participantCount = action.payload;

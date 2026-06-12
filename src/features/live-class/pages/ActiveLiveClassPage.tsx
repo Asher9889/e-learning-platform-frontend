@@ -11,6 +11,7 @@ import { useLiveClass, useLiveClassByRoomName } from "@/pages/Live-Classes/hooks
 export default function ActiveLiveClassPage() {
   const { roomName } = useParams<{ roomName: string }>();
 
+
   if (!roomName) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-background">
@@ -21,25 +22,24 @@ export default function ActiveLiveClassPage() {
         />
       </div>
     )
-
   }
 
   const [room] = useState(() => new Room());
 
   const { data: liveSession } = useLiveClassByRoomName(roomName);
   console.log("Live Session Data:", liveSession);
-  const teacherIdentity = liveSession?.liveSession?.teacher?.id ?? liveSession?.liveSession?.createdBy ?? null;
+  // const teacherIdentity = liveSession?.liveSession?.teacher?.id ?? liveSession?.liveSession?.createdBy ?? null;
+  const teacherIdentity = liveSession?.liveSession?.teacher!;
 
-  const { connectionParams, isJoining, error, joinRoom } = useLiveClassRoom(
-    room,
-    teacherIdentity
-  );
+  const { connectionParams, isJoining, error, joinRoom } = useLiveClassRoom(room, teacherIdentity);
 
   useEffect(() => {
-    if (roomName) {
-      joinRoom(roomName);
+    if (!roomName || !teacherIdentity) {
+      return;
     }
-  }, [roomName]);
+
+    joinRoom(roomName);
+  }, [roomName, teacherIdentity, joinRoom]);
 
   if (isJoining) {
     return (

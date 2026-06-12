@@ -48,3 +48,9 @@ export interface TeacherTrackReferences {
 export interface StudentTrackReferences {
   cameraTracks: TrackReference[];
 }
+
+export interface ITeacherIdentity {
+  id: string;
+  name: string;
+  profileImage?: string;
+}

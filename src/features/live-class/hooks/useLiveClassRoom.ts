@@ -10,10 +10,7 @@ import {
   setTeacherIdentity,
   addMessage,
 } from "@/features/live-class/store/liveClass.slice";
-import type {
-  ChatMessage,
-  LiveKitConnectionParams,
-} from "@/features/live-class/types";
+import type { ChatMessage, ITeacherIdentity, LiveKitConnectionParams } from "@/features/live-class/types";
 import type { Room } from "livekit-client";
 
 interface UseLiveClassRoomReturn {
@@ -24,13 +21,12 @@ interface UseLiveClassRoomReturn {
   leaveRoom: () => void;
 }
 
-export function useLiveClassRoom(
-  room: Room | null,
-  teacherIdentity: string | null
-): UseLiveClassRoomReturn {
+
+
+export function useLiveClassRoom(room: Room, teacherIdentity: ITeacherIdentity): UseLiveClassRoomReturn {
+
   const dispatch = useAppDispatch();
-  const [connectionParams, setConnectionParams] =
-    useState<LiveKitConnectionParams | null>(null);
+  const [connectionParams, setConnectionParams] = useState<LiveKitConnectionParams | null>(null);
 
   const joinMutation = useMutation({
     mutationFn: (roomName: string) => liveClassApi.join(roomName),
@@ -46,17 +42,19 @@ export function useLiveClassRoom(
       dispatch(setParticipantIdentity(liveClass.participantId));
       dispatch(
         setParticipantRole(
-          liveClass.participantRole as "teacher" | "student"
+          liveClass.participantRole as "TEACHER" | "STUDENT" | "ADMIN"
         )
       );
       if (teacherIdentity) {
         dispatch(setTeacherIdentity(teacherIdentity));
       }
     },
+
+    
   });
 
   useEffect(() => {
-    if (!room) return;
+    if (!room && !teacherIdentity) return;
 
     const handleConnected = () => {
       dispatch(setConnected(true));
