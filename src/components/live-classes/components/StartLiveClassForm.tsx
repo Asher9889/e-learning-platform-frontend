@@ -71,7 +71,7 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, gradeOp
   const subjectDataOptions = mapToLabelValue(selectedSubject, "name", "id") || [];
   const onSubmit = async (data: TStartLiveClassInput) => {
     console.log(data);
-    startLiveClassMutation(data, {
+    startLiveClassMutation({...data,status:"LIVE"}, {
     onSuccess: (response) => {
       console.log(response);
 
@@ -80,6 +80,10 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, gradeOp
 
     onError: (error) => {
       console.error(error);
+       sileo.error({
+        title: "Failed to Start",
+        description: error.message || "An error occurred while starting the live class. Please try again.",
+    })
     },
   });
   };

@@ -1,3 +1,4 @@
+import { CLASS_STATUS } from "@/constants/live-class/live-class.constants";
 import { z } from "zod";
 
 export const startLiveClassSchema = z.object({
@@ -16,7 +17,8 @@ export const startLiveClassSchema = z.object({
   subjectId: z.string().min(1, "Subject is required"),
 
   teacherId: z.string().min(1, "Teacher is required"),
-
+ scheduledAt: z.iso.datetime().optional(),
+ status: z.enum(Object.values(CLASS_STATUS)).default("SCHEDULED"),
   durationMinutes: z
     .number()
     .min(1, "Duration must be at least 1 minute"),
