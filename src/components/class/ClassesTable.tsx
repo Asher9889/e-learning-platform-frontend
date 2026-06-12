@@ -1,5 +1,3 @@
-import { Fragment, useState } from "react";
-
 import {
   Table,
   TableBody,
@@ -9,167 +7,99 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  ChevronDown,
-  ChevronRight,
-} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Pencil, Trash2 } from "lucide-react";
+import type { Grade } from "@/pages/Classes/schema/grade.schema";
 
-import type { IClass } from "@/constants/user/user.constant";
+
 
 interface Props {
-  data: IClass[];
+  grades: Grade[];
+  onEdit: (grade: Grade) => void;
+  onDelete: (grade: Grade) => void;
 }
 
 export function ClassesTable({
-  data,
+  grades,
+  onEdit,
+  onDelete,
 }: Props) {
- const [expandedClassId, setExpandedClassId] =
-  useState<string | null>(null);
-
-const toggleRow = (id: string) => {
-  setExpandedClassId((prev) =>
-    prev === id ? null : id
-  );
-};
-
-
-
+  console.log(grades,"grades")
   return (
-    <div className="rounded-lg border bg-background overflow-hidden">
+    <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>
+          <TableRow className="bg-muted/50 hover:bg-muted/50">
+            <TableHead className="w-20">
               Sr. No.
             </TableHead>
-            <TableHead className="w-[50%]">
-              Class
+
+            <TableHead>
+              Name
             </TableHead>
 
             <TableHead>
-              Total Sections
+              Description
             </TableHead>
 
-            <TableHead>
-              Total Strength
+            <TableHead className="w-32 text-center">
+              Actions
             </TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {data.length === 0 ? (
+          {grades.length > 0 ? (
+            grades.map((grade, index) => (
+              <TableRow
+                key={grade.id}
+                className="hover:bg-muted/30"
+              >
+                <TableCell className="font-medium">
+                  {index + 1}
+                </TableCell>
+
+                <TableCell>
+                  <div className="font-medium">
+                    {grade.name}
+                  </div>
+                </TableCell>
+
+                <TableCell className="text-muted-foreground">
+                  {grade.description || "-"}
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex items-center justify-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onEdit(grade)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => onDelete(grade)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
             <TableRow>
               <TableCell
-                colSpan={3}
-                className="text-center py-8 text-muted-foreground"
+                colSpan={4}
+                className="h-24 text-center text-muted-foreground"
               >
                 No classes found
               </TableCell>
             </TableRow>
-          ) : (
-            data.map((cls,index) => (
-              <Fragment key={cls.id}>
-                {/* Parent Row */}
-                <TableRow
-                  className="cursor-pointer hover:bg-muted/40"
-                  onClick={() =>
-                    toggleRow(cls.id)
-                  }
-                >
-                     <TableCell>
-                    <div className="flex items-center gap-2 font-medium">
-
-                         {expandedClassId === cls.id ? (
-                        <ChevronDown className="h-4 w-4" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4" />
-                      )}
-                    {index+1}
-                    </div>
-
-                  </TableCell>
-                  <TableCell>
-                     
-
-                      {cls.className}
-                  </TableCell>
-
-                  <TableCell>
-                    {cls.sections.length}
-                  </TableCell>
-
-                  <TableCell>
-                    {cls.strength}
-                  </TableCell>
-                </TableRow>
-
-                {/* Child Table */}
-                {expandedClassId === cls.id && (
-                  <TableRow>
-                    <TableCell
-                      colSpan={3}
-                      className="bg-muted/20 p-4"
-                    >
-                      <div className="rounded-md border bg-background">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>
-                                Section
-                              </TableHead>
-
-                              <TableHead>
-                                Strength
-                              </TableHead>
-                            </TableRow>
-                          </TableHeader>
-
-                          <TableBody>
-                            {cls.sections
-                              .length === 0 ? (
-                              <TableRow>
-                                <TableCell
-                                  colSpan={2}
-                                  className="text-center text-muted-foreground"
-                                >
-                                  No sections
-                                  available
-                                </TableCell>
-                              </TableRow>
-                            ) : (
-                              cls.sections.map(
-                                (
-                                  section
-                                ) => (
-                                  <TableRow
-                                    key={
-                                      section.id
-                                    }
-                                  >
-                                    <TableCell>
-                                      Section{" "}
-                                      {
-                                        section.sectionName
-                                      }
-                                    </TableCell>
-
-                                    <TableCell>
-                                      {
-                                        section.strength
-                                      }
-                                    </TableCell>
-                                  </TableRow>
-                                )
-                              )
-                            )}
-                          </TableBody>
-                        </Table>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </Fragment>
-            ))
           )}
         </TableBody>
       </Table>

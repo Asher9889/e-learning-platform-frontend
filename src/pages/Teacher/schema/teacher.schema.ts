@@ -152,6 +152,19 @@ export type TeacherDataFromApi = Omit<
   totalTeachers: number;
 };
 
+export type Teacher = {
+  id: string;
+  name: string;
+};
+export type Options = {
+  value: string;
+  label: string;
+};
+
+export type TeachersSummary = {
+  teachers: Teacher[];
+  totalTeachers: number;
+};
 // Parsed values (after transforms)
 export type TeacherEnrollFormOutput =
   z.output<

@@ -7,3 +7,11 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: currentColor !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+[data-sileo-viewport] {
+  z-index: 99999 !important;
+}
+
+[data-sileo-toast] {
+  z-index: 99999 !important;
+}

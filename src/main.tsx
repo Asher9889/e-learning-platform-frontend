@@ -11,6 +11,7 @@ import { Toaster } from "sileo";
 
 const toasterOptions = {
   fill: "#171717",
+   className: "!z-[9999]",
   styles: {
     description: "text-white/75!",
   },

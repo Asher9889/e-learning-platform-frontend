@@ -1,12 +1,20 @@
 import { useState } from "react";
 // import { useUpcomingLiveClasses } from "./hooks/useLiveClass";
 import type { ILiveSession } from "@/pages/Live-Classes/types/index";
-import { LiveClassStats, LiveClassSection, LiveClassCard, CreateLiveClassDialog, StartLiveClassModal, EmptyLiveClassState } from "@/components/live-classes";
-import { useActiveLiveClasses, useStartLiveClass, useUpcomingLiveClasses } from "./hooks/useLiveClass";
+import { useActiveLiveClasses, useStartLiveClass } from "./hooks/useLiveClass";
 import { queryClient } from "@/config";
 import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
-import { set } from "zod";
+import { useUpcomingLiveClasses } from "./hooks/useLiveClass";
+import { useGetGrades } from "../Classes/hooks/useGetGrades";
+import { useTeachersSummary } from "../Teacher/hooks/useTeachersSummary";
+import { EmptyLiveClassState, LiveClassCard, LiveClassSection, LiveClassStats, StartLiveClassModal } from "#components/live-classes/index";
+import ScheduleLiveClassForm from "#components/live-classes/components/ScheduleLiveClassForm";
+import StartLiveClassForm from "#components/live-classes/components/StartLiveClassForm";
+import { Button, } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { mapToLabelValue } from "@/lib/utils";
+import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group";
 
 
 const dummyStats = {
@@ -17,10 +25,11 @@ const dummyStats = {
 };
 
 export default function LiveClassPage() {
-    const { data: upcomingClassesData , isLoading:upcomingSessionLoading } = useUpcomingLiveClasses();
+
+    const { data: upcomingClassesData, isLoading: upcomingSessionLoading } = useUpcomingLiveClasses();
     const startLiveClassMutation = useStartLiveClass();
-    
-    const { data: activeClassesData, isLoading:activeSessionLoading } = useActiveLiveClasses();
+
+    const { data: activeClassesData, isLoading: activeSessionLoading } = useActiveLiveClasses();
     const navigate = useNavigate();
 
     console.log("Active Classes Data:", activeClassesData);
@@ -32,8 +41,14 @@ export default function LiveClassPage() {
     const activeClasses = activeClassesData?.sessions ?? [];
 
 
+    const { data: upcomingClassess, isLoading } = useUpcomingLiveClasses();
+    const { data } = useTeachersSummary()
+    const teachers = data?.teachers ?? [];
+    const { data: gradeData } = useGetGrades();
+    const allGrades = gradeData?.grades || [];
     const [selectedClass, setSelectedClass] = useState<ILiveSession | null>(null);
-
+    const [open, setOpen] = useState(false);
+    const [modalType, setModalType] = useState<"live" | "schedule">("live");
     const [startModalOpen, setStartModalOpen] = useState(false);
 
     const handleStart = (liveClass: ILiveSession) => {
@@ -47,8 +62,8 @@ export default function LiveClassPage() {
         startLiveClassMutation.mutate(selectedClass?.id || "", {
             onSuccess: async (data) => {
                 setStartModalOpen(false);
-                await queryClient.invalidateQueries({queryKey: ["live-classes", "upcoming"]});
-                await queryClient.invalidateQueries({queryKey: ["live-classes", "active"]});
+                await queryClient.invalidateQueries({ queryKey: ["live-classes", "upcoming"] });
+                await queryClient.invalidateQueries({ queryKey: ["live-classes", "active"] });
                 console.log("Live class started successfully:", data);
                 sileo.success({
                     title: "Live Class Started",
@@ -65,12 +80,12 @@ export default function LiveClassPage() {
 
                 // navigate(`/live-classes/${data.roomName}/class-room`); // Navigate to the live class details or dashboard page
                 // navigate(`/live-classes/${data.roomName}/class-room`); // Navigate to the live class details or dashboard page
-                
-            }, 
+
+            },
             onError: (error) => {
                 sileo.error({
                     title: "Failed to Start",
-                    description: error.message ||  "An error occurred while starting the live class. Please try again.",
+                    description: error.message || "An error occurred while starting the live class. Please try again.",
                 })
                 console.error("Failed to start live class:", error);
                 // Optionally show an error message to the user
@@ -82,117 +97,6 @@ export default function LiveClassPage() {
         navigate(`/live-classes/${roomName}/class-room`);
         // Implement join logic, e.g., navigate to the live class room or open a modal
     };
-    /**
-     * Mock Data
-     */
-    // const isLoading = false;
-
-    // const upcomingClasses: ILiveSession[] = [
-    //     // {
-    //     //     id: "live-1",
-    //     //     title: "React Fundamentals",
-    //     //     description: "Learn components, props, state and hooks.",
-    //     //     subject: {
-    //     //         id: "3456789",
-    //     //         name: "Frontend Development"
-    //     //     },
-
-    //     //     roomName: "room-123",
-    //     //     teacher: {
-    //     //         id: "teacher-1",
-    //     //         name: "John Doe",
-    //     //         profileImage: "https://example.com/teacher.jpg"
-    //     //     },
-
-    //     //     startedAt: null,
-    //     //     endedAt: null,
-
-    //     //     scheduledAt: "2026-06-10T10:00:00.000Z",
-
-    //     //     durationMinutes: 60,
-    //     //     maxParticipants: 50,
-
-    //     //     isRecordingEnabled: true,
-    //     //     isChatEnabled: true,
-    //     //     isScreenShareAllowed: true,
-
-    //     //     status: "SCHEDULED",
-
-    //     //     createdBy: "teacher-1",
-
-    //     //     createdAt: "2026-06-01T10:00:00.000Z",
-    //     //     updatedAt: "2026-06-01T10:00:00.000Z",
-    //     // },
-
-    //     // {
-    //     //     id: "live-2",
-    //     //     title: "Advanced TypeScript",
-    //     //     description:
-    //     //         "Generics, utility types and advanced patterns.",
-    //     //     subject:{
-    //     //         id: "3456789",
-    //     //         name: "Frontend Development"
-    //     //     },
-    //     //     teacher: {
-    //     //         id: "teacher-1",
-    //     //         name: "John Doe",
-    //     //         profileImage: "https://example.com/teacher.jpg"
-    //     //     },
-
-    //     //     roomName: "room-456",
-
-    //     //     startedAt: null,
-    //     //     endedAt: null,
-
-    //     //     scheduledAt: "2026-06-11T14:00:00.000Z",
-
-    //     //     durationMinutes: 90,
-    //     //     maxParticipants: 100,
-
-    //     //     isRecordingEnabled: true,
-    //     //     isChatEnabled: true,
-    //     //     isScreenShareAllowed: true,
-
-    //     //     status: "SCHEDULED",
-
-    //     //     createdBy: "teacher-1",
-
-    //     //     createdAt: "2026-06-01T10:00:00.000Z",
-    //     //     updatedAt: "2026-06-01T10:00:00.000Z",
-    //     // },
-    // ];
-
-    // const activeClasses: ILiveSession[] = [
-    //     // {
-    //     //     id: "live-active-1",
-
-    //     //     title: "Database Design",
-    //     //     description:
-    //     //         "Currently discussing indexing and query optimization.",
-
-    //     //     subject: "Database Systems",
-
-    //     //     scheduledAt: "2026-06-08T09:00:00.000Z",
-
-    //     //     durationMinutes: 60,
-    //     //     maxParticipants: 60,
-
-    //     //     isRecordingEnabled: true,
-    //     //     isChatEnabled: true,
-    //     //     isScreenShareAllowed: true,
-
-    //     //     status: "LIVE",
-
-    //     //     meetingUrl: "https://live.example.com/room-123",
-
-    //     //     passcode: "ABC123",
-
-    //     //     createdBy: "teacher-1",
-
-    //     //     createdAt: "2026-06-01T10:00:00.000Z",
-    //     //     updatedAt: "2026-06-08T09:00:00.000Z",
-    //     // },
-    // ];
 
     return (
         <div className="space-y-8 p-6" >
@@ -207,8 +111,67 @@ export default function LiveClassPage() {
                         Schedule, manage, and start your real-time teaching sessions.
                     </p>
                 </div>
+                <ButtonGroup>
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => {
+                            setModalType("live");
+                            setOpen(true);
+                        }}
+                    >
+                        Start New Class
+                    </Button>
 
-                <CreateLiveClassDialog />
+                    <ButtonGroupSeparator />
+
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => {
+                            setModalType("schedule");
+                            setOpen(true);
+                        }}
+                    >
+                        Schedule Class
+                    </Button>
+                </ButtonGroup>
+                <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogContent className="sm:max-w-xl">
+                        <DialogHeader>
+                            <DialogTitle>
+                                {modalType === "live"
+                                    ? "Start Live Class"
+                                    : "Schedule Live Class"}
+                            </DialogTitle>
+
+                            <DialogDescription>
+                                {modalType === "live"
+                                    ? "Start a class immediately."
+                                    : "Schedule a class for later."}
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        {modalType === "live" ? (
+                            <StartLiveClassForm
+                                onSuccess={() => {
+                                    setOpen(false);
+                                }}
+                                teachersOptions={mapToLabelValue(teachers, "name", "id")}
+                                gradeOptions={mapToLabelValue(allGrades, "name", "id")}
+                            />
+                        ) : (
+                            <ScheduleLiveClassForm
+                                onSuccess={() => {
+                                    setOpen(false);
+                                }}
+                                teachersOptions={mapToLabelValue(teachers, "name", "id")}
+                                gradeOptions={mapToLabelValue(allGrades, "name", "id")}
+                            />
+                        )}
+                    </DialogContent>
+                </Dialog>
+                {/* <CreateLiveClassDialog /> */}
             </div>
 
             {/* Stats */}
