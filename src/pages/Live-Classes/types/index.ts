@@ -62,6 +62,15 @@ export interface IUpcomingLiveClassesResponse {
   }
 }
 
+export interface LiveClassFilters {
+  page?: number;
+  limit?: number;
+  startDate?: string;
+  endDate?: string;
+  teacherId?: string;
+  subjectId?: string;
+}
+
 export interface IJoinLiveClassResponse {
   liveClass: {
     id: string,

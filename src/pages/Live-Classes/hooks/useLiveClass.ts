@@ -1,21 +1,29 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { liveClassApi } from "../api/live.api";
 import type { TStartLiveClassInput, TJoinLiveClassInput } from "../schema/live.schema";
+import type { LiveClassFilters } from "../types";
 
-export const useUpcomingLiveClasses = () => {
+export const useUpcomingLiveClasses = (filters?: LiveClassFilters) => {
   return useQuery({
-    queryKey: ["live-classes", "upcoming"],
-    queryFn: () => liveClassApi.getUpcoming(),
+    queryKey: ["live-classes", "upcoming", filters],
+    queryFn: () => liveClassApi.getUpcoming(filters),
   });
 };
 
 
-export const useActiveLiveClasses = () => {
+export const useActiveLiveClasses = (filters?: LiveClassFilters) => {
   return useQuery({
-    queryKey: ["live-classes", "active"],
-    queryFn: () => liveClassApi.getActive(),
+    queryKey: ["live-classes", "active", filters],
+    queryFn: () => liveClassApi.getActive(filters),
   });
-}
+};
+
+export const useCompletedLiveClasses = (filters?: LiveClassFilters) => {
+  return useQuery({
+    queryKey: ["live-classes", "completed", filters],
+    queryFn: () => liveClassApi.getCompleted(filters),
+  });
+};
 
 
 export const useLiveClass = (id: string) => {

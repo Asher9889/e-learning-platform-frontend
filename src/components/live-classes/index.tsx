@@ -14,3 +14,5 @@ export {
 
 
 export { StartLiveClassModal, LiveClassStats, LiveClassSection, LiveClassCard, EmptyLiveClassState };
+export { DateFilter } from "./components/DateFilter";
+export { Pagination } from "./components/Pagination";
