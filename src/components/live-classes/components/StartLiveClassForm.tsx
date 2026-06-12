@@ -19,38 +19,20 @@ import {
 import {
   startLiveClassSchema,
   type TStartLiveClassInput,
-} from "@/pages/Live-Classes/schema/live.schema";
+} from "@/pages/Live-Classes/schema/live.class.schema";
 import type { Options } from "@/pages/Teacher/schema/teacher.schema";
+import { useGetClassSubjectsSummary } from "@/pages/Live-Classes/hooks/useGetClassSubjectsSummary";
+import { mapToLabelValue } from "#lib/utils";
+import { useStartLiveClass } from "@/pages/Live-Classes/hooks/useStartLiveClass";
 
 interface Props {
-  teachersOptions:Options[];
-    gradeOptions:Options[];
+  teachersOptions: Options[];
+  gradeOptions: Options[];
   onSuccess?: () => void;
 }
 
-const SUBJECTS = [
-  "Mathematics",
-  "Physics",
-  "Chemistry",
-  "Biology",
-  "Computer Science",
-];
 
-// const GRADES = [
-//   { id: "g1", name: "Class 6" },
-//   { id: "g2", name: "Class 7" },
-//   { id: "g3", name: "Class 8" },
-//   { id: "g4", name: "Class 9" },
-//   { id: "g5", name: "Class 10" },
-// ];
-
-// const TEACHERS = [
-//   { id: "t1", name: "Mr. Sharma" },
-//   { id: "t2", name: "Ms. Verma" },
-//   { id: "t3", name: "Dr. Gupta" },
-// ];
-
-export default function StartLiveClassForm({ onSuccess ,teachersOptions,gradeOptions}: Props) {
+export default function StartLiveClassForm({ onSuccess, teachersOptions, gradeOptions }: Props) {
   const {
     register,
     handleSubmit,
@@ -71,11 +53,35 @@ export default function StartLiveClassForm({ onSuccess ,teachersOptions,gradeOpt
       isChatEnabled: true,
       isScreenShareAllowed: true,
     },
+    
   });
-
+  const {
+  mutate: startLiveClassMutation,
+  isPending,
+} = useStartLiveClass();
+  const selectedGrade = watch("gradeId");
+  const { data: subjectsData } = useGetClassSubjectsSummary(
+    true,
+    gradeOptions.find(
+      (g) => g.value === selectedGrade
+    )?.label
+  );
+  const selectedSubject: any[] = subjectsData || [];
+  console.log(subjectsData, "subjectsDatahgfdahgwfdhgafwdgf")
+  const subjectDataOptions = mapToLabelValue(selectedSubject, "name", "id") || [];
   const onSubmit = async (data: TStartLiveClassInput) => {
     console.log(data);
-    onSuccess?.();
+    startLiveClassMutation(data, {
+    onSuccess: (response) => {
+      console.log(response);
+
+      onSuccess?.();
+    },
+
+    onError: (error) => {
+      console.error(error);
+    },
+  });
   };
 
   return (
@@ -115,42 +121,66 @@ export default function StartLiveClassForm({ onSuccess ,teachersOptions,gradeOpt
         </div>
         <div className="space-y-1">
           <Label>Subject</Label>
-          <Select onValueChange={(v) => setValue("subjectId", v)}>
+
+          <Select
+            disabled={!selectedGrade}
+            onValueChange={(v) => setValue("subjectId", v)}
+          >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select subject" />
+              <SelectValue
+                placeholder={
+                  !selectedGrade
+                    ? "Please select grade first"
+                    :  subjectDataOptions?.length > 0 ? "Select subject" :  "No Subject Found"
+                }
+              />
             </SelectTrigger>
+
             <SelectContent>
-              {SUBJECTS.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {s}
+              {!selectedGrade ? (
+                <SelectItem value="select-grade-first" disabled>
+                  Please select grade first
                 </SelectItem>
-              ))}
+              ) : subjectDataOptions?.length > 0 ? (
+                subjectDataOptions.map((s) => (
+                  <SelectItem key={s.value} value={s.value}>
+                    {s.label}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem value="no-subject-found" disabled>
+                  No Subject Found
+                </SelectItem>
+              )}
             </SelectContent>
           </Select>
+
           {errors.subjectId && (
-            <p className="text-xs text-destructive">{errors.subjectId.message}</p>
+            <p className="text-xs text-destructive">
+              {errors.subjectId.message}
+            </p>
           )}
         </div>
       </div>
 
       {/* TEACHER */}
       <div className="grid grid-cols-2 gap-4">
-      <div className="space-y-1">
-        <Label>Teacher</Label>
-        <Select onValueChange={(v) => setValue("teacherId", v)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select teacher" />
-          </SelectTrigger>
-          <SelectContent>
-            {teachersOptions?.length > 0 && teachersOptions.map((t) => (
+        <div className="space-y-1">
+          <Label>Teacher</Label>
+          <Select onValueChange={(v) => setValue("teacherId", v)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select teacher" />
+            </SelectTrigger>
+            <SelectContent>
+              {teachersOptions?.length > 0 && teachersOptions.map((t) => (
                 <SelectItem key={t.value} value={t.value}>
                   {t.label}
                 </SelectItem>
               ))}
-          </SelectContent>
-        </Select>
-      </div>
-       
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="space-y-1">
           <Label>Duration (minutes)</Label>
           <Input
@@ -158,7 +188,7 @@ export default function StartLiveClassForm({ onSuccess ,teachersOptions,gradeOpt
             {...register("durationMinutes", { valueAsNumber: true })}
           />
         </div>
-        </div>
+      </div>
 
       {/* DESCRIPTION */}
       <div className="space-y-1">

@@ -25,7 +25,7 @@ import RouteOutlet from "./routeOutlet";
 
 import ActiveLiveClassPage from "@/features/live-class/pages/ActiveLiveClassPage";
 
-import DashboardPage from "./pages/Dashboard";
+import DashboardPage from "./pages/dashboard";
 
 export const APP_ROUTES: AppRoutes = {
   dashboard: {

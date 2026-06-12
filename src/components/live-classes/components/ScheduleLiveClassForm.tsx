@@ -78,10 +78,10 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, grad
   });
   const selectedGrade = watch("gradeId");
   const { data: subjectsData } = useGetClassSubjectsSummary(
-    gradeOptions.find(
+    true,
+     gradeOptions.find(
       (g) => g.value === selectedGrade
-    )?.label,
-    true
+    )?.label
   );
   const selectedSubject: any[] = subjectsData || [];
   console.log(subjectsData, "subjectsDatahgfdahgwfdhgafwdgf")
