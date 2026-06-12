@@ -7,6 +7,7 @@ import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
 import { useUpcomingLiveClasses } from "./hooks/useLiveClass";
 import { useGetGrades } from "../Classes/hooks/useGetGrades";
+
 import { useTeachersSummary } from "../Teacher/hooks/useTeachersSummary";
 import { EmptyLiveClassState, LiveClassCard, LiveClassSection, LiveClassStats, StartLiveClassModal } from "#components/live-classes/index";
 import ScheduleLiveClassForm from "#components/live-classes/components/ScheduleLiveClassForm";
@@ -15,6 +16,8 @@ import { Button, } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { mapToLabelValue } from "@/lib/utils";
 import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group";
+import { useGetClassSubjectsSummary } from "./hooks/useGetClassSubjectsSummary";
+
 
 
 const dummyStats = {
@@ -40,8 +43,6 @@ export default function LiveClassPage() {
 
     const activeClasses = activeClassesData?.sessions ?? [];
 
-
-    const { data: upcomingClassess, isLoading } = useUpcomingLiveClasses();
     const { data } = useTeachersSummary()
     const teachers = data?.teachers ?? [];
     const { data: gradeData } = useGetGrades();
