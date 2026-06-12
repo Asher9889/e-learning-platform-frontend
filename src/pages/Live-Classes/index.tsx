@@ -11,6 +11,7 @@ import ScheduleLiveClassForm from "#components/live-classes/components/ScheduleL
 import { useTeachersSummary } from "../Teacher/hooks/useTeachersSummary";
 import { mapToLabelValue } from "@/utils/helper";
 import { useGetGrades } from "../Classes/hooks/useGetGrades";
+import { useGetClassSubjectsSummary } from "./hooks/useGetClassSubjectsSummary";
 
 
 const dummyStats = {
@@ -28,13 +29,14 @@ const teachers = data?.teachers ?? [];
     data: gradeData
 
   } = useGetGrades();
+
   const allGrades = gradeData?.grades || [];
     const [selectedClass, setSelectedClass] = useState<ILiveSession | null>(null);
     const [open, setOpen] = useState(false);
     const [modalType, setModalType] = useState<"live" | "schedule">("live");
     const [startModalOpen, setStartModalOpen] = useState(false);
-console.log(gradeData,"teachersteachers 3132131321321321231",)
-console.log(teachers,"teachersteachers")
+
+
     const handleStart = (liveClass: ILiveSession) => {
         setSelectedClass(liveClass);
         setStartModalOpen(true);

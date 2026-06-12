@@ -37,9 +37,9 @@ const apiEndpoints = {
             url: "/uploads/avatar",
             method: 'POST'
         },
-        SUMMARY_TEACHERS:{
-             url: "/users/teachers/summary",
-             method: 'GET'
+        SUMMARY_TEACHERS: {
+            url: "/users/teachers/summary",
+            method: 'GET'
         }
 
     },
@@ -69,6 +69,10 @@ const apiEndpoints = {
             url: `/live-classes/${id}/end`,
             method: "POST"
         }),
+        SUBJECTS_SUMMARY: {
+            url: "/classes/subjects/summary",
+            method: "GET",
+        }
     },
 
     CLASSES: {
@@ -114,13 +118,13 @@ const apiEndpoints = {
             url: "/grades",
             method: 'GET'
         },
-        UPDATE_GRADE:{
-            url:"/grades/:id",
-            method:"PATCH"
+        UPDATE_GRADE: {
+            url: "/grades/:id",
+            method: "PATCH"
         },
-        DELETE_GRADE:{
-            url:"/grades/:id",
-            method:"DELETE"
+        DELETE_GRADE: {
+            url: "/grades/:id",
+            method: "DELETE"
         }
     },
 

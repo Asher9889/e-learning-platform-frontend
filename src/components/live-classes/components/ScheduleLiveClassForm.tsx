@@ -21,20 +21,23 @@ import {
   type TScheduledLiveClass,
 } from "@/pages/Live-Classes/schema/live.schema";
 import type { Options, Teacher } from "@/pages/Teacher/schema/teacher.schema";
+import { useGetClassSubjectsSummary } from "@/pages/Live-Classes/hooks/useGetClassSubjectsSummary";
+import { useEffect } from "react";
+import { mapToLabelValue } from "@/utils/helper";
 
 interface Props {
-  teachersOptions:Options[];
-  gradeOptions:Options[];
+  teachersOptions: Options[];
+  gradeOptions: Options[];
   onSuccess?: () => void;
 }
 
-const SUBJECTS = [
-  "Mathematics",
-  "Physics",
-  "Chemistry",
-  "Biology",
-  "Computer Science",
-];
+// const SUBJECTS = [
+//   "Mathematics",
+//   "Physics",
+//   "Chemistry",
+//   "Biology",
+//   "Computer Science",
+// ];
 
 // const GRADES = [
 //   { id: "g1", name: "Class 6" },
@@ -50,7 +53,7 @@ const SUBJECTS = [
 //   { id: "t3", name: "Dr. Gupta" },
 // ];
 
-export default function ScheduleLiveClassForm({ onSuccess ,teachersOptions,gradeOptions}: Props) {
+export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, gradeOptions }: Props) {
   const {
     register,
     handleSubmit,
@@ -73,7 +76,16 @@ export default function ScheduleLiveClassForm({ onSuccess ,teachersOptions,grade
       isScreenShareAllowed: true,
     },
   });
-console.log(teachersOptions,"sdfghjkl")
+  const selectedGrade = watch("gradeId");
+  const { data: subjectsData } = useGetClassSubjectsSummary(
+    gradeOptions.find(
+      (g) => g.value === selectedGrade
+    )?.label,
+    true
+  );
+  const selectedSubject: any[] = subjectsData || [];
+  console.log(subjectsData, "subjectsDatahgfdahgwfdhgafwdgf")
+  const subjectDataOptions = mapToLabelValue(selectedSubject, "name", "id") || [];
   const onSubmit = (data: TScheduledLiveClass) => {
     console.log(data);
     onSuccess?.();
@@ -96,7 +108,7 @@ console.log(teachersOptions,"sdfghjkl")
 
       {/* SUBJECT + GRADE */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <div className="space-y-1">
+        <div className="space-y-1">
           <Label>Grade</Label>
           <Select onValueChange={(v) => setValue("gradeId", v)}>
             <SelectTrigger className="w-full">
@@ -119,16 +131,18 @@ console.log(teachersOptions,"sdfghjkl")
               <SelectValue placeholder="Select subject" />
             </SelectTrigger>
             <SelectContent>
-              {SUBJECTS.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {s}
+              {subjectDataOptions?.length > 0 ? subjectDataOptions.map((s) => (
+                <SelectItem key={s.value} value={s.value}>
+                  {s.label}
                 </SelectItem>
-              ))}
+              )) : <SelectItem value="no-subject-found" disabled>
+                No Subject Found
+              </SelectItem>}
             </SelectContent>
           </Select>
         </div>
 
-    
+
       </div>
 
       {/* TEACHER */}
