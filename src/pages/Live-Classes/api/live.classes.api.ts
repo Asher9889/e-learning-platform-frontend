@@ -1,4 +1,5 @@
 import { api, apiEndPoints } from "@/config";
+import type { TStartLiveClassInput } from "../schema/live.class.schema";
 
 
 // http://127.0.0.1:4505/api/v1/classes/subjects/summary?grade=11th Grade
@@ -14,6 +15,20 @@ export async function getClassSubjectsSummary(grade: string) {
     params: {
       grade,
     },
+  });
+
+  return res.data;
+}
+
+
+export async function startLiveClass(liveClassData: TStartLiveClassInput) {
+  const { url, method } =
+    apiEndPoints.LIVE_CLASSES.START_LIVE_CLASS;
+
+  const res = await api.request({
+    url,
+    method,
+    data: {...liveClassData,status:"LIVE"},
   });
 
   return res.data;

@@ -82,6 +82,10 @@ const apiEndpoints = {
         SUBJECTS_SUMMARY: {
             url: "/classes/subjects/summary",
             method: "GET",
+        },
+        START_LIVE_CLASS :{
+            url: "/live-classes",
+            method: "POST"
         }
     },
 
