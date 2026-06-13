@@ -6,9 +6,35 @@ interface TeacherStageProps {
   tracks: TrackReference[];
   className?: string;
 }
-
+function AudioBars({ className = "" }: { className?: string }) {
+  return (
+    <div className={`flex items-end gap-[2px] ${className}`}>
+      {[6, 12, 8, 15, 6].map((h, i) => (
+        <div
+          key={i}
+          className="w-[3px] rounded-sm bg-emerald-500"
+          style={{
+            height: `${h}px`,
+            animation: `audioPulse 0.8s ${i * 0.15}s ease-in-out infinite`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 export function TeacherStage({ tracks, className }: TeacherStageProps) {
-  if (tracks.length === 0) return null;
+// const isCameraOff =
+//   tracks?.participant?.videoTrackPublications;
+  const cameraPub = tracks?.participant?.getTrackPublication(
+  Track.Source.Camera
+  
+);
+console.log(
+  tracks.map((t) => ({
+    source: t.source,
+    participant: t.participant.identity,
+  })),"anubhavanubhav"
+);
 
   return (
     <div className={cn("relative w-full h-full", className)}>

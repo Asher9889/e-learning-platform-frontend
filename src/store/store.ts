@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/auth.slice';
-import liveClassReducer from '@/features/live-class/store/liveClass.slice';
+import liveClassReducer from './slices/liveClass.slice';
 
 export const store = configureStore({
   reducer: {

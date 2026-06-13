@@ -6,16 +6,14 @@ import { AppSidebar } from "./sidebar/AppSidebar";
 import AppHeader from "./header/AppHeader";
 
 export default function AuthenticatedLayout() {
-   const  {pathname} = useLocation();
-   const isClassRoomPage =
-  /^\/live-classes\/[^/]+\/class-room$/.test(pathname);
-   console.log(pathname,"locationlocationlocationlocation",isClassRoomPage)
+  const { pathname } = useLocation();
+  const isClassRoomPage = /^\/live-classes\/[^/]+\/class-room$/.test(pathname);
   return (
     <SidebarProvider>
-      {!isClassRoomPage  && <AppSidebar />}
+      {!isClassRoomPage && <AppSidebar />}
 
       <div className="flex min-w-0 flex-1 flex-col">
-       {!isClassRoomPage  && <AppHeader />}
+        {!isClassRoomPage && <AppHeader />}
 
         <main className="min-w-0 flex-1 overflow-auto">
           <Outlet />

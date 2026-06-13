@@ -72,9 +72,9 @@ export default function LiveClassPage() {
                 });
                 const route = `/live-classes/${data.roomName}/class-room`;
 
-                setTimeout(() => {
+               Promise.resolve( setTimeout(() => {
                     navigate(route); // Navigate to the live class details or dashboard page
-                }, 3000); // Delay navigation to allow the success toast to be seen
+                }, 3000)) // Delay navigation to allow the success toast to be seen
                 // Promise.resolve().then(() => {
                 //     navigate(`/live-classes/${data.roomName}/class-room`); // Navigate to the live class details or dashboard page
                 // }); // Ensure this runs after the success toast

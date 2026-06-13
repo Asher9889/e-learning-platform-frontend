@@ -49,14 +49,7 @@ export interface ILiveSession {
   updatedAt: string;
 }
 
-export interface IActiveLiveSession {
-  liveSession: ILiveSession;
-  liveKit: {
-    token: string;
-    roomName: string;
-    serverURL: string;
-  }
-}
+export interface IActiveLiveSession extends ILiveSession {}
 
 
 export interface IUpcomingLiveClassesResponse {

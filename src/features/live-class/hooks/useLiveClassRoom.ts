@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { liveClassApi } from "@/pages/Live-Classes/api/live.api";
 import { useAppDispatch } from "@/store/hooks";
 import {
@@ -10,62 +10,54 @@ import {
   setTeacherIdentity,
   addMessage,
 } from "@/features/live-class/store/liveClass.slice";
-import type {
-  ChatMessage,
-  LiveKitConnectionParams,
-} from "@/features/live-class/types";
+import type { ChatMessage, ITeacherIdentity, LiveKitConnectionParams } from "@/features/live-class/types";
 import type { Room } from "livekit-client";
 
 interface UseLiveClassRoomReturn {
   connectionParams: LiveKitConnectionParams | null;
   isJoining: boolean;
   error: Error | null;
-  joinRoom: (roomName: string) => void;
+  retry: () => void;
   leaveRoom: () => void;
 }
 
-export function useLiveClassRoom(
-  room: Room | null,
-  teacherIdentity: string | null
-): UseLiveClassRoomReturn {
+export function useLiveClassRoom(room: Room, teacherIdentity: ITeacherIdentity, roomName?: string): UseLiveClassRoomReturn {
   const dispatch = useAppDispatch();
-  const [connectionParams, setConnectionParams] =
-    useState<LiveKitConnectionParams | null>(null);
 
-  const joinMutation = useMutation({
-    mutationFn: (roomName: string) => liveClassApi.join(roomName),
-    onSuccess: (data) => {
-      const { liveKit, liveClass } = data;
-      setConnectionParams({
-        token: liveKit.token,
-        serverUrl: liveKit.serverURL,
-        roomName: liveKit.roomName,
-      });
+  const enabled = Boolean(roomName) && Boolean(teacherIdentity);
 
-      dispatch(setRoomName(liveKit.roomName));
-      dispatch(setParticipantIdentity(liveClass.participantId));
-      dispatch(
-        setParticipantRole(
-          liveClass.participantRole as "teacher" | "student"
-        )
-      );
-      if (teacherIdentity) {
-        dispatch(setTeacherIdentity(teacherIdentity));
-      }
-    },
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["live-classes", "join", roomName],
+    queryFn: () => liveClassApi.join(roomName!),
+    enabled,
+    retry: false,
+    staleTime: Infinity,
   });
 
+  const connectionParams = useMemo<LiveKitConnectionParams | null>(() => {
+    if (!data) return null;
+    return {
+      token: data.liveKit.token,
+      serverUrl: data.liveKit.serverURL,
+      roomName: data.liveKit.roomName,
+    };
+  }, [data]);
+
   useEffect(() => {
-    if (!room) return;
+    if (!data) return;
+    const { liveKit, liveClass } = data;
 
-    const handleConnected = () => {
-      dispatch(setConnected(true));
-    };
+    dispatch(setRoomName(liveKit.roomName));
+    dispatch(setParticipantIdentity(liveClass.participantId));
+    dispatch(setParticipantRole(liveClass.participantRole as "TEACHER" | "STUDENT" | "ADMIN"));
+    if (teacherIdentity) dispatch(setTeacherIdentity(teacherIdentity));
+  }, [data, dispatch, teacherIdentity]);
 
-    const handleDisconnected = () => {
-      dispatch(setConnected(false));
-    };
+  useEffect(() => {
+    if (!room && !teacherIdentity) return;
 
+    const handleConnected = () => dispatch(setConnected(true));
+    const handleDisconnected = () => dispatch(setConnected(false));
     const handleDataReceived = (payload: Uint8Array) => {
       try {
         const text = new TextDecoder().decode(payload);
@@ -87,24 +79,16 @@ export function useLiveClassRoom(
     };
   }, [room, dispatch]);
 
-  const joinRoom = useCallback(
-    (roomName: string) => {
-      joinMutation.mutate(roomName);
-    },
-    [joinMutation]
-  );
-
   const leaveRoom = useCallback(() => {
     room?.disconnect();
-    setConnectionParams(null);
     dispatch(setConnected(false));
   }, [room, dispatch]);
 
   return {
     connectionParams,
-    isJoining: joinMutation.isPending,
-    error: joinMutation.error,
-    joinRoom,
+    isJoining: isLoading,
+    error: error as Error | null,
+    retry: () => refetch(),
     leaveRoom,
   };
 }

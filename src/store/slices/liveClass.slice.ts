@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { ChatMessage, ChatTab, ITeacherIdentity } from "../types";
+import type { ChatMessage, ChatTab, ITeacherIdentity } from "@/features/live-class/types";
 import type { TUserRole } from "@/constants/user/user.constant";
 
 interface LiveClassState {
@@ -105,4 +105,4 @@ export const {
   resetClassroom,
 } = liveClassSlice.actions;
 
-// export default liveClassSlice.reducer;
+export default liveClassSlice.reducer;
