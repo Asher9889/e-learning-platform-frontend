@@ -34,10 +34,7 @@ export function ChatMessage({ message, isOwn }: ChatMessageProps) {
         </AvatarFallback>
       </Avatar>
       <div className={cn("flex flex-col max-w-[85%]", isOwn && "items-end")}>
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-medium">{message.senderName}</span>
-          <span className="text-[10px] text-muted-foreground">{time}</span>
-        </div>
+        
         <div
           className={cn(
             "mt-0.5 rounded-2xl px-3 py-1.5 text-sm",
@@ -47,6 +44,10 @@ export function ChatMessage({ message, isOwn }: ChatMessageProps) {
           )}
         >
           {message.content}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium">{message.senderName}</span>
+          <span className="text-[10px] text-muted-foreground">{time}</span>
         </div>
       </div>
     </div>

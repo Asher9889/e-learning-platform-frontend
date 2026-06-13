@@ -5,15 +5,17 @@ import type { StudentEnrollFormOutput, StudentsListResponse } from "../schema/st
 
 
 export async function createStudent(
-  teacherData: StudentEnrollFormOutput
+  studentData: StudentEnrollFormOutput
 ) {
   const { url, method } =
     apiEndPoints.USERS.ADD_STUDENT;
-
+  if(studentData?.personalInfo.profileImage === ""){
+    delete studentData?.personalInfo.profileImage
+  }
   const res = await api.request({
     url,
     method,
-    data: teacherData,
+    data: studentData,
   });
 
   return res.data;

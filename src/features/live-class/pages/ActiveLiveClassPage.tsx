@@ -8,6 +8,7 @@ import { LoadingState } from "@/features/live-class/components/shared/LoadingSta
 import { ErrorState } from "@/features/live-class/components/shared/ErrorState";
 import { useLiveClassByRoomName } from "@/pages/Live-Classes/hooks/useLiveClass";
 import "@livekit/components-styles";
+import ClassRoomLayoutNew from "../layouts/ClassRoomLayoutNew";
 export default function ActiveLiveClassPage() {
   const { roomName } = useParams<{ roomName: string }>();
 
@@ -60,8 +61,9 @@ export default function ActiveLiveClassPage() {
         dynacast: true,
       }}
     >
-      <ClassroomLayout />
+      {/* <ClassroomLayout /> */}
       {/* <VideoConference /> */}
+      <ClassRoomLayoutNew/>
     </LiveKitRoom>
   );
 }
