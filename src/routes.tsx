@@ -19,6 +19,10 @@ import {
   ClipboardCheck,
   School,
   GraduationCap,
+  Library,
+  Upload,
+  FolderTree,
+  Trash2,
 } from "lucide-react";
 import { USER_ROLE } from "@/constants/user/user.constant";
 import RouteOutlet from "./routeOutlet";
@@ -26,6 +30,8 @@ import RouteOutlet from "./routeOutlet";
 import ActiveLiveClassPage from "@/features/live-class/pages/ActiveLiveClassPage";
 
 import DashboardPage from "./pages/dashboard";
+import ContentPage from "./pages/Content";
+import UploadContentPage from "./pages/Content/UploadContent";
 
 export const APP_ROUTES: AppRoutes = {
   dashboard: {
@@ -134,6 +140,46 @@ export const APP_ROUTES: AppRoutes = {
     element: ClassesPage,
     showInSidebar: true,
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+  },
+
+  content: {
+    title: "Content Library",
+    path: "/content",
+    icon: Library,
+    element: ContentPage,
+    showInSidebar: true,
+    group: "Learning Content",
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
+  },
+
+  uploadContent: {
+    title: "Upload Content",
+    path: "/content/upload",
+    icon: Upload,
+    element: UploadContentPage,
+    showInSidebar: true,
+    group: "Learning Content",
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
+  },
+
+  contentCategories: {
+    title: "Categories",
+    path: "/content/categories",
+    icon: FolderTree,
+    element: () => <div className="p-6"><h1 className="text-2xl font-bold">Categories</h1></div>,
+    showInSidebar: true,
+    group: "Learning Content",
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
+  },
+
+  contentTrash: {
+    title: "Trash",
+    path: "/content/trash",
+    icon: Trash2,
+    element: () => <div className="p-6"><h1 className="text-2xl font-bold">Trash</h1></div>,
+    showInSidebar: true,
+    group: "Learning Content",
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
   },
 };
 

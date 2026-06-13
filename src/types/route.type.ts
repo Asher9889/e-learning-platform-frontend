@@ -17,6 +17,7 @@ export interface AppRoute {
   element: ComponentType;
   showInSidebar: boolean;
   roles: UserRole[];
+  group?: string;
   children?: ChildRoute[];
 }
 

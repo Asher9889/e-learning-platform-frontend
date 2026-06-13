@@ -190,16 +190,16 @@ export default function LiveClassPage() {
 
       {/* Tabs */}
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList variant="line" className="mb-1">
-          <TabsTrigger value="live" className="gap-2">
+        <TabsList variant="line" className="mb-2">
+          <TabsTrigger value="live" className="gap-4 cursor-pointer">
             <Video className="h-4 w-4" />
             Live
           </TabsTrigger>
-          <TabsTrigger value="upcoming" className="gap-2">
+          <TabsTrigger value="upcoming" className="gap-4 cursor-pointer">
             <CalendarDays className="h-4 w-4" />
             Upcoming
           </TabsTrigger>
-          <TabsTrigger value="completed" className="gap-2">
+          <TabsTrigger value="completed" className="gap-4 cursor-pointer">
             <Radio className="h-4 w-4" />
             Completed
           </TabsTrigger>

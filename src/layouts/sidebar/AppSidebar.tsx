@@ -1,76 +1,95 @@
 import { Link, useLocation } from "react-router-dom";
 
 import {
-    Sidebar,
-    SidebarContent,
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
 import { useAppSelector } from "@/store/hooks";
-// import { APP_ROUTES } from "@/routes/appRoutes";
-// import { APP_ROUTES } from "./sidebar.config";
 import type { TUserRole } from "@/constants/user/user.constant";
+import type { AppRoute } from "@/types/route.type";
 import AppSidebarHeader from "./AppSidebarHeader";
 import AppSidebarFooter from "./AppSidebarFooter";
 import { useLogout } from "./hooks/useLogout";
 import { APP_ROUTES } from "@/routes";
 
+interface SidebarSection {
+  label: string | null;
+  items: AppRoute[];
+}
+
 export function AppSidebar() {
-    const location = useLocation();
+  const location = useLocation();
+  const user = useAppSelector(state => state.auth.user);
+  const mutation = useLogout();
 
-    const user = useAppSelector(state => state.auth.user);
-    const mutation = useLogout();
+  const handleLogout = () => {
+    mutation.mutate();
+  };
 
-    const handleLogout = () => {
-        mutation.mutate();
+  if (!user) {
+    return null;
+  }
+
+  const allRoutes = Object.values(APP_ROUTES).filter(
+    (item) => item.showInSidebar && item.roles.includes(user.role as TUserRole)
+  );
+
+  const sections: SidebarSection[] = [];
+  const grouped: Record<string, AppRoute[]> = {};
+  const ungrouped: AppRoute[] = [];
+
+  for (const route of allRoutes) {
+    if (route.group) {
+      if (!grouped[route.group]) grouped[route.group] = [];
+      grouped[route.group].push(route);
+    } else {
+      ungrouped.push(route);
     }
+  }
 
-    if (!user) {
-        console.log("AppSidebar returning null because user is falsy");
-        return null;
-    }
-  const getSidebarItems = (role: TUserRole) => {
-    return Object.values(APP_ROUTES).filter(item =>
-        item.roles.includes(role)
-    );
-};
+  if (ungrouped.length > 0) {
+    sections.push({ label: null, items: ungrouped });
+  }
 
-    const menus = getSidebarItems(user?.role);
+  for (const [label, items] of Object.entries(grouped)) {
+    sections.push({ label, items });
+  }
 
-
-
-    return (
-        <Sidebar collapsible="icon">
-            <AppSidebarHeader />
-            <SidebarContent>
-                <SidebarGroup>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {menus.map(menu => {
-                                const isActive = location.pathname === menu.path;
-                                return (
-                                    <SidebarMenuItem key={menu.path}>
-                                        <SidebarMenuButton asChild isActive={isActive}>
-                                            <Link to={menu.path}>
-                                                <menu.icon />
-                                                <span>
-                                                    {menu.title}
-                                                </span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                );
-                            })}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
-            </SidebarContent>
-            {/* Footer */}
-            <AppSidebarFooter logout={handleLogout} />
-        </Sidebar>
-    );
+  return (
+    <Sidebar collapsible="icon">
+      <AppSidebarHeader />
+      <SidebarContent>
+        {sections.map((section) => (
+          <SidebarGroup key={section.label ?? "__main"}>
+            {section.label && <SidebarGroupLabel>{section.label}</SidebarGroupLabel>}
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {section.items.map((menu) => {
+                  const isActive = location.pathname === menu.path;
+                  return (
+                    <SidebarMenuItem key={menu.path}>
+                      <SidebarMenuButton asChild isActive={isActive} tooltip={menu.title}>
+                        <Link to={menu.path}>
+                          <menu.icon />
+                          <span>{menu.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
+      </SidebarContent>
+      <AppSidebarFooter logout={handleLogout} />
+    </Sidebar>
+  );
 }
