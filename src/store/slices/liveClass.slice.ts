@@ -4,6 +4,7 @@ import type { TUserRole } from "@/constants/user/user.constant";
 
 interface LiveClassState {
   roomName: string | null;
+  title: string | null;
   isConnected: boolean;
   chatOpen: boolean;
   participantsOpen: boolean;
@@ -19,8 +20,9 @@ interface LiveClassState {
 
 const initialState: LiveClassState = {
   roomName: null,
+  title: null,
   isConnected: false,
-  chatOpen: true,
+  chatOpen: false,
   participantsOpen: true,
   activeTab: "chat",
   handRaised: false,
@@ -31,7 +33,7 @@ const initialState: LiveClassState = {
   teacherIdentity: null,
   participantCount: 0,
 };
- 
+
 const liveClassSlice = createSlice({
   name: "liveClass",
   initialState,
@@ -41,6 +43,9 @@ const liveClassSlice = createSlice({
     },
     setConnected(state, action: PayloadAction<boolean>) {
       state.isConnected = action.payload;
+    },
+    setTitle(state, action: PayloadAction<string | null>) {
+      state.title = action.payload;
     },
     toggleChat(state) {
       state.chatOpen = !state.chatOpen;
@@ -76,7 +81,7 @@ const liveClassSlice = createSlice({
       state.participantIdentity = action.payload;
     },
     setTeacherIdentity(state, action: PayloadAction<ITeacherIdentity>) {
-      state.teacherIdentity = action.payload;  
+      state.teacherIdentity = action.payload;
     },
     setParticipantCount(state, action: PayloadAction<number>) {
       state.participantCount = action.payload;
@@ -103,6 +108,7 @@ export const {
   setTeacherIdentity,
   setParticipantCount,
   resetClassroom,
+  setTitle
 } = liveClassSlice.actions;
 
 export default liveClassSlice.reducer;

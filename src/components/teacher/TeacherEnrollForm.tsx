@@ -13,6 +13,8 @@ import { teacherEnrollSchema, type TeacherEnrollFormInput, type TeacherEnrollFor
 import TeacherInformation from "./steps/TeacherInformation";
 import { useCreateTeacher } from "@/pages/Teacher/hooks/useCreateTeacher";
 import { useUploadAvatar } from "@/pages/Teacher/hooks/useUploadAvtar";
+import { sileo } from "sileo";
+import { useNavigate } from "react-router-dom";
 
 const steps = ["Account", "Personal", "Address", "Teacher", "Review"];
 const stepFields: Record<number, string[]> = {
@@ -48,9 +50,10 @@ const stepFields: Record<number, string[]> = {
 };
 export default function TeacherEnrollForm() {
     const [currentStep, setCurrentStep] = useState(0);
+      const navigate = useNavigate();
     const {
 
-        handleCreateTeacher,
+        mutate: handleCreateTeacher,
     } = useCreateTeacher();
     const {
         uploadAvatarAsync,
@@ -93,7 +96,27 @@ export default function TeacherEnrollForm() {
                 ...values.personalInfo,
                 profileImage: avatarUrl
             },
-        });
+        },  {
+        onSuccess: (response) => {
+          sileo.success({
+            title: "Student Created",
+            description:
+              response?.message ||
+              "Student created successfully",
+          });
+          navigate("/teachers");
+        },
+
+        onError: (error) => {
+          sileo.error({
+            title: "Failed to Create Student",
+            description:
+              error instanceof Error
+                ? error.message
+                : "Something went wrong",
+          });
+        },
+      });
     };
 
     const renderStep = () => {

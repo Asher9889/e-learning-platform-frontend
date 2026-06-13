@@ -195,6 +195,9 @@ export default function ClassRoomLayoutNew() {
     const [camOn, setCamOn] = useState(false);
     // const [chatOpen, setChatOpen] = useState(false);
     const chatOpen = useAppSelector((state) => state.liveClass.chatOpen);
+    const title = useAppSelector(
+  (state) => state.liveClass.title
+);
     const liveKitParticipants = useParticipants();
     const teacherIdentity = useAppSelector((state) => state.liveClass.teacherIdentity);
     console.log(isTablet, "isTabletisTablet", isMobile)
@@ -256,13 +259,12 @@ export default function ClassRoomLayoutNew() {
         ]);
         setMessage("");
     };
-
+const totalSudents = participants || [];
     const visibleStudents = isMobile
         ? participants.slice(0, 3)
         : isTablet
             ? participants.slice(0, 4)
             : participants;
-
     const tabTriggerClass =
         "flex-1 rounded-none py-2.5 text-xs font-semibold tracking-wide text-slate-400 " +
         "data-[state=active]:text-violet-600 data-[state=active]:border-b-2 " +
@@ -283,18 +285,18 @@ export default function ClassRoomLayoutNew() {
                 {/* ══════════════ HEADER ══════════════ */}
                 <header className="flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3 bg-white border-b border-slate-200 shrink-0 gap-2">
                     <p className="text-xs sm:text-sm font-semibold tracking-wide truncate min-w-0">
-                        <span className="text-slate-400 hidden sm:inline">Class: </span>
-                        <span className="text-violet-600">Adv. Maths — Ch. 7 </span>
-                        <p className="hidden sm:inline truncate text-xs">Class started · 10:00 AM</p>
+                        <span className="text-slate-400 hidden sm:inline">Title: </span>
+                        <span className="text-violet-600">{title}</span>
+                        {/* <p className="hidden sm:inline truncate text-xs">Class started · 10:00 AM</p> */}
 
                     </p>
-                    <span className="font-mono text-[12px] sm:text-[13px] text-violet-600 font-semibold shrink-0">
+                    {/* <span className="font-mono text-[12px] sm:text-[13px] text-violet-600 font-semibold shrink-0">
                         {formatTime(seconds)}
-                    </span>
+                    </span> */}
                     <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                         <LiveBadge />
                         <ConnectionIndicator />
-                        <span className="text-[11px] sm:text-xs text-slate-400 hidden sm:inline">18 students</span>
+                        <span className="text-[11px] sm:text-xs text-slate-400 hidden sm:inline">{totalSudents?.length} students</span>
                     </div>
                 </header>
                 {/* ══════════════ FOOTER ══════════════ */}

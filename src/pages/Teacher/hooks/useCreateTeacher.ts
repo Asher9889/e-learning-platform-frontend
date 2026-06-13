@@ -9,6 +9,7 @@ import {
 } from "../schema/teacher.schema";
 
 import { createTeacher } from "../api/teacher.api";
+import { queryClient } from "@/config";
 
 export function useCreateTeacher() {
   const {
@@ -40,7 +41,9 @@ export function useCreateTeacher() {
         "Teacher created successfully",
         data
       );
-
+queryClient.invalidateQueries({
+        queryKey: ["teachers"],
+      });
       reset();
     },
 
@@ -59,7 +62,7 @@ export function useCreateTeacher() {
   }
 
   return {
-    mutate,
+     mutate: mutate.mutate,
     handleCreateTeacher,
 
     handleSubmit,

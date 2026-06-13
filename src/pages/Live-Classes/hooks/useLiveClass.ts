@@ -2,7 +2,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { liveClassApi } from "../api/live.api";
 import type { TStartLiveClassInput, TJoinLiveClassInput } from "../schema/live.schema";
 import type { LiveClassFilters } from "../types";
-
+import { useEffect } from "react";
+import { useAppDispatch } from "@/store/hooks";
+import { setTitle } from "@/store/slices/liveClass.slice";
 export const useUpcomingLiveClasses = (filters?: LiveClassFilters) => {
   return useQuery({
     queryKey: ["live-classes", "upcoming", filters],
@@ -35,11 +37,22 @@ export const useLiveClass = (id: string) => {
 };
 
 export const useLiveClassByRoomName = (roomName: string) => {
-  return useQuery({
+ const dispatch = useAppDispatch();
+
+  const query = useQuery({
     queryKey: ["live-classes", "room", roomName],
     queryFn: () => liveClassApi.getByRoomName(roomName),
     enabled: Boolean(roomName),
   });
+
+  useEffect(() => {
+    const title = query.data?.title;
+    if (title) {
+      dispatch(setTitle(title));
+    }
+  }, [query.data, dispatch]);
+
+  return query;
 }
 
 export const useCreateLiveClass = () => {

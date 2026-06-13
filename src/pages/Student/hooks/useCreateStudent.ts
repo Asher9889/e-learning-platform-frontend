@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createStudent } from "../api/student.api";
 import { studentEnrollSchema, type StudentEnrollFormInput, type StudentEnrollFormOutput } from "../schema/student.schema";
 import { sileo } from "sileo";
+import { queryClient } from "@/config";
 
 
 export function useCreateStudent() {
@@ -34,10 +35,9 @@ export function useCreateStudent() {
       createStudent(data),
 
     onSuccess: (data) => {
-      console.log(
-        "Student created successfully",
-        data
-      );
+     queryClient.invalidateQueries({
+        queryKey: ["create-students"],
+      });
 
       reset();
     },
