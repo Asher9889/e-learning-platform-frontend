@@ -1,14 +1,12 @@
-import { useCallback } from "react"
+import { useState, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Upload, CheckCircle2 } from "lucide-react"
+import { Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useContentUpload } from "@/features/content/hooks/useContentUpload"
 import { ContentUploadForm } from "@/features/content/components/ContentUploadForm"
 import { UploadDropzone } from "@/features/content/components/UploadDropzone"
-import { FileList } from "@/features/content/components/FileList"
-import { UploadProgress } from "@/features/content/components/UploadProgress"
+import { getUppy } from "@/features/upload/services/upload-engine"
 import {
   contentUploadFormSchema,
   type ContentUploadFormData,
@@ -25,31 +23,53 @@ export default function UploadContentPage() {
     },
   })
 
-  const {
-    files,
-    totalProgress,
-    hasFiles,
-    allDone,
-    hasError,
-    isUploading,
-    handleDrop,
-    handleFileInputChange,
-    handleRemoveFile,
-    handleUpload,
-    handlePauseResume,
-  } = useContentUpload()
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 
-  const uploadingCount = files.filter((f) => f.status === "uploading").length
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setSelectedFiles((prev) => [...prev, ...Array.from(e.dataTransfer.files)])
+  }, [])
 
-  const onUpload = useCallback(() => {
-    form.handleSubmit(() => {
-      handleUpload()
+  const handleFileInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(e.target.files ?? [])
+      if (files.length > 0) {
+        setSelectedFiles((prev) => [...prev, ...files])
+      }
+      e.target.value = ""
+    },
+    []
+  )
+
+  const handleRemoveFile = useCallback(
+    (fileName: string) => {
+      setSelectedFiles((prev) => prev.filter((f) => f.name !== fileName))
+    },
+    []
+  )
+
+  const handleUpload = useCallback(() => {
+    form.handleSubmit((data) => {
+      selectedFiles.forEach((file) => {
+        getUppy().addFile({
+          name: file.name,
+          type: file.type,
+          data: file,
+          meta: {
+            title: data.title,
+            description: data.description ?? "",
+            contentType: data.contentType,
+          },
+        })
+      })
+      setSelectedFiles([])
+      form.reset()
+      navigate("/content")
     })()
-  }, [form, handleUpload])
+  }, [form, selectedFiles, navigate])
 
   return (
     <div className="max-w-3xl space-y-8 p-4 md:p-6">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Upload Content</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -60,66 +80,49 @@ export default function UploadContentPage() {
       <div className="space-y-6">
         <ContentUploadForm form={form} />
 
-        {/* Drop Zone */}
         <div className="space-y-2">
-          <p className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-            File
-          </p>
+          <p className="text-sm font-medium leading-none">File</p>
           <UploadDropzone
             onDrop={handleDrop}
             onFileInputChange={handleFileInputChange}
           />
         </div>
 
-        {/* File List */}
-        <FileList
-          files={files}
-          onRemove={handleRemoveFile}
-          onPauseResume={handlePauseResume}
-          totalProgress={totalProgress}
-          isUploading={isUploading}
-        />
-
-        {/* Overall Progress Bar */}
-        {isUploading && (
-          <UploadProgress
-            totalProgress={totalProgress}
-            uploadingCount={uploadingCount}
-          />
+        {selectedFiles.length > 0 && (
+          <div className="rounded-lg border p-3">
+            <p className="mb-2 text-sm font-medium">
+              {selectedFiles.length} file
+              {selectedFiles.length > 1 ? "s" : ""} selected
+            </p>
+            <ul className="space-y-1">
+              {selectedFiles.map((file) => (
+                <li
+                  key={file.name + file.size}
+                  className="flex items-center justify-between text-sm"
+                >
+                  <span className="truncate">{file.name}</span>
+                  <button
+                    onClick={() => handleRemoveFile(file.name)}
+                    className="ml-2 text-xs text-muted-foreground hover:text-destructive"
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
 
-        {/* Actions */}
         <div className="flex items-center gap-3 pt-2">
-          {!allDone ? (
-            <Button
-              size="lg"
-              className="min-w-[140px] gap-2"
-              disabled={!hasFiles || isUploading || hasError}
-              onClick={onUpload}
-            >
-              {isUploading ? (
-                <>
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  Uploading...
-                </>
-              ) : (
-                <>
-                  <Upload className="h-4 w-4" />
-                  Upload
-                </>
-              )}
-            </Button>
-          ) : (
-            <Button
-              size="lg"
-              variant="default"
-              className="min-w-[140px] gap-2"
-              onClick={() => navigate("/content")}
-            >
-              <CheckCircle2 className="h-4 w-4" />
-              Back to Library
-            </Button>
-          )}
+          <Button
+            size="lg"
+            className="min-w-[140px] gap-2"
+            disabled={selectedFiles.length === 0}
+            onClick={handleUpload}
+          >
+            <Upload className="h-4 w-4" />
+            Upload to Library
+          </Button>
           <Button
             size="lg"
             variant="ghost"

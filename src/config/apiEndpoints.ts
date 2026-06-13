@@ -88,7 +88,7 @@ const apiEndpoints = {
             url: "/classes/subjects/summary",
             method: "GET",
         },
-        START_LIVE_CLASS :{
+        START_LIVE_CLASS: {
             url: "/live-classes",
             method: "POST"
         }
@@ -146,7 +146,28 @@ const apiEndpoints = {
             method: "DELETE"
         }
     },
-
+    UPLOADS: {
+        CREATE_MULTIPART_UPLOAD: {
+            url: "/uploads/materials/s3/multipart/create",
+            method: "POST"
+        },
+        SIGN_MULTIPART_UPLOAD: {
+            url: "/uploads/materials/s3/multipart/sign-part",
+            method: "POST"
+        },
+        COMPLETE_MULTIPART_UPLOAD: {
+            url: "/uploads/materials/s3/multipart/complete",
+            method: "POST"
+        },
+        ABORT_MULTIPART_UPLOAD: {
+            url: "/uploads/materials/s3/multipart/abort",
+            method: "POST"
+        },
+        LIST_MULTIPART_UPLOADS: {
+            url: "/uploads/materials/s3/multipart/list-parts",
+            method: "POST"
+        }
+    }
 }
 
 export default apiEndpoints;

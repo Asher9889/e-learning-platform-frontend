@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Search,
   Upload,
@@ -15,6 +14,7 @@ import {
   Archive,
   UserCheck,
 } from "lucide-react";
+import { UploadContentDialog } from "@/features/content/components/UploadContentDialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -89,9 +89,9 @@ const FILTER_TABS = [
 ] as const;
 
 export default function ContentPage() {
-  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   const filtered = useMemo(() => {
     return MOCK_CONTENT.filter((item) => {
@@ -112,10 +112,11 @@ export default function ContentPage() {
             View, manage, and assign learning content across all subjects.
           </p>
         </div>
-        <Button className="gap-2" onClick={() => navigate("/content/upload")}>
+        <Button className="gap-2" onClick={() => setUploadOpen(true)}>
           <Upload className="h-4 w-4" />
           Upload Content
         </Button>
+        <UploadContentDialog open={uploadOpen} onOpenChange={setUploadOpen} />
       </div>
 
       {/* Search + Filters */}

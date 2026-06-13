@@ -4,6 +4,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 
 import { AppSidebar } from "./sidebar/AppSidebar";
 import AppHeader from "./header/AppHeader";
+import { UploadManager } from "@/features/upload/components/UploadManager";
 
 export default function AuthenticatedLayout() {
   const { pathname } = useLocation();
@@ -19,6 +20,8 @@ export default function AuthenticatedLayout() {
           <Outlet />
         </main>
       </div>
+
+      <UploadManager />
     </SidebarProvider>
   );
 }

@@ -20,7 +20,6 @@ import {
   School,
   GraduationCap,
   Library,
-  Upload,
   FolderTree,
   Trash2,
 } from "lucide-react";
@@ -31,7 +30,7 @@ import ActiveLiveClassPage from "@/features/live-class/pages/ActiveLiveClassPage
 
 import DashboardPage from "./pages/dashboard";
 import ContentPage from "./pages/Content";
-import UploadContentPage from "./pages/Content/UploadContent";
+import UploadMetadataPage from "./pages/Content/UploadMetadata";
 
 export const APP_ROUTES: AppRoutes = {
   dashboard: {
@@ -146,20 +145,14 @@ export const APP_ROUTES: AppRoutes = {
     title: "Content Library",
     path: "/content",
     icon: Library,
-    element: ContentPage,
+    element: RouteOutlet,
     showInSidebar: true,
     group: "Learning Content",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
-  },
-
-  uploadContent: {
-    title: "Upload Content",
-    path: "/content/upload",
-    icon: Upload,
-    element: UploadContentPage,
-    showInSidebar: true,
-    group: "Learning Content",
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
+    children: [
+      { path: undefined, element: ContentPage },
+      { path: "upload/metadata", element: UploadMetadataPage },
+    ],
   },
 
   contentCategories: {
