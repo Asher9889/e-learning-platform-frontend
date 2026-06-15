@@ -1,4 +1,4 @@
-import { createElement, useMemo } from "react"
+import { createElement, memo, useMemo } from "react"
 import {
   FileVideo,
   FileText,
@@ -99,7 +99,7 @@ interface UploadItemProps {
   onRemove: (id: string) => void
 }
 
-export function UploadItem({
+export const UploadItem = memo(function UploadItem({
   item,
   onPause,
   onResume,
@@ -107,6 +107,7 @@ export function UploadItem({
   onRetry,
   onRemove,
 }: UploadItemProps) {
+  console.log("Rendering UploadItem:", item)
   const fileIcon = useMemo(() => getFileIcon(item.fileName), [item.fileName])
   const StatusIcon = STATUS_ICONS[item.status]
   const statusColor = STATUS_COLORS[item.status]
@@ -257,4 +258,4 @@ export function UploadItem({
       </div>
     </div>
   )
-}
+})

@@ -9,6 +9,7 @@ import {
   addPendingMetadata,
 } from "../store/upload.slice"
 import { api, apiEndPoints } from "@/config"
+import { sileo } from "sileo"
 
 let instance: Uppy | null = null
 
@@ -62,7 +63,6 @@ function createUppy(): Uppy {
 
     signPart: async (_, { uploadId, key, partNumber }) => {
       const { url, method } = apiEndPoints.UPLOADS.SIGN_MULTIPART_UPLOAD;
-      console.table({ uploadId, key, partNumber })
       const res = await api.request({
         url,
         method,
@@ -110,6 +110,7 @@ function createUppy(): Uppy {
   })
 
   uppy.on("file-added", (file) => {
+    console.log("file-added event:", file);
     store.dispatch(
       addUpload({
         id: file.id,
@@ -125,14 +126,16 @@ function createUppy(): Uppy {
 
   uppy.on("upload-progress", (file, progress) => {
     if (!file) return
+    const bytesUploaded = progress.bytesUploaded ?? 0
+    const bytesTotal = progress.bytesTotal ?? 0
     store.dispatch(
       updateProgress({
         id: file.id,
-        uploadedBytes: progress.bytesUploaded ?? 0,
-        progress: Math.round(progress.percentage ?? 0),
-        speed: progress.bytesUploaded ?? 0,
-        eta: progress.bytesTotal ?? 0,
-      }) 
+        uploadedBytes: bytesUploaded,
+        progress: bytesTotal > 0 ? Math.round((bytesUploaded / bytesTotal) * 100) : 0,
+        speed: progress.bytesPerSecond ?? 0,
+        eta: progress.eta ?? 0,
+      })
     )
   })
 
@@ -152,6 +155,26 @@ function createUppy(): Uppy {
     store.dispatch(
       setStatus({ id: file?.id, status: "FAILED", error: error.message })
     )
+    sileo.error({
+      title: "Upload Error",
+      description: `Failed to upload ${file?.name ?? "Unknown"}: ${error.message}`,
+    })
+  })
+
+  uppy.on("restriction-failed", (_, error) => {
+    // console.warn("Restriction failed for file:", file, "Error:", error)
+    sileo.error({
+      title: "File Rejected",
+      description: error.message,
+    })
+  })
+
+  uppy.on("error", (error) => {
+    console.error("Uppy error:", error)
+    sileo.error({
+      title: "Upload Error",
+      description: `An error occurred during upload: ${error.message}`,
+    })
   })
 
   uppy.on("complete", (result) => {

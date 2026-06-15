@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useEffect, useMemo, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import {
   Upload,
@@ -20,17 +20,24 @@ import { getUppy } from "../services/upload-engine"
 export function UploadManager() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { items, isMinimized, pendingMetadata } = useAppSelector((s) => s.upload)
+  const items = useAppSelector((s) => s.upload.items)
+  const isMinimized = useAppSelector((s) => s.upload.isMinimized)
+  const pendingMetadata = useAppSelector((s) => s.upload.pendingMetadata)
   const hasNavigated = useRef(false)
 
-  const activeCount = items.filter(
-    (i) => i.status === "UPLOADING" || i.status === "QUEUED" || i.status === "PAUSED"
-  ).length
-  const totalProgress = items.length
-    ? Math.round(items.reduce((sum, i) => sum + i.progress, 0) / items.length)
-    : 0
-  const visibleItems = items.filter(
-    (i) => i.status !== "COMPLETED" && i.status !== "CANCELED"
+  const activeCount = useMemo(
+    () => items.filter((i) => i.status === "UPLOADING" || i.status === "QUEUED" || i.status === "PAUSED").length,
+    [items]
+  )
+  const totalProgress = useMemo(
+    () => items.length
+      ? Math.round(items.reduce((sum, i) => sum + i.progress, 0) / items.length)
+      : 0,
+    [items]
+  )
+  const visibleItems = useMemo(
+    () => items.filter((i) => i.status !== "COMPLETED" && i.status !== "CANCELED"),
+    [items]
   )
 
   const handlePauseResume = useCallback((id: string) => {
@@ -52,9 +59,10 @@ export function UploadManager() {
     [dispatch]
   )
 
-  const navigableCount = items.filter(
-    (i) => i.status === "COMPLETED" || i.status === "FAILED" || i.status === "CANCELED"
-  ).length
+  const navigableCount = useMemo(
+    () => items.filter((i) => i.status === "COMPLETED" || i.status === "FAILED" || i.status === "CANCELED").length,
+    [items]
+  )
 
   // Navigate to metadata page once all uploads reach a terminal state
   // and there's pending metadata to fill in
@@ -77,8 +85,14 @@ export function UploadManager() {
     }
   }, [activeCount])
 
+  const itemsRef = useRef(items)
+
+  useEffect(() => {
+    itemsRef.current = items
+  }, [items])
+
   const handleClose = useCallback(() => {
-    items.forEach((i) => {
+    itemsRef.current.forEach((i) => {
       if (
         i.status === "UPLOADING" ||
         i.status === "QUEUED" ||
@@ -89,7 +103,7 @@ export function UploadManager() {
         dispatch(removeItem(i.id))
       }
     })
-  }, [items, dispatch])
+  }, [dispatch])
 
   if (items.length === 0) return null
 

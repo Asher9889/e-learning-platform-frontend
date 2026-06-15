@@ -130,13 +130,17 @@ export function UploadContentDialog({ open, onOpenChange }: UploadContentDialogP
   }, [])
 
   const handleUpload = useCallback(() => {
-    files.forEach((file) => {
-      getUppy().addFile({
-        name: file.file.name,
-        type: file.file.type,
-        data: file.file,
+    try {
+      files.forEach((file) => {
+        getUppy().addFile({
+          name: file.file.name,
+          type: file.file.type,
+          data: file.file,
+        })
       })
-    })
+    } catch (error) {
+      console.error("Error occurred while adding files to Uppy:", error)
+    }
     setFiles([])
     onOpenChange(false)
   }, [files, onOpenChange])

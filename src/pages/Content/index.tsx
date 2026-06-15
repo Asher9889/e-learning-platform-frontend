@@ -16,12 +16,12 @@ type ContentType = "VIDEO" | "PDF" | "DOCUMENT" | "IMAGE"
 interface ContentItem {
   id: string
   title: string
+  description?: string
   type: ContentType
   subject: string
   uploadedBy: string
   uploadedAt: string
   size: string
-  description?: string
 }
 
 const MOCK_CONTENT: ContentItem[] = [
