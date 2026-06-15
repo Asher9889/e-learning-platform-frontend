@@ -69,6 +69,7 @@ const uploadSlice = createSlice({
         error?: string
       }>
     ) {
+      console.log("[REDUX SETSTATUS] Updating status for", action.payload.id, "to", action.payload.status);
       const item = state.items.find((i) => i.id === action.payload.id)
       if (item) {
         item.status = action.payload.status

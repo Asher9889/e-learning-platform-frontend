@@ -19,6 +19,17 @@ import {
 import { cn } from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import type { UploadItem as UploadItemType } from "../types/upload.types"
 
 const FILE_ICONS: Record<string, LucideIcon> = {
@@ -107,7 +118,6 @@ export const UploadItem = memo(function UploadItem({
   onRetry,
   onRemove,
 }: UploadItemProps) {
-  console.log("Rendering UploadItem:", item)
   const fileIcon = useMemo(() => getFileIcon(item.fileName), [item.fileName])
   const StatusIcon = STATUS_ICONS[item.status]
   const statusColor = STATUS_COLORS[item.status]
@@ -135,7 +145,7 @@ export const UploadItem = memo(function UploadItem({
 
         <div className="min-w-0 flex-1">
           {/* File name + status */}
-          <div className="flex items-start justify-between gap-2">
+          <div className="flex items-start justify-between gap-2 bg-red-500">
             <div className="min-w-0">
               <p className="truncate text-sm font-medium">{item.fileName}</p>
               <span
@@ -176,15 +186,38 @@ export const UploadItem = memo(function UploadItem({
                 </Button>
               )}
               {(item.status === "QUEUED" || item.status === "UPLOADING" || item.status === "PAUSED") && (
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  className="text-muted-foreground hover:text-destructive"
-                  onClick={() => onCancel(item.id)}
-                  aria-label="Cancel upload"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      className="text-muted-foreground hover:text-destructive"
+                      aria-label="Cancel upload"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </AlertDialogTrigger>
+
+                  <AlertDialogContent size="sm">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Cancel upload?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to cancel uploading{" "}
+                        <span className="font-medium text-foreground">{item.fileName}</span>
+                        ?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Keep uploading</AlertDialogCancel>
+                      <AlertDialogAction
+                        variant="destructive"
+                        onClick={() => onCancel(item.id)}
+                      >
+                        Yes, cancel
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
               {item.status === "FAILED" && (
                 <>

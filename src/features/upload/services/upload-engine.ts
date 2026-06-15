@@ -26,7 +26,7 @@ function createUppy(): Uppy {
 
 
   const uppy = new Uppy({
-    autoProceed: true,
+    autoProceed: false,
     restrictions: {
       maxFileSize: 5 * 1024 * 1024 * 1024,
       allowedFileTypes: null,
@@ -39,6 +39,7 @@ function createUppy(): Uppy {
 
 
     createMultipartUpload: async (file) => {
+      console.log("[createMultipartUpload] START", file.name);
       const { url, method } = apiEndPoints.UPLOADS.CREATE_MULTIPART_UPLOAD;
       const payload = {
         fileName: file.name,
@@ -51,9 +52,6 @@ function createUppy(): Uppy {
         method,
         data: payload,
       })
-
-      console.log("createMultipartUpload response:", res.data);
-
       return {
         uploadId: res.data.uploadId,
         key: res.data.key,
@@ -68,8 +66,6 @@ function createUppy(): Uppy {
         method,
         data: { uploadId, key, partNumber }
       })
-
-      console.log("signPart response:", res.data);
       return {
         url: res.data.signedUrl,
       }
@@ -124,6 +120,19 @@ function createUppy(): Uppy {
     store.dispatch(removeItem(file.id))
   })
 
+  uppy.on("upload-start", (files) => {
+    if (!files) return
+    console.log("upload-start event:===== all files are", files);
+    Object.values(files).forEach((file) => {
+      store.dispatch(
+        setStatus({
+          id: file.id,
+          status: "UPLOADING",
+        })
+      );
+    });
+  })
+
   uppy.on("upload-progress", (file, progress) => {
     if (!file) return
     const bytesUploaded = progress.bytesUploaded ?? 0
@@ -133,8 +142,10 @@ function createUppy(): Uppy {
         id: file.id,
         uploadedBytes: bytesUploaded,
         progress: bytesTotal > 0 ? Math.round((bytesUploaded / bytesTotal) * 100) : 0,
-        speed: progress.bytesPerSecond ?? 0,
-        eta: progress.eta ?? 0,
+        speed: 0,
+        eta: 0,
+        // speed: progress.bytesPerSecond  ?? 0,
+        // eta: progress.eta ?? 0,
       })
     )
   })
@@ -182,7 +193,7 @@ function createUppy(): Uppy {
       (file) => {
         setTimeout(() => {
           store.dispatch(removeItem(file.id))
-        }, 10_000)
+        }, 30_000)
       }
     )
   })

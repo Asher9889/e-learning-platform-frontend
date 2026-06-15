@@ -8,7 +8,8 @@ import {
   Music,
   Archive,
   File,
-  AlertCircle
+  AlertCircle,
+  Scroll
 } from "lucide-react"
 import {
   Dialog,
@@ -21,6 +22,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { getUppy } from "@/features/upload/services/upload-engine"
 import { formatFileSize } from "@/utils/helper"
+import { ScrollArea } from "#components/ui/scroll-area"
 
 
 const EXT_ICONS: Record<string, React.ReactNode> = {
@@ -129,18 +131,18 @@ export function UploadContentDialog({ open, onOpenChange }: UploadContentDialogP
     setFiles((prev) => prev.filter((f) => f.id !== id))
   }, [])
 
-  const handleUpload = useCallback(() => {
-    try {
-      files.forEach((file) => {
-        getUppy().addFile({
-          name: file.file.name,
-          type: file.file.type,
-          data: file.file,
-        })
+  const handleUpload = useCallback(async () => {
+    const uppy = getUppy();
+    files.forEach((file) => {
+      uppy.addFile({
+        name: file.file.name,
+        type: file.file.type,
+        data: file.file,
       })
-    } catch (error) {
-      console.error("Error occurred while adding files to Uppy:", error)
-    }
+    })
+
+    await uppy.upload();
+
     setFiles([])
     onOpenChange(false)
   }, [files, onOpenChange])
@@ -238,34 +240,36 @@ export function UploadContentDialog({ open, onOpenChange }: UploadContentDialogP
 
               <ul className="max-h-50 overflow-y-auto">
                 {files.map((file) => (
-                  <li
-                    key={file.id}
-                    className="group flex items-center gap-3 px-4 py-2.5 hover:bg-muted/30 transition-colors"
-                  >
-                    <div className="shrink-0 flex h-9 w-9 items-center justify-center rounded-lg bg-muted">
-                      {getFileIcon(file.file.name, file.file.type, "h-4 w-4 text-muted-foreground")}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">
-                        {file.file.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatFileSize(file.file.size)}
-                      </p>
-                    </div>
-
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleRemoveFile(file.id)
-                      }}
-                      className="shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-destructive/10 hover:text-destructive text-muted-foreground"
-                      aria-label={`Remove ${file.file.name}`}
+                  <ScrollArea >
+                    <li
+                      key={file.id}
+                      className="group flex items-center gap-3 px-4 py-2.5 hover:bg-muted/30 transition-colors"
                     >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </li>
+                      <div className="shrink-0 flex h-9 w-9 items-center justify-center rounded-lg bg-muted">
+                        {getFileIcon(file.file.name, file.file.type, "h-4 w-4 text-muted-foreground")}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">
+                          {file.file.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatFileSize(file.file.size)}
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleRemoveFile(file.id)
+                        }}
+                        className="shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-destructive/10 hover:text-destructive text-muted-foreground"
+                        aria-label={`Remove ${file.file.name}`}
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </li>
+                  </ScrollArea>
                 ))}
               </ul>
             </div>

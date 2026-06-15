@@ -107,7 +107,7 @@ export default function ContentPage() {
         <Tabs value={typeFilter} onValueChange={setTypeFilter}>
           <TabsList variant="line" className="mb-0">
             {FILTER_TABS.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value}>
+              <TabsTrigger key={tab.value} value={tab.value} className="cursor-pointer">
                 {tab.label}
               </TabsTrigger>
             ))}
