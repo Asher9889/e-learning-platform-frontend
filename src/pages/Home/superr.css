@@ -1,0 +1,227 @@
+/* ─── Superr Theme ───
+     Warm schoolyard notebook in soft afternoon light.
+     Cream page, orange marker, sticker labels waiting to be peeled.
+  ==================================================================== */
+
+/* ── Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap');
+
+/* ── Custom Properties ── */
+.superr {
+  --color-cream-paper: #fdfbf9;
+  --color-charcoal: #171717;
+  --color-cocoa-ink: #2b1a07;
+  --color-true-black: #000000;
+  --color-dew-drop: #f7efe9;
+  --color-marker-orange: #ff6f1e;
+  --color-burnt-sienna: #ce500a;
+  --color-sky-sticker: #3b82f6;
+  --color-bubblegum-sticker: #ff66cf;
+  --color-sprout-sticker: #22c55e;
+  --color-shadow-mist: #bebcbb;
+
+  --font-gelica: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+  --font-geist: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --text-caption: 16px;
+  --text-body-sm: 18px;
+  --text-body: 20px;
+  --text-subheading: 24px;
+  --text-heading-sm: 28px;
+  --text-heading: 36px;
+  --text-heading-lg: 46px;
+  --text-display: clamp(3rem, 8vw, 6.5rem);
+
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-28: 28px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-48: 48px;
+  --spacing-64: 64px;
+  --spacing-116: 116px;
+
+  --radius-tags: 20px;
+  --radius-cards: 12px;
+  --radius-footer: 56px;
+  --radius-inputs: 8px;
+  --radius-buttons: 20px;
+
+  --shadow-lg: rgba(0, 0, 0, 0.06) 0px 2px 20px 0px;
+  --shadow-subtle: rgba(0, 0, 0, 0.25) 0px 1px 2px 0px;
+
+  --surface-canvas: #fdfbf9;
+  --surface-surface-tint: #f7efe9;
+  --surface-brand-band: #ff6f1e;
+
+  background: var(--surface-canvas);
+  color: var(--color-charcoal);
+  font-family: var(--font-geist);
+}
+
+/* ── Typography ── */
+.superr h1,
+.superr h2,
+.superr h3,
+.superr h4,
+.superr .font-display {
+  font-family: var(--font-gelica);
+  font-weight: 400;
+  color: var(--color-cocoa-ink);
+  letter-spacing: normal;
+  text-transform: lowercase;
+}
+
+/* ── Display Headline ── */
+.superr .display-headline {
+  font-family: var(--font-gelica);
+  font-size: var(--text-display);
+  line-height: 1.08;
+  font-weight: 400;
+  color: var(--color-cocoa-ink);
+  text-transform: lowercase;
+}
+
+/* ── Handwritten Caption ── */
+.superr .handwritten-caption {
+  font-family: var(--font-gelica);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--color-marker-orange);
+  font-style: italic;
+}
+
+/* ── Marker Highlight ── */
+.superr .marker-highlight {
+  color: var(--color-marker-orange);
+  position: relative;
+  display: inline;
+}
+
+.superr .marker-highlight::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 1px;
+  height: 3px;
+  background: var(--color-marker-orange);
+  border-radius: 2px;
+  opacity: 0.6;
+}
+
+/* ── Pill Action Button ── */
+.superr .pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-canvas);
+  border: 1.5px solid var(--color-charcoal);
+  border-radius: var(--radius-buttons);
+  padding: 10px 28px;
+  font-family: var(--font-gelica);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-charcoal);
+  box-shadow: var(--shadow-subtle);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-transform: lowercase;
+  text-decoration: none;
+}
+
+.superr .pill-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 6px 0px;
+}
+
+.superr .pill-btn:active {
+  transform: translateY(0px);
+}
+
+/* ── Sticker ── */
+.superr .sticker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* ── Product Card ── */
+.superr .product-card {
+  background: var(--surface-canvas);
+  border: 1.5px solid var(--color-charcoal);
+  border-radius: var(--radius-cards);
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* ── Tag / Badge ── */
+.superr .tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border: 1.5px solid var(--color-sprout-sticker);
+  border-radius: var(--radius-tags);
+  font-family: var(--font-geist);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-charcoal);
+}
+
+/* ── Brand Mark ── */
+.superr .brand-mark svg {
+  display: block;
+}
+
+/* ── Section spacing ── */
+.superr .section-gap {
+  margin-bottom: 64px;
+}
+
+/* ── Nav link ── */
+.superr .nav-link {
+  font-family: var(--font-geist);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--color-charcoal);
+  text-decoration: none;
+  transition: opacity 0.2s;
+  text-transform: lowercase;
+  cursor: pointer;
+}
+
+.superr .nav-link:hover {
+  opacity: 0.6;
+}
+
+/* ── Footer Brand Band ── */
+.superr .footer-brand-band {
+  background: var(--color-marker-orange);
+  border-radius: var(--radius-footer) var(--radius-footer) 0 0;
+  padding: 48px 32px 40px;
+  color: var(--color-charcoal);
+}
+
+/* ── Arrow connector ── */
+.superr .hand-arrow {
+  stroke: var(--color-charcoal);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-linecap: round;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .superr .display-headline {
+    font-size: clamp(2.2rem, 10vw, 3.5rem);
+  }
+  .superr .product-card {
+    padding: 20px;
+  }
+}

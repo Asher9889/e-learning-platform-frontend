@@ -1,41 +1,30 @@
-import { Button } from "@/components/ui/button";
-import ThemeToggle from "../common/ThemeToggle";
 import { useNavigate } from "react-router-dom";
 
 export function Header() {
   const navigate = useNavigate();
- 
 
   return (
-    <header className="sticky top-0 z-50 border-b-6 border-border backdrop-blur-md bg-background/80 flex items-center justify-center h-16 px-10">
-      <div className="mx-auto w-full max-w-[1100px] flex h-16 items-center justify-between">
+    <header className="superr" style={{ position: 'sticky', top: 0, zIndex: 50, background: 'var(--surface-canvas)', borderBottom: '1px solid var(--color-charcoal)' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <a href="/" className="brand-mark" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="6" width="24" height="20" rx="3" stroke="#171717" strokeWidth="1.5" fill="#fdfbf9" />
+            <path d="M16 14L22 18L16 22L10 18L16 14Z" fill="#171717" />
+            <circle cx="16" cy="18" r="2" fill="#ff6f1e" />
+            <path d="M10 10H22" stroke="#171717" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+          <span style={{ fontFamily: 'var(--font-gelica)', fontSize: 20, color: 'var(--color-cocoa-ink)', textTransform: 'lowercase' }}>elearn</span>
+        </a>
 
-        {/* Logo */}
-        <div className="font-['Syne',_sans-serif] font-extrabold text-[22px] bg-gradient-to-r from-blue-600 to-cyan-400 bg-clip-text text-transparent tracking-[-0.5px]">
-          E-Learning
-        </div>
-
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-6 text-[14px] text-muted-foreground">
-          <a href="#features" className="hover:text-foreground transition-colors">Features</a>
-          <a href="#classroom" className="hover:text-foreground transition-colors">Live Classes</a>
-          <a href="#benefits" className="hover:text-foreground transition-colors">Benefits</a>
-          <a href="#security" className="hover:text-foreground transition-colors">Security</a>
-          <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+          <a href="#features" className="nav-link">features</a>
+          <a href="#classroom" className="nav-link">live classes</a>
+          <a href="#why-us" className="nav-link">why us</a>
+          <a href="#contact" className="nav-link">contact</a>
+          <button className="pill-btn" onClick={() => navigate('/login')}>
+            get started
+          </button>
         </nav>
-
-        {/* Right side */}
-        <div className="flex items-center gap-3.5">
-          <ThemeToggle />
-
-          <Button
-            onClick={() => navigate('/login')}
-            className="bg-blue-600 hover:bg-blue-700 text-white border-none px-[22px] py-[9px] rounded-full text-[14px] font-medium transition-all hover:-translate-y-0.5 hover:shadow-[0_6px_18px_rgba(37,99,235,0.4)]"
-          >
-            Get Started
-          </Button>
-        </div>
-
       </div>
     </header>
   );

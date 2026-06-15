@@ -1,35 +1,53 @@
-import { Button } from '@/components/ui/button';
-import { AnimatedSection } from './Animatedsection';
+interface ContactSectionProps {
+  scrollTo: (id: string) => void;
+}
 
-export function ContactSection() {
-    return (
-        <section id="contact" className="px-10 pt-10 pb-20">
-            <AnimatedSection>
-                <div className="max-w-[1100px] mx-auto bg-gradient-to-br from-[#eff6ff] to-[#ecfeff] dark:from-blue-600/22 dark:to-cyan-500/15 border border-blue-600/20 dark:border-blue-600/35 rounded-[28px] px-10 py-16 text-center relative overflow-hidden">
-                    {/* Decorative blob */}
-                    <div className="absolute -top-[60px] -right-[60px] w-[300px] h-[300px] rounded-full bg-blue-600/6 dark:bg-blue-600/10 blur-[50px] pointer-events-none" />
+export function ContactSection({ scrollTo }: ContactSectionProps) {
+  return (
+    <section id="contact" className="superr" style={{ padding: '0 24px 80px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div className="product-card" style={{
+          padding: '56px 40px',
+          textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          {/* Sticker decorations */}
+          <div className="sticker" style={{ position: 'absolute', top: 20, left: 20, transform: 'rotate(-8deg)' }}>
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+              <circle cx="18" cy="18" r="16" fill="#3b82f6" stroke="#171717" strokeWidth="2" />
+              <path d="M12 18L16 22L24 14" stroke="#171717" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <div className="sticker" style={{ position: 'absolute', bottom: 20, right: 20, transform: 'rotate(12deg)' }}>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <rect x="2" y="2" width="28" height="28" rx="6" fill="#ff66cf" stroke="#171717" strokeWidth="2" />
+              <path d="M16 8V24M8 16H24" stroke="#171717" strokeWidth="2.5" strokeLinecap="round" />
+            </svg>
+          </div>
 
-                    <div className="text-[44px] mb-5">🎓</div>
-                    <h2 className="font-['Syne',_sans-serif] text-[clamp(1.8rem,3.5vw,2.6rem)] font-extrabold text-foreground mb-4 leading-[1.15]">
-                        Ready to Modernize Your<br />Learning Experience?
-                    </h2>
-                    <p className="text-[16px] text-muted-foreground max-w-[500px] mx-auto mb-9 leading-[1.7]">
-                        Let's build a platform tailored for your institution. Contact Multifacet Softwares Systems today for a free consultation.
-                    </p>
-
-                    <div className="flex gap-3.5 justify-center flex-wrap mb-9">
-                        <Button  className="btn-primary-glow" style={{ animationDuration: '4s' }}>
-                            Request a Demo
-                        </Button>
-                        <a
-                            href="mailto:info@multifacetsystems.com"
-                            className="inline-block border border-border text-foreground px-[30px] py-[13px] rounded-full text-[15px] no-underline transition-all duration-200 hover:border-blue-600 hover:text-blue-600"
-                        >
-                            📧 Contact Us
-                        </a>
-                    </div>
-                </div>
-            </AnimatedSection>
-        </section>
-    );
+          <div style={{ fontFamily: 'var(--font-gelica)', fontSize: 24, color: 'var(--color-marker-orange)', marginBottom: 12, textTransform: 'lowercase' }}>
+            ready to transform?
+          </div>
+          <h2 className="display-headline" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', margin: '0 auto 16', maxWidth: 600 }}>
+            let's build your<br />learning future
+          </h2>
+          <p style={{
+            fontFamily: 'var(--font-geist)', fontSize: 16, lineHeight: 1.6,
+            color: 'var(--color-charcoal)', maxWidth: 480, margin: '0 auto 32',
+          }}>
+            free consultation · custom demo tailored to your institution · setup in 48 hours · dedicated support team
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+            <button className="pill-btn" onClick={() => window.location.href = 'mailto:info@multifacetsystems.com'}>
+              talk to us →
+            </button>
+            <button className="pill-btn" onClick={() => scrollTo('features')}>
+              see what we built
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
