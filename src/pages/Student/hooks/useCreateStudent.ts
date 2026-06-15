@@ -34,7 +34,7 @@ export function useCreateStudent() {
     mutationFn: (data: StudentEnrollFormOutput) =>
       createStudent(data),
 
-    onSuccess: (data) => {
+    onSuccess: () => {
      queryClient.invalidateQueries({
         queryKey: ["create-students"],
       });

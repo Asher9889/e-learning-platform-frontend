@@ -1,20 +1,25 @@
 import { useMemo } from "react";
-import { useParticipants, useTracks } from "@livekit/components-react";
+import { useParticipants, useTracks, type TrackReference } from "@livekit/components-react";
 import { Track } from "livekit-client";
 
-export function useTeacherMediaState(teacherIdentity: string | null,myIdentity: string | null) {
+export function useTeacherMediaState(myIdentity?: string | null,teacherIdentity?: string | null) {
   const participants = useParticipants();
 
- const mediaTracks = useTracks(
+const mediaTracks = useTracks(
   [
-    { source: Track.Source.Camera },
-    { source: Track.Source.Microphone },
+    {
+      source: Track.Source.Camera,
+      withPlaceholder: true,
+    },
+    {
+      source: Track.Source.Microphone,
+      withPlaceholder: true,
+    },
   ],
   {
     onlySubscribed: false,
   }
 );
-console.log(myIdentity,"myIdentity")
   return useMemo(() => {
     if (!teacherIdentity) {
       return {
@@ -31,9 +36,11 @@ console.log(myIdentity,"myIdentity")
 
     const isTeacherJoined = !!teacherParticipant;
 
-    const cameraTracks = mediaTracks.filter(
-  (track) =>
-    track.participant.identity === teacherIdentity
+  const cameraTracks = mediaTracks.filter(
+  (track): track is TrackReference =>
+    track.participant.identity === teacherIdentity &&
+    track.source === Track.Source.Camera &&
+    track.publication !== undefined
 );
 
     const micTracks = mediaTracks.filter(

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Room } from "livekit-client";
-import { LiveKitRoom, VideoConference } from "@livekit/components-react";
+import { LiveKitRoom } from "@livekit/components-react";
 import { useLiveClassRoom } from "@/features/live-class/hooks/useLiveClassRoom";
-import { ClassroomLayout } from "@/features/live-class/layouts/ClassroomLayout";
+// import { ClassroomLayout } from "@/features/live-class/layouts/ClassroomLayout";
 import { LoadingState } from "@/features/live-class/components/shared/LoadingState";
 import { ErrorState } from "@/features/live-class/components/shared/ErrorState";
 import { useLiveClassByRoomName } from "@/pages/Live-Classes/hooks/useLiveClass";
@@ -11,7 +11,11 @@ import "@livekit/components-styles";
 import ClassRoomLayoutNew from "../layouts/ClassRoomLayoutNew";
 export default function ActiveLiveClassPage() {
   const { roomName } = useParams<{ roomName: string }>();
+  const [room] = useState(() => new Room());
+  const { data: liveSession } = useLiveClassByRoomName(roomName ?? "");
+  const teacherIdentity = liveSession?.teacher;
 
+  const { connectionParams, isJoining, error, retry } = useLiveClassRoom(room, teacherIdentity, roomName);
   if (!roomName) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-background">
@@ -22,13 +26,6 @@ export default function ActiveLiveClassPage() {
       </div>
     )
   }
-
-  const [room] = useState(() => new Room());
-
-  const { data: liveSession } = useLiveClassByRoomName(roomName);
-  const teacherIdentity = liveSession?.teacher!;
-
-  const { connectionParams, isJoining, error, retry } = useLiveClassRoom(room, teacherIdentity, roomName);
 
   if (isJoining) {
     return (
