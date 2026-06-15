@@ -17,7 +17,6 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import {
   removePendingMetadata,
-  clearPendingMetadata,
 } from "@/features/upload/store/upload.slice"
 
 const CONTENT_TYPES = [
@@ -107,8 +106,8 @@ export default function UploadMetadata() {
   if (pendingMetadata.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
-          <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+          <CheckCircle2 className="h-8 w-8 text-muted-foreground" />
         </div>
         <h2 className="text-xl font-semibold">All up to date</h2>
         <p className="max-w-sm text-sm text-muted-foreground">
@@ -125,7 +124,6 @@ export default function UploadMetadata() {
   const allFilled = pendingMetadata.every(
     (item) => forms[item.fileId]?.title?.trim()
   )
-  const allSubmitted = pendingMetadata.length === 0
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 p-4 md:p-6">

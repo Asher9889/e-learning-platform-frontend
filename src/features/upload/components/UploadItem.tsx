@@ -1,3 +1,4 @@
+import { createElement, useMemo } from "react"
 import {
   FileVideo,
   FileText,
@@ -57,10 +58,10 @@ const STATUS_ICONS: Record<string, LucideIcon> = {
 
 const STATUS_COLORS: Record<string, string> = {
   QUEUED: "text-muted-foreground",
-  UPLOADING: "text-blue-500",
-  PAUSED: "text-amber-500",
-  PROCESSING: "text-purple-500",
-  COMPLETED: "text-emerald-500",
+  UPLOADING: "text-foreground",
+  PAUSED: "text-muted-foreground",
+  PROCESSING: "text-foreground",
+  COMPLETED: "text-muted-foreground",
   FAILED: "text-destructive",
   CANCELED: "text-muted-foreground",
 }
@@ -106,7 +107,7 @@ export function UploadItem({
   onRetry,
   onRemove,
 }: UploadItemProps) {
-  const FileIcon = getFileIcon(item.fileName)
+  const fileIcon = useMemo(() => getFileIcon(item.fileName), [item.fileName])
   const StatusIcon = STATUS_ICONS[item.status]
   const statusColor = STATUS_COLORS[item.status]
   const isSpinning = item.status === "UPLOADING" || item.status === "PROCESSING"
@@ -117,8 +118,7 @@ export function UploadItem({
       aria-label={`Upload: ${item.fileName}`}
       className={cn(
         "rounded-lg border p-3 transition-colors",
-        item.status === "FAILED" && "border-destructive/30 bg-destructive/5",
-        item.status === "COMPLETED" && "border-emerald-500/30 bg-emerald-500/5"
+        item.status === "FAILED" && "border-destructive/30 bg-destructive/5"
       )}
     >
       <div className="flex items-start gap-3">
@@ -129,7 +129,7 @@ export function UploadItem({
             "bg-muted text-muted-foreground"
           )}
         >
-          <FileIcon className="h-4 w-4" />
+          {createElement(fileIcon, { className: "h-4 w-4" })}
         </div>
 
         <div className="min-w-0 flex-1">
@@ -157,8 +157,7 @@ export function UploadItem({
               {item.status === "UPLOADING" && (
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
+                  size="icon-sm"
                   onClick={() => onPause(item.id)}
                   aria-label="Pause upload"
                 >
@@ -168,8 +167,7 @@ export function UploadItem({
               {item.status === "PAUSED" && (
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
+                  size="icon-sm"
                   onClick={() => onResume(item.id)}
                   aria-label="Resume upload"
                 >
@@ -179,8 +177,8 @@ export function UploadItem({
               {(item.status === "QUEUED" || item.status === "UPLOADING" || item.status === "PAUSED") && (
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                  size="icon-sm"
+                  className="text-muted-foreground hover:text-destructive"
                   onClick={() => onCancel(item.id)}
                   aria-label="Cancel upload"
                 >
@@ -191,8 +189,7 @@ export function UploadItem({
                 <>
                   <Button
                     variant="ghost"
-                    size="icon"
-                    className="h-7 w-7"
+                    size="icon-sm"
                     onClick={() => onRetry(item.id)}
                     aria-label="Retry upload"
                   >
@@ -200,8 +197,8 @@ export function UploadItem({
                   </Button>
                   <Button
                     variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                    size="icon-sm"
+                    className="text-muted-foreground hover:text-destructive"
                     onClick={() => onRemove(item.id)}
                     aria-label="Remove upload"
                   >
@@ -212,8 +209,8 @@ export function UploadItem({
               {(item.status === "COMPLETED" || item.status === "CANCELED") && (
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                  size="icon-sm"
+                  className="text-muted-foreground hover:text-foreground"
                   onClick={() => onRemove(item.id)}
                   aria-label="Dismiss"
                 >
@@ -229,8 +226,7 @@ export function UploadItem({
               value={item.progress}
               className={cn(
                 "h-1.5",
-                item.status === "FAILED" && "[&>[data-slot=progress-bar]]:bg-destructive",
-                item.status === "COMPLETED" && "[&>[data-slot=progress-bar]]:bg-emerald-500"
+                item.status === "FAILED" && "[&>[data-slot=progress-bar]]:bg-destructive"
               )}
             />
 

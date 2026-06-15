@@ -33,11 +33,7 @@ export function UploadManager() {
     (i) => i.status !== "COMPLETED" && i.status !== "CANCELED"
   )
 
-  const handlePause = useCallback((id: string) => {
-    getUppy().pauseResume(id)
-  }, [])
-
-  const handleResume = useCallback((id: string) => {
+  const handlePauseResume = useCallback((id: string) => {
     getUppy().pauseResume(id)
   }, [])
 
@@ -60,6 +56,8 @@ export function UploadManager() {
     (i) => i.status === "COMPLETED" || i.status === "FAILED" || i.status === "CANCELED"
   ).length
 
+  // Navigate to metadata page once all uploads reach a terminal state
+  // and there's pending metadata to fill in
   useEffect(() => {
     if (
       items.length > 0 &&
@@ -79,6 +77,20 @@ export function UploadManager() {
     }
   }, [activeCount])
 
+  const handleClose = useCallback(() => {
+    items.forEach((i) => {
+      if (
+        i.status === "UPLOADING" ||
+        i.status === "QUEUED" ||
+        i.status === "PAUSED"
+      ) {
+        getUppy().removeFile(i.id)
+      } else {
+        dispatch(removeItem(i.id))
+      }
+    })
+  }, [items, dispatch])
+
   if (items.length === 0) return null
 
   return (
@@ -88,19 +100,19 @@ export function UploadManager() {
       className="fixed bottom-4 right-4 z-50 w-[400px] max-w-[calc(100vw-2rem)]"
     >
       <Card
+        size="sm"
         className={cn(
-          "border shadow-lg transition-all duration-300",
+          "shadow-[0_4px_16px_rgba(0,0,0,0.1)] transition-all duration-300",
           isMinimized && "cursor-pointer"
         )}
         onClick={() => {
           if (isMinimized) dispatch(toggleMinimized())
         }}
       >
-        {/* Header */}
         <CardHeader
           className={cn(
-            "flex flex-row items-center justify-between p-3",
-            "border-b bg-muted/30"
+            "flex flex-row items-center justify-between",
+            "border-b bg-muted/50"
           )}
         >
           <div className="flex items-center gap-2">
@@ -118,8 +130,7 @@ export function UploadManager() {
             )}
             <Button
               variant="ghost"
-              size="icon"
-              className="h-7 w-7"
+              size="icon-sm"
               onClick={(e) => {
                 e.stopPropagation()
                 dispatch(toggleMinimized())
@@ -136,20 +147,11 @@ export function UploadManager() {
             </Button>
             <Button
               variant="ghost"
-              size="icon"
-              className="h-7 w-7 text-muted-foreground hover:text-destructive"
-              onClick={() => {
-                items.forEach((i) => {
-                  if (
-                    i.status === "UPLOADING" ||
-                    i.status === "QUEUED" ||
-                    i.status === "PAUSED"
-                  ) {
-                    getUppy().removeFile(i.id)
-                  } else {
-                    dispatch(removeItem(i.id))
-                  }
-                })
+              size="icon-sm"
+              className="text-muted-foreground hover:text-destructive"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleClose()
               }}
               aria-label="Close upload panel"
             >
@@ -158,10 +160,10 @@ export function UploadManager() {
           </div>
         </CardHeader>
 
-        {/* Minimized: just show progress bar */}
+        {/* Minimized: show progress bar */}
         {isMinimized && activeCount > 0 && (
-          <div className="px-3 pb-3 pt-1">
-            <Progress value={totalProgress} className="h-1.5" />
+          <div className="px-3 pb-3">
+            <Progress value={totalProgress} className="h-2" />
           </div>
         )}
 
@@ -169,19 +171,19 @@ export function UploadManager() {
         {!isMinimized && (
           <CardContent className="p-0">
             {visibleItems.length === 0 ? (
-              <div className="flex flex-col items-center gap-2 py-8 text-center text-sm text-muted-foreground">
+              <div className="flex flex-col items-center gap-2 py-10 text-center text-sm text-muted-foreground">
                 <FileUp className="h-8 w-8" />
-                <p>No active uploads</p>
+                <p className="text-balance">No active uploads</p>
               </div>
             ) : (
               <ScrollArea className="max-h-80">
-                <div role="list" className="space-y-2 p-3">
+                <div role="list" className="flex flex-col gap-2 p-3">
                   {visibleItems.map((item) => (
                     <UploadItem
                       key={item.id}
                       item={item}
-                      onPause={handlePause}
-                      onResume={handleResume}
+                      onPause={handlePauseResume}
+                      onResume={handlePauseResume}
                       onCancel={handleCancel}
                       onRetry={handleRetry}
                       onRemove={handleRemove}

@@ -132,7 +132,7 @@ function createUppy(): Uppy {
         progress: Math.round(progress.percentage ?? 0),
         speed: progress.bytesUploaded ?? 0,
         eta: progress.bytesTotal ?? 0,
-      })
+      }) 
     )
   })
 

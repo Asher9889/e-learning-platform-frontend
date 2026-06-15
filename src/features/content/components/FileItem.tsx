@@ -30,7 +30,7 @@ export function FileItem({ file, onRemove, onPauseResume }: FileItemProps) {
       className={cn(
         "rounded-lg border p-3 transition-colors",
         file.status === "error" && "border-destructive/30 bg-destructive/5",
-        file.status === "done" && "border-emerald-500/30 bg-emerald-500/5"
+        file.status === "done" && "border-border bg-muted/50"
       )}
     >
       <div className="flex items-start gap-3">
@@ -77,7 +77,7 @@ export function FileItem({ file, onRemove, onPauseResume }: FileItemProps) {
                   className={cn(
                     "h-full rounded-full transition-all duration-300",
                     file.status === "error" && "bg-destructive",
-                    file.status === "done" && "bg-emerald-500",
+                    file.status === "done" && "bg-primary",
                     file.status === "uploading" && "bg-primary",
                     file.status === "waiting" && "bg-muted-foreground/20"
                   )}
@@ -103,7 +103,7 @@ export function FileItem({ file, onRemove, onPauseResume }: FileItemProps) {
                 </span>
               )}
               {file.status === "done" && (
-                <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                <span className="flex items-center gap-1 text-foreground">
                   <CheckCircle2 className="h-3 w-3" />
                   Uploaded
                 </span>

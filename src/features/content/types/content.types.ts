@@ -25,11 +25,11 @@ export const FILE_TYPE_ICONS: Record<string, LucideIcon> = {
 }
 
 export const TYPE_COLORS: Record<string, string> = {
-  [FILE_CATEGORY.VIDEO]: "text-blue-500 bg-blue-500/10",
-  [FILE_CATEGORY.PDF]: "text-red-500 bg-red-500/10",
-  [FILE_CATEGORY.DOCUMENT]: "text-amber-500 bg-amber-500/10",
-  [FILE_CATEGORY.IMAGE]: "text-emerald-500 bg-emerald-500/10",
-  [FILE_CATEGORY.AUDIO]: "text-violet-500 bg-violet-500/10",
+  [FILE_CATEGORY.VIDEO]: "text-muted-foreground bg-muted",
+  [FILE_CATEGORY.PDF]: "text-muted-foreground bg-muted",
+  [FILE_CATEGORY.DOCUMENT]: "text-muted-foreground bg-muted",
+  [FILE_CATEGORY.IMAGE]: "text-muted-foreground bg-muted",
+  [FILE_CATEGORY.AUDIO]: "text-muted-foreground bg-muted",
   OTHER: "text-muted-foreground bg-muted",
 }
 
