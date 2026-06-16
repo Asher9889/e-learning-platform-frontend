@@ -7,7 +7,7 @@
 // }
 
 // export default ClassRoomLayoutNew
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo } from "react";
 // import { Badge } from "@/components/ui/badge";
 // import { Button } from "@/components/ui/button";
 // import { Input } from "@/components/ui/input";
@@ -39,9 +39,10 @@ import { useMediaQuery } from "#hooks/use-media-query";
 import { setChatOpen } from "../store/liveClass.slice";
 // import { RoomEvent } from "livekit-client";
 import notificationSound from "@/assets/sounds/notification.mp3";
-import { useRoomContext } from "@livekit/components-react";
+// import { useRoomContext } from "@livekit/components-react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import handRaiseAnimation from "@/assets/animations/hand-raise.lottie";
+import { useSingleSpeakerSystem } from "../hooks/useSingleSpeakerSystem";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Student {
@@ -189,7 +190,7 @@ function extractAvatar(metadata: string): string | undefined {
     }
 }
 export default function ClassRoomLayoutNew() {
-    const [seconds, setSeconds] = useState(42 * 60 + 17);
+    // const [seconds, setSeconds] = useState(42 * 60 + 17);
     // const [message, setMessage] = useState("");
     const isTablet = useMediaQuery("(max-width: 1024px)");
     const isMobile = useMediaQuery("(max-width: 768px)");
@@ -200,22 +201,26 @@ export default function ClassRoomLayoutNew() {
     //     Record<string, boolean>
     // >({});
     const previousRaisedUsers = useRef(new Set<string>());
-    const room = useRoomContext();
+    // const room = useRoomContext();
     // const [chatOpen, setChatOpen] = useState(false);
     const chatOpen = useAppSelector((state) => state.liveClass.chatOpen);
     const title = useAppSelector(
         (state) => state.liveClass.title
     );
     const liveKitParticipants = useParticipants();
-    const participantIdentities = useMemo(
-        () => liveKitParticipants.map(p => p.identity).join(","),
-        [liveKitParticipants]
-    );
+    // const participantIdentities = useMemo(
+    //     () => liveKitParticipants.map(p => p.identity).join(","),
+    //     [liveKitParticipants]
+    // );
     const myIdentity = useAppSelector(
         (state) => state?.auth?.user?.id
     );
-
     const teacherIdentity = useAppSelector((state) => state.liveClass.teacherIdentity);
+    // const myId = myIdentity;
+    const teacherId = teacherIdentity?.id;
+    const { activeSpeaker, fadeDuration } =
+        useSingleSpeakerSystem(liveKitParticipants, teacherId);
+
 
     // useEffect(() => {
     //     const check = () => {
@@ -257,8 +262,8 @@ export default function ClassRoomLayoutNew() {
 
     const participants = useMemo(() => {
         return liveKitParticipants
-            .filter((p) =>   p.identity &&
-        p.identity.trim() !== "" && p.identity !== teacherIdentity?.id && p.identity !== myIdentity)
+            .filter((p) => p.identity &&
+                p.identity.trim() !== "" && p.identity !== teacherIdentity?.id && p.identity !== myIdentity)
             .map((p) => ({
                 identity: p.identity,
                 name: p.name || p.identity,
@@ -267,7 +272,9 @@ export default function ClassRoomLayoutNew() {
                 isMuted: p.isMicrophoneEnabled === false,
                 isCameraOff: p.isCameraEnabled === false,
                 handRaised: p.attributes?.handRaised === "true",
-                isSpeaking: p.isSpeaking,
+                // isSpeaking: p.isSpeaking,
+                audioLevel: p.audioLevel || 0,
+                isSpeaking: p.identity === activeSpeaker,
             })).sort((a, b) => {
                 if (a.handRaised && !b.handRaised) return -1;
                 if (!a.handRaised && b.handRaised) return 1;
@@ -279,14 +286,13 @@ export default function ClassRoomLayoutNew() {
         //         ? p.name.toLowerCase().includes(searchQuery.toLowerCase())
         //         : true
         // );
-    }, [liveKitParticipants, teacherIdentity, myIdentity]);
-    console.log(participants, "participantsparticipantsparticipants14231235", participantIdentities, "liveKitParticipants", liveKitParticipants)
-    console.log(room.localParticipant.permissions);
+    }, [liveKitParticipants, teacherIdentity, myIdentity, activeSpeaker]);
+
     // Timer
-    useEffect(() => {
-        const id = setInterval(() => setSeconds((s) => s + 1), 1000);
-        return () => clearInterval(id);
-    }, []);
+    // useEffect(() => {
+    //     const id = setInterval(() => setSeconds((s) => s + 1), 1000);
+    //     return () => clearInterval(id);
+    // }, []);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
@@ -306,12 +312,12 @@ export default function ClassRoomLayoutNew() {
         document.addEventListener("click", unlock, { once: true });
         document.addEventListener("touchstart", unlock, { once: true });
     }, []);
-    const formatTime = (s: number) => {
-        const h = Math.floor(s / 3600);
-        const m = Math.floor((s % 3600) / 60);
-        const sec = s % 60;
-        return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
-    };
+    // const formatTime = (s: number) => {
+    //     const h = Math.floor(s / 3600);
+    //     const m = Math.floor((s % 3600) / 60);
+    //     const sec = s % 60;
+    //     return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+    // };
 
     // const handleSend = () => {
     //     if (!message.trim()) return;
@@ -347,7 +353,9 @@ export default function ClassRoomLayoutNew() {
             }
         });
     }, [participants]);
-    const totalSudents = participants || [];
+    const totalSudents = liveKitParticipants
+        .filter((p) => p.identity &&
+            p.identity.trim() !== "" && p.identity !== teacherIdentity?.id) || [];
     const visibleStudents = isMobile
         ? participants.slice(0, 3)
         : isTablet
@@ -360,7 +368,7 @@ export default function ClassRoomLayoutNew() {
     //     "data-[state=active]:shadow-none";
 
 
-        console.log(visibleStudents,"visibleStudentsvisibleStudentsvisibleStudents",participants)
+    console.log(visibleStudents, "visibleStudentsvisibleStudentsvisibleStudents", liveKitParticipants)
     return (
         <>
             <style>{`
@@ -380,9 +388,9 @@ export default function ClassRoomLayoutNew() {
                         {/* <p className="hidden sm:inline truncate text-xs">Class started · 10:00 AM</p> */}
 
                     </p>
-                    <span className="font-mono text-[12px] sm:text-[13px] text-violet-600 font-semibold shrink-0">
+                    {/* <span className="font-mono text-[12px] sm:text-[13px] text-violet-600 font-semibold shrink-0">
                         {formatTime(seconds)}
-                    </span>
+                    </span> */}
                     <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                         <LiveBadge />
                         <ConnectionIndicator />
@@ -401,7 +409,7 @@ export default function ClassRoomLayoutNew() {
                     <main className="flex flex-col flex-1 p-2 sm:p-3 lg:p-4 gap-2 sm:gap-3 overflow-hidden min-w-0">
 
                         {/* Teacher video */}
-                        <MainStageNew />
+                        <MainStageNew participants={liveKitParticipants} />
 
                         {/* Controls */}
                         {/* <div className="flex items-center justify-center gap-2 sm:gap-2.5 py-0.5 sm:py-1">
@@ -489,36 +497,62 @@ export default function ClassRoomLayoutNew() {
                         {/* Students strip */}
                         <div className="flex gap-1.5 sm:gap-2">
                             {visibleStudents.map((s) => (
+
                                 <div
                                     key={s.identity}
-                                    className={`flex-1 rounded-lg bg-white border px-2 py-1.5 sm:px-2.5 sm:py-2 flex items-center gap-1.5 sm:gap-2 min-w-0 transition-all duration-200 shadow-sm `}
+                                    className="flex-1 rounded-lg bg-white border px-2 py-1.5 sm:px-2.5 sm:py-2 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm"
+                                    style={{
+                                        borderColor: s.isSpeaking ? "#4ade80" : "#e2e8f0",
+                                        boxShadow: s.isSpeaking
+                                            ? "0 0 0 1.5px #4ade8066"
+                                            : "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+                                        // Smooth transition on border/shadow — duration matches hook fade
+                                        transition: `border-color ${fadeDuration}ms ease, box-shadow ${fadeDuration}ms ease`,
+                                    }}
                                 >
-                                      {/* ${s.status === "speaking"
-                                         ? "border-emerald-300 shadow-emerald-100"
-                                         : "border-slate-200"
-                                         } */}
-                                    <div
-                                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-slate-500 to-slate-300  flex items-center justify-center text-[11px] sm:text-[13px] font-semibold text-white shrink-0`}
-                                    >
-                                        {s.avatar || s.name.charAt(0).toUpperCase()}
+                                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-slate-500 to-slate-300 flex items-center justify-center text-[11px] sm:text-[13px] font-semibold text-white shrink-0">
+                                        {s.avatar ? (
+                                            <img
+                                                src={s.avatar}
+                                                alt={s.name}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    e.currentTarget.style.display = "none";
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full rounded-full bg-gradient-to-br from-slate-500 to-slate-300 flex items-center justify-center text-[11px] sm:text-[13px] font-semibold text-white">
+                                                {s.name.charAt(0).toUpperCase()}
+                                            </div>
+                                        )}
                                     </div>
+
                                     <div className="min-w-0 hidden sm:block">
                                         <div className="flex items-center gap-1">
                                             <p className="text-[11px] sm:text-[12px] font-semibold text-slate-700 truncate">
                                                 {s.name}
                                             </p>
-                                             <div className="w-5 h-5 shrink-0">
-                                                {s.handRaised && (
-                                                    <DotLottieReact
-                                                        src={handRaiseAnimation}
-                                                        autoplay
-                                                        loop
-                                                    />
-                                                )}
-                                            </div>
+
+                                            {s.handRaised && (
+                                                <DotLottieReact src={handRaiseAnimation} autoplay loop />
+                                            )}
+
+                                            {/* Speaking indicator — fades in/out via opacity transition */}
+                                            <span
+                                                className="ml-1 flex items-center gap-[2px]"
+                                                style={{
+                                                    opacity: s.isSpeaking ? 1 : 0,
+                                                    transition: `opacity ${fadeDuration}ms ease`,
+                                                    // pointer-events none when hidden so it doesn't block clicks
+                                                    pointerEvents: s.isSpeaking ? "auto" : "none",
+                                                }}
+                                            >
+                                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                                                <span className="text-[10px] text-green-600 font-medium">speaking</span>
+                                            </span>
                                         </div>
 
-                                        <StudentStatusLabel status={"online"} />
+                                        <StudentStatusLabel status="online" />
                                     </div>
                                 </div>
                             ))}

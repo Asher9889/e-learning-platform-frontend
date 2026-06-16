@@ -16,6 +16,8 @@ export default function ActiveLiveClassPage() {
   const teacherIdentity = liveSession?.teacher;
 
   const { connectionParams, isJoining, error, retry } = useLiveClassRoom(room, teacherIdentity, roomName);
+
+  console.log("roomroomroomroomroom3543434354354",room)
   if (!roomName) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-background">
@@ -46,7 +48,7 @@ export default function ActiveLiveClassPage() {
       </div>
     );
   }
-
+console.log(room,"roomroomroomroomroom3543434354354")
   return (
     <LiveKitRoom
       token={connectionParams?.token}

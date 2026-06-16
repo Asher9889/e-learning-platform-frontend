@@ -1,4 +1,3 @@
-import React from 'react'
 import { Users } from "lucide-react";
 import { useAppSelector } from '@/store/hooks';
 import { getInitials } from '@/utils/helper';
@@ -6,9 +5,12 @@ import { cn } from "@/lib/utils";
 
 interface TeacherAudioOnlyCardProps {
   hasScreenShare?: boolean;
+  isSpeaking?: boolean
 }
 
-function AudioBars({ className = "" }: { className?: string }) {
+
+function AudioBars({ className = "" ,isSpeaking}: { className?: string, isSpeaking?:boolean}) {
+  console.log(isSpeaking ,"isSpeakingaudio")
   return (
     <div className={`flex items-end gap-[2px] ${className}`}>
       {[6, 12, 8, 15, 6].map((h, i) => (
@@ -17,7 +19,7 @@ function AudioBars({ className = "" }: { className?: string }) {
           className="w-[3px] rounded-sm bg-emerald-500"
           style={{
             height: `${h}px`,
-            animation: `audioPulse 0.8s ${i * 0.15}s ease-in-out infinite`,
+            animation: isSpeaking ? `audioPulse 0.8s ${i * 0.15}s ease-in-out infinite`: '',
           }}
         />
       ))}
@@ -25,7 +27,9 @@ function AudioBars({ className = "" }: { className?: string }) {
   );
 }
 
-function TeacherAudioOnlyCard({ hasScreenShare = false }: TeacherAudioOnlyCardProps) {
+function TeacherAudioOnlyCard({ hasScreenShare = false,isSpeaking }: TeacherAudioOnlyCardProps) {
+  console.log(isSpeaking ,"isSpeakingaudio TeacherAudioOnlyCard")
+
   const teacherIdentity = useAppSelector(
     (state) => state.liveClass.teacherIdentity
   );
@@ -56,7 +60,7 @@ function TeacherAudioOnlyCard({ hasScreenShare = false }: TeacherAudioOnlyCardPr
           <p className="text-[11px] font-medium text-slate-700 truncate min-w-0">
             {teacherIdentity?.name}
           </p>
-          <AudioBars className="shrink-0" />
+          <AudioBars className="shrink-0" isSpeaking={isSpeaking}/>
         </div>
       </div>
     );
@@ -118,7 +122,7 @@ function TeacherAudioOnlyCard({ hasScreenShare = false }: TeacherAudioOnlyCardPr
 
       {/* Audio bars — bottom right, always visible */}
       <div className="absolute bottom-4 right-3 sm:bottom-5 sm:right-4 shrink-0">
-        <AudioBars />
+        <AudioBars isSpeaking={isSpeaking}/>
       </div>
 
       {/* Student count chip — mobile only */}
