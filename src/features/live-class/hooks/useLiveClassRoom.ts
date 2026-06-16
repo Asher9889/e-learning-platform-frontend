@@ -21,7 +21,7 @@ interface UseLiveClassRoomReturn {
   leaveRoom: () => void;
 }
 
-export function useLiveClassRoom(room: Room, teacherIdentity: ITeacherIdentity, roomName?: string): UseLiveClassRoomReturn {
+export function useLiveClassRoom(room: Room, teacherIdentity?: ITeacherIdentity, roomName?: string): UseLiveClassRoomReturn {
   const dispatch = useAppDispatch();
 
   const enabled = Boolean(roomName) && Boolean(teacherIdentity);
@@ -86,7 +86,7 @@ export function useLiveClassRoom(room: Room, teacherIdentity: ITeacherIdentity, 
 
   return {
     connectionParams,
-    isJoining: isLoading,
+    isJoining: !enabled || isLoading || !connectionParams,
     error: error as Error | null,
     retry: () => refetch(),
     leaveRoom,

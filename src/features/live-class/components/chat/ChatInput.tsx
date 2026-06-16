@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
@@ -18,11 +18,13 @@ export function ChatInput({
   const [content, setContent] = useState("");
   const room = useRoomContext();
   const dispatch = useAppDispatch();
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isTypingRef = useRef(false);
   const participantIdentity = useAppSelector(
     (state) => state.liveClass.participantIdentity
   );
 
-  const send = useCallback(() => {
+  const send = useCallback(async () => {
     const trimmed = content.trim();
     if (!trimmed) return;
 
@@ -45,10 +47,37 @@ export function ChatInput({
     } catch {
       // publish failed silently
     }
+    await room.localParticipant.setAttributes({
+      typing: "false",
+    });
 
+    isTypingRef.current = false;
     setContent("");
+
   }, [content, dispatch, participantIdentity, room.localParticipant, type]);
 
+
+  const updateTypingStatus = async () => {
+    if (!isTypingRef.current) {
+      isTypingRef.current = true;
+
+      await room.localParticipant.setAttributes({
+        typing: "true",
+      });
+    }
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(async () => {
+      isTypingRef.current = false;
+
+      await room.localParticipant.setAttributes({
+        typing: "false",
+      });
+    }, 1500);
+  };
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -56,11 +85,34 @@ export function ChatInput({
     }
   };
 
+  // const handleChange = async (
+  //   e: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const value = e.target.value;
+  //   setContent(value);
+
+  //   room.localParticipant.setAttributes({
+  //     typing: "true",
+  //   });
+
+  //   if (typingTimeoutRef.current) {
+  //     clearTimeout(typingTimeoutRef.current);
+  //   }
+
+  //   typingTimeoutRef.current = setTimeout(() => {
+  //     room.localParticipant.setAttributes({
+  //       typing: "false",
+  //     });
+  //   }, 1500);
+  // };
   return (
     <div className="flex items-center gap-2 p-3 border-t">
       <Input
         value={content}
-        onChange={(e) => setContent(e.target.value)}
+        onChange={(e) => {
+          setContent(e.target.value);
+          updateTypingStatus();
+        }}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         className="h-9 text-sm"

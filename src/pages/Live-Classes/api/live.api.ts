@@ -1,6 +1,6 @@
 import { apiEndPoints } from "@/config";
-import type { TStartLiveClassInput, TJoinLiveClassInput } from "../schema/live.schema";
-import type { IActiveLiveSession, IBaseApiResponse, IJoinLiveClassResponse, ILiveSession, IUpcomingLiveClassesResponse, LiveClassFilters } from "../types";
+import type { TStartLiveClassInput } from "../schema/live.schema";
+import type { IActiveLiveSession, IJoinLiveClassResponse, ILiveSession, IUpcomingLiveClassesResponse, LiveClassFilters } from "../types";
 
 import apiRequest from "@/lib/request";
 import type { Method } from "axios";

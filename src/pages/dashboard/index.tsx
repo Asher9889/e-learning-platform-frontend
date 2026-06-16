@@ -7,12 +7,12 @@ import { TeacherPanel } from "@/components/dashboard/TeacherPanel";
 import { StudentPanel } from "@/components/dashboard/StudentPanel";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
-import { useGetUser } from "./hooks/useGetUser";
-import { useEffect } from "react";
+// import { useGetUser } from "./hooks/useGetUser";
+// import { useEffect } from "react";
 
 
 export default function DashboardPage() {
-  const getUserMutation = useGetUser();
+  // const getUserMutation = useGetUser();
 //   const queryClient = useQueryClient();
 
 // const user = queryClient.getQueryData(['user']);
@@ -26,11 +26,11 @@ export default function DashboardPage() {
     useSelector(
       (state: RootState) => state.auth.user?.role
     ) ;
-    useEffect(()=>{
-      const response =  getUserMutation.mutateAsync();
-      console.log(response, 'response');
-    },[])
-    console.log(role,"aaaaaadasdasd")
+    // useEffect(()=>{
+    //   const response =  getUserMutation.mutateAsync();
+    //   console.log(response, 'response');
+    // },[])
+    // console.log(role,"aaaaaadasdasd")
 // const role: string = 'teacher';
   return (
     <div className="space-y-6 p-4 md:p-6">

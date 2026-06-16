@@ -16,15 +16,27 @@ export function RaiseHandButton() {
     dispatch(setHandRaised(newState));
 
     try {
-      await room.localParticipant.publishData(
-        new TextEncoder().encode(
-          JSON.stringify({ type: "hand_raise", raised: newState })
-        ),
-        { reliable: true }
-      );
-    } catch {
+      // await room.localParticipant.publishData(
+      //   new TextEncoder().encode(
+      //     JSON.stringify({ type: "hand_raise", raised: newState })
+      //   ),
+      //   { reliable: true }
+      // );
+      console.log("button clicked");
+      await room.localParticipant.setAttributes({
+        handRaised: String(newState),
+      });
+      console.log("button clicked",String(newState));
+
+    } catch (error) {
       // fallback silently
+      console.log("button clicked error",error);
     }
+
+    console.log(
+      "My Attributes:",
+      room.localParticipant.attributes
+    );
   };
 
   return (
