@@ -10,7 +10,9 @@ import StudentsPage from "@/pages/Student";
 import EnrollStudentPage from "@/components/student/EnrollStudentPage";
 import TeachersPage from "@/pages/Teacher";
 import AddTeacher from "@/components/teacher/AddTeacher";
-import ClassesPage from "@/pages/Classes";
+import ProgramsPage from "@/pages/Programs";
+import BatchesPage from "@/pages/Batches";
+import SubjectsPage from "@/pages/Subjects";
 import {
   LayoutDashboard,
   BookOpen,
@@ -49,7 +51,7 @@ export const APP_ROUTES: AppRoutes = {
     title: "Programs",
     path: "/programs",
     icon: School,
-    element: ClassesPage,
+    element: ProgramsPage,
     showInSidebar: true,
     group: "Academics",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
@@ -59,7 +61,7 @@ export const APP_ROUTES: AppRoutes = {
     title: "Batches",
     path: "/batches",
     icon: Layers,
-    element: () => <div className="p-6"><h1 className="text-2xl font-bold">Batches</h1></div>,
+    element: BatchesPage,
     showInSidebar: true,
     group: "Academics",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
@@ -69,7 +71,7 @@ export const APP_ROUTES: AppRoutes = {
     title: "Subjects",
     path: "/subjects",
     icon: Book,
-    element: () => <div className="p-6"><h1 className="text-2xl font-bold">Subjects</h1></div>,
+    element: SubjectsPage,
     showInSidebar: true,
     group: "Academics",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],

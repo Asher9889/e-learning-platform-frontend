@@ -146,6 +146,72 @@ const apiEndpoints = {
             method: "DELETE"
         }
     },
+    SUBJECTS: {
+        LIST: {
+            url: "/subjects",
+            method: "GET" as Method
+        },
+        GET: {
+            url: "/subjects/:id",
+            method: "GET" as Method
+        },
+        CREATE: {
+            url: "/subjects",
+            method: "POST" as Method
+        },
+        UPDATE: {
+            url: "/subjects/:id",
+            method: "PATCH" as Method
+        },
+        DELETE: {
+            url: "/subjects/:id",
+            method: "DELETE" as Method
+        }
+    },
+    BATCHES: {
+        LIST: {
+            url: "/batches",
+            method: "GET" as Method
+        },
+        GET: {
+            url: "/batches/:id",
+            method: "GET" as Method
+        },
+        CREATE: {
+            url: "/batches",
+            method: "POST" as Method
+        },
+        UPDATE: {
+            url: "/batches/:id",
+            method: "PATCH" as Method
+        },
+        DELETE: {
+            url: "/batches/:id",
+            method: "DELETE" as Method
+        }
+    },
+    PROGRAMS: {
+        LIST: {
+            url: "/programs",
+            method: "GET" as Method
+        },
+        GET: {
+            url: "/programs/:id",
+            method: "GET" as Method
+        },
+        CREATE: {
+            url: "/programs",
+            method: "POST" as Method
+        },
+        UPDATE: {
+            url: "/programs/:id",
+            method: "PATCH" as Method
+        },
+        DELETE: {
+            url: "/programs/:id",
+            method: "DELETE" as Method
+        }
+    },
     UPLOADS: {
         CREATE_MULTIPART_UPLOAD: {
             url: "/uploads/materials/s3/multipart/create",
