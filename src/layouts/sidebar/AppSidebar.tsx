@@ -41,6 +41,8 @@ export function AppSidebar() {
     (item) => item.showInSidebar && item.roles.includes(user.role as TUserRole)
   );
 
+  const SECTION_ORDER = ["Academics", "People", "Teaching", "Learning Content"];
+
   const sections: SidebarSection[] = [];
   const grouped: Record<string, AppRoute[]> = {};
   const ungrouped: AppRoute[] = [];
@@ -58,8 +60,12 @@ export function AppSidebar() {
     sections.push({ label: null, items: ungrouped });
   }
 
-  for (const [label, items] of Object.entries(grouped)) {
-    sections.push({ label, items });
+  const sortedGroupLabels = Object.keys(grouped).sort(
+    (a, b) => SECTION_ORDER.indexOf(a) - SECTION_ORDER.indexOf(b)
+  );
+
+  for (const label of sortedGroupLabels) {
+    sections.push({ label, items: grouped[label] });
   }
 
   return (
