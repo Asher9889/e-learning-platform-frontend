@@ -24,6 +24,9 @@ dist-ssr
 *.sw?
 
 
+.impeccable
+.opencode
+
 .env
 .env.local
 .env.development.local
