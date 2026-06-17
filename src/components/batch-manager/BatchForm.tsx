@@ -9,6 +9,7 @@ import {
   createBatchSchema,
   type CreateBatchInput,
   type UpdateBatchInput,
+  type BatchFormValues,
 } from "@/pages/Batches/schema/batch.schema";
 
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,7 @@ export function BatchForm({
 }: BatchFormProps) {
   const isEditing = !!batchData;
 
-  const methods = useForm<CreateBatchInput>({
+  const methods = useForm<BatchFormValues>({
     resolver: zodResolver(createBatchSchema),
     mode: "onChange",
     defaultValues: {
@@ -95,12 +96,12 @@ export function BatchForm({
     }
   }, [batchData, reset]);
 
-  const submitHandler = (data: CreateBatchInput) => {
+  const submitHandler = (data: BatchFormValues) => {
     if (isEditing && batchData) {
-      onSubmit({ id: batchData.id, ...data });
+      onSubmit({ id: batchData.id, ...data } as CreateBatchInput);
       return;
     }
-    onSubmit(data);
+    onSubmit(data as CreateBatchInput);
   };
 
   const handleDialogClose = () => {

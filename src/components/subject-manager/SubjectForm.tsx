@@ -8,6 +8,7 @@ import {
   createSubjectSchema,
   type CreateSubjectInput,
   type UpdateSubjectInput,
+  type SubjectFormValues,
 } from "@/pages/Subjects/schema/subject.schema";
 
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,7 @@ export function SubjectForm({
 }: SubjectFormProps) {
   const isEditing = !!subjectData;
 
-  const methods = useForm<CreateSubjectInput>({
+  const methods = useForm<SubjectFormValues>({
     resolver: zodResolver(createSubjectSchema),
     mode: "onChange",
     defaultValues: {
@@ -92,12 +93,12 @@ export function SubjectForm({
     }
   }, [subjectData, reset]);
 
-  const submitHandler = (data: CreateSubjectInput) => {
+  const submitHandler = (data: SubjectFormValues) => {
     if (isEditing && subjectData) {
-      onSubmit({ id: subjectData.id, ...data });
+      onSubmit({ id: subjectData.id, ...data } as CreateSubjectInput);
       return;
     }
-    onSubmit(data);
+    onSubmit(data as CreateSubjectInput);
   };
 
   const handleDialogClose = () => {

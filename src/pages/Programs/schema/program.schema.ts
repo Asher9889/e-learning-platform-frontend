@@ -34,7 +34,7 @@ export const createProgramSchema = z
       .optional()
       .or(z.literal("").transform(() => undefined)),
 
-    isActive: z.boolean().default(true),
+    isActive: z.boolean(),
   })
   .superRefine((data, ctx) => {
     const isHigherEd = HIGHER_ED_TYPES.includes(data.programType);
@@ -62,8 +62,9 @@ export const updateProgramSchema = createProgramSchema.extend({
   id: z.string().min(1, "Program ID is required"),
 });
 
-export type CreateProgramInput = z.infer<typeof createProgramSchema>;
-export type UpdateProgramInput = z.infer<typeof updateProgramSchema>;
+export type CreateProgramInput = z.output<typeof createProgramSchema>;
+export type UpdateProgramInput = z.output<typeof updateProgramSchema>;
+export type ProgramFormValues = z.input<typeof createProgramSchema>;
 
 export type ProgramListResponse = {
   programs: import("../types").Program[];

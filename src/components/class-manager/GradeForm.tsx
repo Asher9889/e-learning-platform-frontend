@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { createGradeSchema, type CreateGradeInput } from "@/pages/Classes/schema/grade.schema";
+import { createGradeSchema, type CreateGradeInput, type GradeFormValues } from "@/pages/Classes/schema/grade.schema";
 
 
 
@@ -43,7 +43,7 @@ export function GradeForm({
 }: GradeFormProps) {
   const isEditing = !!gradeData;
 
-  const methods = useForm<CreateGradeInput>({
+  const methods = useForm<GradeFormValues>({
     resolver: zodResolver(createGradeSchema),
     mode: "onChange",
     defaultValues: {
@@ -73,8 +73,8 @@ export function GradeForm({
     }
   }, [gradeData, reset]);
 
-  const submitHandler = (data: CreateGradeInput) => {
-    onSubmit(data);
+  const submitHandler = (data: GradeFormValues) => {
+    onSubmit(data as CreateGradeInput);
   };
 
   const handleDialogClose = () => {

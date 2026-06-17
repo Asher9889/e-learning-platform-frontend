@@ -8,6 +8,7 @@ import {
   createProgramSchema,
   type CreateProgramInput,
   type UpdateProgramInput,
+  type ProgramFormValues,
 } from "@/pages/Programs/schema/program.schema";
 
 import { Button } from "@/components/ui/button";
@@ -52,7 +53,7 @@ export function ProgramForm({
 }: ProgramFormProps) {
   const isEditing = !!programData;
 
-  const methods = useForm<CreateProgramInput>({
+  const methods = useForm<ProgramFormValues>({
     resolver: zodResolver(createProgramSchema),
     mode: "onChange",
     defaultValues: {
@@ -101,12 +102,12 @@ export function ProgramForm({
     }
   }, [programData, reset]);
 
-  const submitHandler = (data: CreateProgramInput) => {
+  const submitHandler = (data: ProgramFormValues) => {
     if (isEditing && programData) {
-      onSubmit({ id: programData.id, ...data });
+      onSubmit({ id: programData.id, ...data } as CreateProgramInput);
       return;
     }
-    onSubmit(data);
+    onSubmit(data as CreateProgramInput);
   };
 
   const handleDialogClose = () => {

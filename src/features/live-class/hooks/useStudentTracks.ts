@@ -1,10 +1,9 @@
-import { useTracks } from "@livekit/components-react";
+import { useTracks, type TrackReferenceOrPlaceholder } from "@livekit/components-react";
 import { Track } from "livekit-client";
-import type { TrackReference } from "@livekit/components-react";
 
 export function useStudentTracks(
   teacherIdentity: string | null
-): TrackReference[] {
+): TrackReferenceOrPlaceholder[] {
   const cameraTracks = useTracks(
     [{ source: Track.Source.Camera, withPlaceholder: true }],
     { onlySubscribed: false }

@@ -67,12 +67,12 @@
 import { useMemo } from "react";
 import { useTracks } from "@livekit/components-react";
 import { Track } from "livekit-client";
-import type { TrackReference } from "@livekit/components-react";
+import type { TrackReferenceOrPlaceholder } from "@livekit/components-react";
 
 export function useTeacherTracks(
   teacherIdentity: string | null
 ): {
-  tracks: TrackReference[];
+  tracks: TrackReferenceOrPlaceholder[];
   isCameraOff: boolean;
   hasAudioTrack: boolean;
 } {

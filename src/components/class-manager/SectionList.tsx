@@ -18,7 +18,6 @@ import {
 import type { CreateSectionInput, UpdateSectionInput } from "@/pages/Classes/schema/class.schema";
 import { useCreateSection } from "@/pages/Classes/hooks/useCreateSection";
 import { useUpdateSection } from "@/pages/Classes/hooks/useUpdateSection";
-import { useUpdateClass } from "@/pages/Classes/hooks/useUpdateClass";
 import { useDeleteSection } from "@/pages/Classes/hooks/useDeleteSection";
 
 interface SectionListProps {
@@ -44,9 +43,6 @@ const {
   deleteSectionAsync,
   isDeleting,
 } = useDeleteSection();
-  const createSection = useCreateSection();
-  const updateSection = useUpdateSection();
-  const deleteSection = useDeleteSection();
 console.log(isDeleting,"isDeleting")
   const handleCreate = async (data: CreateSectionInput) => {
    console.log("response",data)
@@ -119,9 +115,8 @@ console.log(isDeleting,"isDeleting")
           <div className="space-y-2 pl-2">
             {sections.map((section) => (
               <SectionCard
-                key={section.id}
+                key={section._id}
                 section={section}
-                data={editingSection}
                 onEdit={setEditingSection}
                 onDelete={setDeletingSection}
               />
@@ -143,10 +138,16 @@ console.log(isDeleting,"isDeleting")
           setShowForm(false);
           setEditingSection(null);
         }}
-        onSubmit={editingSection ? handleUpdate : handleCreate}
+        onSubmit={async (data) => {
+          if (editingSection) {
+            await handleUpdate(data as UpdateSectionInput);
+          } else {
+            await handleCreate(data as CreateSectionInput);
+          }
+        }}
         classId={classId}
         section={editingSection}
-        isLoading={createSection.isPending || updateSection.isPending}
+        isLoading={isCreating || isUpdating}
       />
 
       {/* Delete Confirmation */}
@@ -161,13 +162,13 @@ console.log(isDeleting,"isDeleting")
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteSection.isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              disabled={deleteSection.isPending}
+              disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteSection.isPending ? "Deleting..." : "Delete Section"}
+              {isDeleting ? "Deleting..." : "Delete Section"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -19,13 +19,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
     addClassSchema,
     type AddClassFormInput,
+    type AddClassFormOutput,
 } from "@/pages/Classes/schema/class.schema";
 
 interface Props {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onSubmit: (
-        values: AddClassFormInput
+        values: AddClassFormOutput
     ) => void;
 }
 
@@ -53,7 +54,7 @@ export default function AddClassDialog({
     const handleSubmit = (
         values: AddClassFormInput
     ) => {
-        onSubmit(values);
+        onSubmit(values as AddClassFormOutput);
 
         reset();
 
