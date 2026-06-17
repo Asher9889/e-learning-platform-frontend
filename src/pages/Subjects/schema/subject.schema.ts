@@ -16,15 +16,16 @@ export const createSubjectSchema = z.object({
     .optional()
     .or(z.literal("")),
 
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 });
 
 export const updateSubjectSchema = createSubjectSchema.extend({
   id: z.string().min(1, "Subject ID is required"),
 });
 
-export type CreateSubjectInput = z.infer<typeof createSubjectSchema>;
-export type UpdateSubjectInput = z.infer<typeof updateSubjectSchema>;
+export type CreateSubjectInput = z.output<typeof createSubjectSchema>;
+export type UpdateSubjectInput = z.output<typeof updateSubjectSchema>;
+export type SubjectFormValues = z.input<typeof createSubjectSchema>;
 
 export type SubjectListResponse = {
   subjects: import("../types").Subject[];

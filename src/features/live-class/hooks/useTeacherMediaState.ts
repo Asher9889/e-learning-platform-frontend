@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useParticipants, useTracks, type TrackReference } from "@livekit/components-react";
 import { Track } from "livekit-client";
 
-export function useTeacherMediaState(myIdentity?: string | null,teacherIdentity?: string | null) {
+export function useTeacherMediaState(_myIdentity?: string | null,teacherIdentity?: string | null) {
   const participants = useParticipants();
 
 const mediaTracks = useTracks(

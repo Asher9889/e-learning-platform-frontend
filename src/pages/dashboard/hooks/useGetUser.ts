@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 // import { loginSuccess } from '../../../store/slices/authSlice';
-import { getUser } from '../api/dashboard.api';
+import { getUser } from '@/pages/Dashboard/api/dashboard.api';
 import { setUser } from '@/store/slices/auth.slice';
 
 

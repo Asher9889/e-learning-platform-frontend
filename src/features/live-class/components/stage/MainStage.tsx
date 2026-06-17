@@ -4,7 +4,6 @@ import { useAppSelector } from "@/store/hooks";
 import { useScreenShareTracks } from "@/features/live-class/hooks/useScreenShareTracks";
 import { useTeacherTracks } from "@/features/live-class/hooks/useTeacherTracks";
 import { ScreenShareStage } from "./ScreenShareStage";
-import { TeacherStage } from "./TeacherStage";
 import { EmptyState } from "@/features/live-class/components/shared/EmptyState";
 import { User } from "lucide-react";
 
@@ -16,9 +15,9 @@ export function MainStage() {
   const myIdententity = useAppSelector(
     (state) => state?.auth?.user
   );
-  const screenShareTracks = useScreenShareTracks(teacherIdentity);
-  const teacherCameraTracks = useTeacherTracks(teacherIdentity?.id);
-  const myCameraTracks = useTeacherTracks(myIdententity?.id);
+  const screenShareTracks = useScreenShareTracks(teacherIdentity?.id ?? null);
+  const teacherCameraTracks = useTeacherTracks(teacherIdentity?.id ?? null);
+  const myCameraTracks = useTeacherTracks(myIdententity?.id ?? null);
 
 
   const allCameraTracks = useTracks(
@@ -27,7 +26,7 @@ export function MainStage() {
   );
 
   const hasScreenShare = screenShareTracks.length > 0;
-  const hasTeacherCamera = teacherCameraTracks.length > 0;
+  const hasTeacherCamera = teacherCameraTracks.tracks.length > 0;
   const hasAnyCamera = allCameraTracks.length > 0;
   console.log(teacherCameraTracks, "hasTeacherCamera123", myCameraTracks, "anubhav", hasAnyCamera, "teacherIdentity", teacherIdentity)
   if (hasScreenShare) {

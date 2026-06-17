@@ -9,7 +9,6 @@ import {
   Archive,
   File,
   AlertCircle,
-  Scroll
 } from "lucide-react"
 import {
   Dialog,

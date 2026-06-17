@@ -21,15 +21,16 @@ export const createBatchSchema = z.object({
     .optional()
     .or(z.literal("").transform(() => undefined)),
 
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 });
 
 export const updateBatchSchema = createBatchSchema.extend({
   id: z.string().min(1, "Batch ID is required"),
 });
 
-export type CreateBatchInput = z.infer<typeof createBatchSchema>;
-export type UpdateBatchInput = z.infer<typeof updateBatchSchema>;
+export type CreateBatchInput = z.output<typeof createBatchSchema>;
+export type UpdateBatchInput = z.output<typeof updateBatchSchema>;
+export type BatchFormValues = z.input<typeof createBatchSchema>;
 
 export type BatchListResponse = {
   batches: import("../types").Batch[];

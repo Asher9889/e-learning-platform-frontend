@@ -74,6 +74,15 @@ export type ClassFormData = z.infer<typeof classSchema>;
 
 export type SectionFormData = z.infer<typeof sectionSchema>;
 
+export const addClassSchema = z.object({
+  className: z.string().min(1, "Class name is required"),
+  sectionName: z.string().min(1, "Section name is required"),
+  strength: z.coerce.number().min(1, "Strength must be at least 1"),
+});
+
+export type AddClassFormInput = z.input<typeof addClassSchema>;
+export type AddClassFormOutput = z.output<typeof addClassSchema>;
+
 /* =========================
    API Types
 ========================= */

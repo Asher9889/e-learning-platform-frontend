@@ -76,7 +76,7 @@ export default function ClassManager() {
   const [showClassForm, setShowClassForm] = useState(false);
   const [showGradeForm, setShowGradeForm] = useState(false);
   const [editinggrade,setEditingGrade] = useState<Grade | null>(null)
-  const [deletingGrade,setDeletingGrade] =  useState<Grade | null>(null)
+  const [_,setDeletingGrade] =  useState<Grade | null>(null)
   const [editingClass, setEditingClass] = useState<Class | null>(null);
   const [deletingClass, setDeletingClass] = useState<Class | null>(null);
   const [activeTab, setActiveTab] = useState("subjects");
@@ -113,7 +113,7 @@ export default function ClassManager() {
 
   };
   
-   const handleDeleteGrade = async (grade) => {
+   const handleDeleteGrade = async (grade: Grade) => {
     if (!grade) return;
 
     try {

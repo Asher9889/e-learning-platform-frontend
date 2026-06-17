@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { HIGHER_ED_TYPES } from "../types";
+import { HIGHER_ED_TYPES, TOTAL_PROGRAM_TYPES } from "../types";
 
 export const createProgramSchema = z
   .object({
@@ -9,16 +9,7 @@ export const createProgramSchema = z
       .min(2, "Program name must be at least 2 characters")
       .max(100, "Program name cannot exceed 100 characters"),
 
-    programType: z.enum(
-      [
-        "SCHOOL",
-        "UNDERGRADUATE",
-        "POSTGRADUATE",
-        "DOCTORATE",
-        "CERTIFICATION",
-        "COACHING",
-      ],
-      { required_error: "Program type is required" }
+    programType: z.enum( Object.values(TOTAL_PROGRAM_TYPES),{ error: `Program type is required and can be one of: ${Object.values(TOTAL_PROGRAM_TYPES).join(", ")}` }
     ),
 
     fullName: z
@@ -43,7 +34,7 @@ export const createProgramSchema = z
       .optional()
       .or(z.literal("").transform(() => undefined)),
 
-    isActive: z.boolean().default(true),
+    isActive: z.boolean(),
   })
   .superRefine((data, ctx) => {
     const isHigherEd = HIGHER_ED_TYPES.includes(data.programType);
@@ -71,8 +62,9 @@ export const updateProgramSchema = createProgramSchema.extend({
   id: z.string().min(1, "Program ID is required"),
 });
 
-export type CreateProgramInput = z.infer<typeof createProgramSchema>;
-export type UpdateProgramInput = z.infer<typeof updateProgramSchema>;
+export type CreateProgramInput = z.output<typeof createProgramSchema>;
+export type UpdateProgramInput = z.output<typeof updateProgramSchema>;
+export type ProgramFormValues = z.input<typeof createProgramSchema>;
 
 export type ProgramListResponse = {
   programs: import("../types").Program[];

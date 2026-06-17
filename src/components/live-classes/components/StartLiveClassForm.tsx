@@ -61,7 +61,6 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
   });
   const {
   mutate: startLiveClassMutation,
-  isPending,
 } = useStartLiveClass();
   const selectedProgram = watch("programId");
   const selectedBatch = watch("batchId");
@@ -194,9 +193,6 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">All students in this program</SelectItem>
-            {batchOptions.length > 0 && (
-              <div className="h-px bg-border mx-1 my-1" />
-            )}
             {batchOptions.map((b) => (
               <SelectItem key={b.value} value={b.value}>
                 {b.label}
