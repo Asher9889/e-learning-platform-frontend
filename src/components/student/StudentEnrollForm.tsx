@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   studentEnrollSchema,
@@ -16,7 +16,6 @@ import EnrollmentStepper from "./EnrollmentStepper";
 import StepNavigation from "./StepNavigation";
 import { useUploadAvatar } from "@/pages/Teacher/hooks/useUploadAvtar";
 import { useCreateStudent } from "@/pages/Student/hooks/useCreateStudent";
-import { useGetGrades } from "@/pages/Classes/hooks/useGetGrades";
 import { mapToLabelValue } from "@/utils/helper";
 import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +23,10 @@ import { useGetPrograms } from "@/pages/Programs/hooks/useGetPrograms";
 import { useGetBatches } from "@/pages/Batches/hooks/useGetBatches";
 
 const steps = ["Account", "Personal", "Address", "Student", "Guardian", "Review"];
-const stepFields: Record<number, string[]> = {
+const stepFields: Record<
+  number,
+  FieldPath<StudentEnrollFormInput>[]
+> = {
   0: ["email", "phoneNumber", "password", "confirmPassword"],
   1: ["personalInfo.name", "personalInfo.dateOfBirth", "personalInfo.gender"],
   2: ["personalInfo.address.line1", "personalInfo.address.city", "personalInfo.address.state", "personalInfo.address.country", "personalInfo.address.zipCode"],
@@ -45,11 +47,8 @@ export default function StudentEnrollForm() {
   console.log(programData,"programData")
   const allProgramData = programData?.programs || [];
 
-  // const { data: batchesData } = useGetBatches(selectedProgram);
-  const { data: gradeData } = useGetGrades();
-  const allGrades = gradeData?.grades || [];
 
-  console.log(allGrades, "allGradesallGradesallGradesallGrades")
+
   // ✅ useForm ko Input type do — raw form values (phoneNumber: string)
   const methods = useForm<StudentEnrollFormInput, unknown, StudentEnrollFormOutput>({
     resolver: zodResolver(studentEnrollSchema),
@@ -93,43 +92,37 @@ console.log(values,"asdfghjkl")
       avatarUrl =
         uploadResponse?.key;
     }
-console.log( {
+
+    handleCreateStudent(
+      {
         ...values,
         personalInfo: {
           ...values.personalInfo,
           profileImage: avatarUrl,
         },
-      },"asdfghjkl")
-    // handleCreateStudent(
-    //   {
-    //     ...values,
-    //     personalInfo: {
-    //       ...values.personalInfo,
-    //       profileImage: avatarUrl,
-    //     },
-    //   },
-    //   {
-    //     onSuccess: (response) => {
-    //       sileo.success({
-    //         title: "Student Created",
-    //         description:
-    //           response?.message ||
-    //           "Student created successfully",
-    //       });
-    //       navigate("/student");
-    //     },
+      },
+      {
+        onSuccess: (response) => {
+          sileo.success({
+            title: "Student Created",
+            description:
+              response?.message ||
+              "Student created successfully",
+          });
+          navigate("/student");
+        },
 
-    //     onError: (error) => {
-    //       sileo.error({
-    //         title: "Failed to Create Student",
-    //         description:
-    //           error instanceof Error
-    //             ? error.message
-    //             : "Something went wrong",
-    //       });
-    //     },
-    //   }
-    // );
+        onError: (error) => {
+          sileo.error({
+            title: "Failed to Create Student",
+            description:
+              error instanceof Error
+                ? error.message
+                : "Something went wrong",
+          });
+        },
+      }
+    );
   };
   const renderStep = () => {
     switch (currentStep) {
@@ -146,7 +139,7 @@ console.log( {
     console.log("NEXT STEP debugging", currentStep);
     const fields = stepFields[currentStep];
 
-    const isValid = await methods.trigger(fields as any);
+    const isValid = await methods.trigger(fields);
 
     if (!isValid) return;
 

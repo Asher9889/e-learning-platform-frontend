@@ -100,7 +100,7 @@ export function StudentsTable({ students }: Props) {
                 </TableCell>
 
                 <TableCell>
-                  {student.roleInfo?.batch}
+                  {student.roleInfo?.batchId}
                 </TableCell>
 
                 <TableCell className="text-muted-foreground">

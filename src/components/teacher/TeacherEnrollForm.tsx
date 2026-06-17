@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import AccountInformation from "./steps/AccountInformation";
@@ -17,7 +17,10 @@ import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
 
 const steps = ["Account", "Personal", "Address", "Teacher", "Review"];
-const stepFields: Record<number, string[]> = {
+const stepFields: Record<
+  number,
+  FieldPath<TeacherEnrollFormInput>[]
+>  = {
     0: [
         "email",
         "phoneNumber",
@@ -132,7 +135,7 @@ export default function TeacherEnrollForm() {
     const nextStep = async () => {
         const fields = stepFields[currentStep];
 
-        const isValid = await methods.trigger(fields as any);
+        const isValid = await methods.trigger(fields);
 
         if (!isValid) return;
 
