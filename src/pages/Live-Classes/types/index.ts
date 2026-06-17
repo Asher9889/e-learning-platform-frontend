@@ -20,15 +20,33 @@ export interface ILiveSessionTeacher {
   profileImage?: string;
 }
 
+export interface ILiveSessionProgram {
+  id: string;
+  name: string;
+}
+
+export interface ILiveSessionBatch {
+  id: string;
+  name: string;
+}
+
+export interface ILiveSessionCreatedBy {
+  id: string;
+  name: string;
+  profileImage?: string;
+}
+
 export interface ILiveSession {
   id: string;
 
   title: string;
   description: string | null;
 
+  program?: ILiveSessionProgram;
+  batch?: ILiveSessionBatch | null;
   subject: ILiveSessionSubject;
   teacher: ILiveSessionTeacher;
-  createdBy: string;
+  createdBy: ILiveSessionCreatedBy;
 
   status: TClassStatus;
 
