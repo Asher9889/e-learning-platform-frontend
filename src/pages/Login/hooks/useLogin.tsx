@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from "react-redux";
 import { authenticated } from "@/store/slices/auth.slice";
-import { useGetUser } from "@/pages/dashboard/hooks/useGetUser";
+import { useGetUser } from "@/pages/Dashboard/hooks/useGetUser";
 // import { authCheckedAuthenticated } from "@/store/slices/auth.slice";
 export function useLogin() {
 

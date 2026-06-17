@@ -32,7 +32,7 @@ import RouteOutlet from "./routeOutlet";
 
 import ActiveLiveClassPage from "@/features/live-class/pages/ActiveLiveClassPage";
 
-import DashboardPage from "./pages/dashboard";
+import DashboardPage from "./pages/Dashboard";
 import ContentPage from "./pages/Content";
 import UploadMetadataPage from "./pages/Content/UploadMetadata";
 

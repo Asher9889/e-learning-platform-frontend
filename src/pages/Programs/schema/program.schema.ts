@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { HIGHER_ED_TYPES } from "../types";
+import { HIGHER_ED_TYPES, TOTAL_PROGRAM_TYPES } from "../types";
 
 export const createProgramSchema = z
   .object({
@@ -9,16 +9,7 @@ export const createProgramSchema = z
       .min(2, "Program name must be at least 2 characters")
       .max(100, "Program name cannot exceed 100 characters"),
 
-    programType: z.enum(
-      [
-        "SCHOOL",
-        "UNDERGRADUATE",
-        "POSTGRADUATE",
-        "DOCTORATE",
-        "CERTIFICATION",
-        "COACHING",
-      ],
-      { required_error: "Program type is required" }
+    programType: z.enum( Object.values(TOTAL_PROGRAM_TYPES),{ error: `Program type is required and can be one of: ${Object.values(TOTAL_PROGRAM_TYPES).join(", ")}` }
     ),
 
     fullName: z
