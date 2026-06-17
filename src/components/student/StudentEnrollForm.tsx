@@ -22,7 +22,8 @@ import { useNavigate } from "react-router-dom";
 import { useGetPrograms } from "@/pages/Programs/hooks/useGetPrograms";
 import { useGetBatches } from "@/pages/Batches/hooks/useGetBatches";
 
-const steps = ["Account", "Personal", "Address", "Student", "Guardian", "Review"];
+// const steps = ["Account", "Personal", "Address", "Student", "Guardian", "Review"];
+
 const stepFields: Record<
   number,
   FieldPath<StudentEnrollFormInput>[]
@@ -35,8 +36,16 @@ const stepFields: Record<
 };
 export default function StudentEnrollForm() {
   const navigate = useNavigate();
-  
-  const [currentStep, setCurrentStep] = useState(3);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const steps = [
+    { label: "Account", completed: completedSteps.includes(0) },
+    { label: "Personal", completed: completedSteps.includes(1) },
+    { label: "Address", completed: completedSteps.includes(2) },
+    { label: "Student", completed: completedSteps.includes(3) },
+    { label: "Guardian", completed: completedSteps.includes(4) },
+    { label: "Review", completed: false },
+  ];
+  const [currentStep, setCurrentStep] = useState(0);
   const {
     mutate: handleCreateStudent,
   } = useCreateStudent();
@@ -44,7 +53,7 @@ export default function StudentEnrollForm() {
     uploadAvatarAsync,
   } = useUploadAvatar();
   const { data: programData } = useGetPrograms();
-  console.log(programData,"programData")
+  console.log(programData, "programData")
   const allProgramData = programData?.programs || [];
 
 
@@ -52,17 +61,17 @@ export default function StudentEnrollForm() {
   // ✅ useForm ko Input type do — raw form values (phoneNumber: string)
   const methods = useForm<StudentEnrollFormInput, unknown, StudentEnrollFormOutput>({
     resolver: zodResolver(studentEnrollSchema),
-    mode: "all",
+    mode: "onBlur",
   });
 
-    const selectedProgram = methods.getValues("roleInfo.programId");
+  const selectedProgram = methods.getValues("roleInfo.programId");
 
-const { data: batchesData } = useGetBatches(selectedProgram);
-const allBactchesData = batchesData?.batches || [];
+  const { data: batchesData } = useGetBatches(selectedProgram);
+  const allBactchesData = batchesData?.batches || [];
   console.log(
-  methods.getValues("roleInfo.programId"),
-  "selectedProgram",batchesData
-);
+    methods.getValues("roleInfo.programId"),
+    "selectedProgram", batchesData
+  );
 
   // ✅ onSubmit ko Output type milta hai — transform ke baad (phoneNumber: string E.164)
   // const onSubmit = (values: StudentEnrollFormOutput) => {
@@ -73,7 +82,7 @@ const allBactchesData = batchesData?.batches || [];
   const onSubmit = async (
     values: StudentEnrollFormOutput
   ) => {
-console.log(values,"asdfghjkl")
+    console.log(values, "asdfghjkl")
 
     let avatarUrl = "";
     console.log(values.personalInfo.profileImage,
@@ -135,14 +144,18 @@ console.log(values,"asdfghjkl")
       default: return null;
     }
   };
-  const nextStep = async () => {
+  const nextStep = async (step?: number) => {
     console.log("NEXT STEP debugging", currentStep);
     const fields = stepFields[currentStep];
 
     const isValid = await methods.trigger(fields);
 
     if (!isValid) return;
-
+    setCompletedSteps((prev) =>
+      prev.includes(currentStep)
+        ? prev
+        : [...prev, currentStep]
+    );
     if (
       currentStep === 0 &&
       methods.getValues("password") !==
@@ -155,8 +168,12 @@ console.log(values,"asdfghjkl")
 
       return;
     }
+    if (step) {
+      setCurrentStep(step);
+    } else {
+      setCurrentStep((p) => p + 1);
 
-    setCurrentStep((p) => p + 1);
+    }
   };
   return (
     <FormProvider {...methods}>
@@ -188,8 +205,8 @@ console.log(values,"asdfghjkl")
           readOnly
         />
         <div className="mb-6">
-          <EnrollmentStepper currentStep={currentStep} steps={steps} onNext={() => nextStep()} onPrevious={() => {
-            // setCurrentStep((p) => p - 1)
+          <EnrollmentStepper currentStep={currentStep} steps={steps} onNext={(step) => nextStep(step)} onPrevious={(step) => {
+            setCurrentStep(step)
           }} />
         </div>
 

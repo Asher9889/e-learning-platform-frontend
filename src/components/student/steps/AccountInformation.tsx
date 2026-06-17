@@ -5,19 +5,30 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "#components/ui/inp
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { Label } from "#components/ui/label";
+import { getPasswordScore } from "@/utils/helper";
+import { Progress } from "#components/ui/progress";
 // import { StudentEnrollFormData } from "@/sche";
 
 export default function AccountInformation() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
-
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/;
   const {
     register,
     watch,
     formState: { errors },
   } =
     useFormContext<StudentEnrollFormInput>();
+  const password = watch("password");
+  const score = getPasswordScore(password);
 
+  const progressColor =
+    score <= 2
+      ? "bg-red-500"
+      : score <= 4
+        ? "bg-yellow-500"
+        : "bg-green-500";
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold">
@@ -29,7 +40,7 @@ export default function AccountInformation() {
           <Label htmlFor="student-mail">Email address</Label>
           <Input
             placeholder="name@company.com"
-            autoComplete="new-password" 
+            autoComplete="new-password"
             {...register("email")}
           />
 
@@ -57,36 +68,65 @@ export default function AccountInformation() {
             placeholder="Password"
             {...register("password")}
           /> */}
-          <InputGroup>
-            <InputGroupInput
-              id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter password"
-              {...register("password")}
-            />
+          <div className="relative">
+            <InputGroup>
+              <InputGroupInput
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter password"
+                {...register("password", {
+                  pattern: {
+                    value: passwordRegex,
+                    message:
+                      "Password must contain uppercase, lowercase, number and special character",
+                  },
+                })}
+              />
 
-            <InputGroupAddon
-              align="inline-end"
-              className="cursor-pointer"
-              onClick={() =>
-                setShowPassword((prev) => !prev)
-              }
-            >
-              {showPassword ? (
-                <EyeOffIcon className="h-4 w-4" />
-              ) : (
-                <EyeIcon className="h-4 w-4" />
-              )}
-            </InputGroupAddon>
-          </InputGroup>
-          <p className="text-red-500 text-sm">
-            {errors.password?.message}
-          </p>
-        </div>
+              <InputGroupAddon
+                align="inline-end"
+                className="cursor-pointer"
+                onClick={() =>
+                  setShowPassword((prev) => !prev)
+                }
+              >
+                {showPassword ? (
+                  <EyeOffIcon className="h-4 w-4" />
+                ) : (
+                  <EyeIcon className="h-4 w-4" />
+                )}
+              </InputGroupAddon>
+            </InputGroup>
 
-        <div className="space-y-2">
-          <Label htmlFor="ConfirmPassword">Confirm Password</Label>
-          {/* <Input
+            {password && (
+              <>
+                {/* <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className={`h-full transition-all duration-300 ${progressColor}`}
+                  style={{
+                    width: `${(score / 5) * 100}%`,
+                  }}
+                />
+              </div> */}
+                <div className="absolute bottom-[1px] left-0 h-0.5 px-[3px] w-full overflow-hidden ">
+                  <div
+                    className={`h-full transition-all duration-300 ${progressColor} rounded-b-md`}
+                    style={{
+                      width: `${(score / 5) * 100}%`,
+                    }}
+                  />
+                </div>
+              </>
+            )}
+</div>
+            <p className="text-red-500 text-sm">
+              {errors.password?.message}
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="ConfirmPassword">Confirm Password</Label>
+            {/* <Input
             type="password"
             placeholder="Confirm Password"
             {...register("confirmPassword", {
@@ -100,45 +140,45 @@ export default function AccountInformation() {
               }
             })}
           /> */}
-          <InputGroup>
-            <InputGroupInput
-              id="password"
-              type={showConfirmPassword ? "text" : "password"}
-              placeholder="Enter password"
-              {...register("confirmPassword", {
-                validate: (value) => {
-                  console.log("VALIDATING", value, watch("password"));
+            <InputGroup>
+              <InputGroupInput
+                id="password"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Enter password"
+                {...register("confirmPassword", {
+                  validate: (value) => {
+                    console.log("VALIDATING", value, watch("password"));
 
-                  return (
-                    value === watch("password") ||
-                    "Passwords do not match"
-                  );
+                    return (
+                      value === watch("password") ||
+                      "Passwords do not match"
+                    );
+                  }
+                })}
+              />
+
+              <InputGroupAddon
+                align="inline-end"
+                className="cursor-pointer"
+                onClick={() =>
+                  setShowConfirmPassword((prev) => !prev)
                 }
-              })}
-            />
-
-            <InputGroupAddon
-              align="inline-end"
-              className="cursor-pointer"
-              onClick={() =>
-                setShowConfirmPassword((prev) => !prev)
+              >
+                {showConfirmPassword ? (
+                  <EyeOffIcon className="h-4 w-4" />
+                ) : (
+                  <EyeIcon className="h-4 w-4" />
+                )}
+              </InputGroupAddon>
+            </InputGroup>
+            <p className="text-red-500 text-sm">
+              {
+                errors.confirmPassword
+                  ?.message
               }
-            >
-              {showConfirmPassword ? (
-                <EyeOffIcon className="h-4 w-4" />
-              ) : (
-                <EyeIcon className="h-4 w-4" />
-              )}
-            </InputGroupAddon>
-          </InputGroup>
-          <p className="text-red-500 text-sm">
-            {
-              errors.confirmPassword
-                ?.message
-            }
-          </p>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  );
+      );
 }
