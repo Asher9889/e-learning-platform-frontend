@@ -135,6 +135,11 @@ export default function ReviewSubmit() {
         </CardHeader>
 
         <CardContent className="space-y-3">
+
+          <ReviewRow
+            label="Program"
+            value={data.roleInfo?.programId}
+          />
           <ReviewRow
             label="Roll Number"
             value={
@@ -144,7 +149,7 @@ export default function ReviewSubmit() {
 
           <ReviewRow
             label="Batch"
-            value={data.roleInfo?.batch}
+            value={data.roleInfo?.batchId}
           />
 
           <ReviewRow

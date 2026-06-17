@@ -20,24 +20,32 @@ import { useGetGrades } from "@/pages/Classes/hooks/useGetGrades";
 import { mapToLabelValue } from "@/utils/helper";
 import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
+import { useGetPrograms } from "@/pages/Programs/hooks/useGetPrograms";
+import { useGetBatches } from "@/pages/Batches/hooks/useGetBatches";
 
 const steps = ["Account", "Personal", "Address", "Student", "Guardian", "Review"];
 const stepFields: Record<number, string[]> = {
   0: ["email", "phoneNumber", "password", "confirmPassword"],
   1: ["personalInfo.name", "personalInfo.dateOfBirth", "personalInfo.gender"],
   2: ["personalInfo.address.line1", "personalInfo.address.city", "personalInfo.address.state", "personalInfo.address.country", "personalInfo.address.zipCode"],
-  3: ["roleInfo.gradeId", "roleInfo.rollNumber", "roleInfo.batch", "roleInfo.admissionDate"],
+  3: ["roleInfo.programId", "roleInfo.rollNumber", "roleInfo.batchId", "roleInfo.admissionDate"],
   4: ["roleInfo.guardianName", "roleInfo.guardianPhoneNumber"],
 };
 export default function StudentEnrollForm() {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(0);
+  
+  const [currentStep, setCurrentStep] = useState(3);
   const {
     mutate: handleCreateStudent,
   } = useCreateStudent();
   const {
     uploadAvatarAsync,
   } = useUploadAvatar();
+  const { data: programData } = useGetPrograms();
+  console.log(programData,"programData")
+  const allProgramData = programData?.programs || [];
+
+  // const { data: batchesData } = useGetBatches(selectedProgram);
   const { data: gradeData } = useGetGrades();
   const allGrades = gradeData?.grades || [];
 
@@ -48,6 +56,15 @@ export default function StudentEnrollForm() {
     mode: "all",
   });
 
+    const selectedProgram = methods.getValues("roleInfo.programId");
+
+const { data: batchesData } = useGetBatches(selectedProgram);
+const allBactchesData = batchesData?.batches || [];
+  console.log(
+  methods.getValues("roleInfo.programId"),
+  "selectedProgram",batchesData
+);
+
   // ✅ onSubmit ko Output type milta hai — transform ke baad (phoneNumber: string E.164)
   // const onSubmit = (values: StudentEnrollFormOutput) => {
   //   console.log("form data:", values);
@@ -57,6 +74,8 @@ export default function StudentEnrollForm() {
   const onSubmit = async (
     values: StudentEnrollFormOutput
   ) => {
+console.log(values,"asdfghjkl")
+
     let avatarUrl = "";
     console.log(values.personalInfo.profileImage,
       "SUBMIT CALLED   debugging",
@@ -72,47 +91,52 @@ export default function StudentEnrollForm() {
         );
 
       avatarUrl =
-        uploadResponse?.url;
+        uploadResponse?.key;
     }
-
-
-    handleCreateStudent(
-      {
+console.log( {
         ...values,
         personalInfo: {
           ...values.personalInfo,
           profileImage: avatarUrl,
         },
-      },
-      {
-        onSuccess: (response) => {
-          sileo.success({
-            title: "Student Created",
-            description:
-              response?.message ||
-              "Student created successfully",
-          });
-          navigate("/student");
-        },
+      },"asdfghjkl")
+    // handleCreateStudent(
+    //   {
+    //     ...values,
+    //     personalInfo: {
+    //       ...values.personalInfo,
+    //       profileImage: avatarUrl,
+    //     },
+    //   },
+    //   {
+    //     onSuccess: (response) => {
+    //       sileo.success({
+    //         title: "Student Created",
+    //         description:
+    //           response?.message ||
+    //           "Student created successfully",
+    //       });
+    //       navigate("/student");
+    //     },
 
-        onError: (error) => {
-          sileo.error({
-            title: "Failed to Create Student",
-            description:
-              error instanceof Error
-                ? error.message
-                : "Something went wrong",
-          });
-        },
-      }
-    );
+    //     onError: (error) => {
+    //       sileo.error({
+    //         title: "Failed to Create Student",
+    //         description:
+    //           error instanceof Error
+    //             ? error.message
+    //             : "Something went wrong",
+    //       });
+    //     },
+    //   }
+    // );
   };
   const renderStep = () => {
     switch (currentStep) {
       case 0: return <AccountInformation />;
       case 1: return <PersonalInformation />;
       case 2: return <AddressInformation />;
-      case 3: return <StudentInformation gradeOptions={mapToLabelValue(allGrades, "name", "id")} />;
+      case 3: return <StudentInformation programOptions={mapToLabelValue(allProgramData, "name", "id")} batchesOptions={mapToLabelValue(allBactchesData, "name", "id")} />;
       case 4: return <GuardianInformation />;
       case 5: return <ReviewSubmit />;
       default: return null;

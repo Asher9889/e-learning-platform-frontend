@@ -9,6 +9,7 @@ export default function StudentsPage() {
 const navigate = useNavigate();
 const {data, isLoading, isError } = useStudents();
 
+
   const students = data?.students || [];
 console.log(students,"studentsstudents")
   if (isLoading) {

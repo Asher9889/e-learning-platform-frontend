@@ -60,9 +60,9 @@ export const studentEnrollSchema = z
     // }),
 
     roleInfo: z.object({
-      gradeId: z.string().min(1, "Grade is required"),
+      programId: z.string().min(1, "Grade is required"),
       rollNumber: z.string().min(1, "Roll number is required"),
-      batch: z.string().min(1, "Batch is required"),
+      batchId: z.string().min(1, "Batch is required"),
       admissionDate: z.string().min(1, "Admission date is required"),
       guardianName: z.string().min(2, "Guardian name is required"),
       guardianPhoneNumber: z.string().min(10, "Guardian phone number is required").max(10, "Phone number is too long").refine(

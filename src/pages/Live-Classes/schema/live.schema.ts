@@ -6,7 +6,7 @@ export const scheduleLiveClassSchema = z.object({
     description: z.string().max(500).optional(),
     subjectId: z.string().min(1, "Subject is required"),
     teacherId: z.string(),
-    gradeId:z.string(),
+    programId:z.string(),
     scheduledAt: z.iso.datetime(),
     durationMinutes: z.number().min(15).max(180),
     maxParticipants: z.number().min(1).max(500),
@@ -23,7 +23,7 @@ export const scheduleLiveClassSchema = z.object({
 
 export const startLiveClassSchema = z.object({
     title: z.string().min(1, "Title is required").max(120),
-    gradeId: z.string().min(1, "Subject is required"),
+    programId: z.string().min(1, "Subject is required"),
     description: z.string().max(500).optional(),
     subjectId: z.string().min(1, "Subject is required"),
     teacherId:z.string().min(1, "Subject is required"),
