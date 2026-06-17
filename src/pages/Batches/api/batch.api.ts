@@ -6,9 +6,13 @@ import type {
 } from "../schema/batch.schema";
 import type { Batch } from "../types";
 
-export async function getBatches() {
+export async function getBatches(programId?: string) {
   const { url, method } = apiEndPoints.BATCHES.LIST;
-  const res = await api.request<BatchListResponse>({ url, method });
+  const res = await api.request<BatchListResponse>({
+    url,
+    method,
+    params: programId ? { programId } : undefined,
+  });
   return res.data;
 }
 

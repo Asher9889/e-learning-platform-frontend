@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { getSubjects } from "../api/subject.api";
 
-export function useGetSubjects() {
+export function useGetSubjects(programId?: string) {
   return useQuery({
-    queryKey: ["subjects"],
-    queryFn: getSubjects,
+    queryKey: programId ? ["subjects", programId] : ["subjects"],
+    queryFn: () => getSubjects(programId || undefined),
+    enabled: programId !== "",
     staleTime: 5 * 60 * 1000,
   });
 }

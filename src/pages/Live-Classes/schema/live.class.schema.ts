@@ -12,7 +12,9 @@ export const startLiveClassSchema = z.object({
     .min(1, "Description is required")
     .max(500, "Description must be less than 500 characters"),
 
-  gradeId: z.string().min(1, "Grade is required"),
+  programId: z.string().min(1, "Program is required"),
+
+  batchId: z.string().optional(),
 
   subjectId: z.string().min(1, "Subject is required"),
 

@@ -6,9 +6,13 @@ import type {
 } from "../schema/subject.schema";
 import type { Subject } from "../types";
 
-export async function getSubjects() {
+export async function getSubjects(programId?: string) {
   const { url, method } = apiEndPoints.SUBJECTS.LIST;
-  const res = await api.request<SubjectListResponse>({ url, method });
+  const res = await api.request<SubjectListResponse>({
+    url,
+    method,
+    params: programId ? { programId } : undefined,
+  });
   return res.data;
 }
 
