@@ -115,7 +115,7 @@ export default function StudentEnrollForm() {
       case 2: return <AddressInformation />;
       case 3: return <StudentInformation programOptions={mapToLabelValue(allProgramData, "name", "id")} batchesOptions={mapToLabelValue(allBactchesData, "name", "id")} />;
       case 4: return <GuardianInformation />;
-      case 5: return <ReviewSubmit />;
+      case 5: return <ReviewSubmit programOptions={mapToLabelValue(allProgramData, "name", "id")} batchesOptions={mapToLabelValue(allBactchesData, "name", "id")} />;
       default: return null;
     }
   };

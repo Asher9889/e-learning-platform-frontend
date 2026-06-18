@@ -10,9 +10,17 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-export default function ReviewSubmit() {
+interface ReviewSubmitProps {
+  programOptions: { label: string; value: string }[];
+  batchesOptions: { label: string; value: string }[];
+}
+
+export default function ReviewSubmit({ programOptions, batchesOptions }: ReviewSubmitProps) {
   const { getValues } = useFormContext<StudentEnrollFormInput>();
   const data = getValues();
+
+  const programName = programOptions.find((p) => p.value === data.roleInfo?.programId)?.label || data.roleInfo?.programId;
+  const batchName = batchesOptions.find((b) => b.value === data.roleInfo?.batchId)?.label || data.roleInfo?.batchId;
 
   const sections: SectionConfig[] = [
     {
@@ -47,9 +55,9 @@ export default function ReviewSubmit() {
       value: "student",
       title: "Student information",
       fields: [
-        { label: "Program", value: data.roleInfo?.programId },
+        { label: "Program", value: programName },
         { label: "Roll number", value: data.roleInfo?.rollNumber },
-        { label: "Batch", value: data.roleInfo?.batchId },
+        { label: "Batch", value: batchName },
         { label: "Admission date", value: data.roleInfo?.admissionDate },
         { label: "Guardian name", value: data.roleInfo?.guardianName },
         {
