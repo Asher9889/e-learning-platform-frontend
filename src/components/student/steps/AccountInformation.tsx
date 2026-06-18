@@ -6,7 +6,6 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { Label } from "#components/ui/label";
 import { getPasswordScore } from "@/utils/helper";
-import { Progress } from "#components/ui/progress";
 // import { StudentEnrollFormData } from "@/sche";
 
 export default function AccountInformation() {
