@@ -78,8 +78,8 @@ export default function EditStudentPage() {
         zipCode: student.personalInfo?.address?.zipCode || "",
       },
       roleInfo: {
-        programId: student.roleInfo?.programId || "",
-        batchId: student.roleInfo?.batchId || "",
+        programId: "",
+        batchId: "",
         rollNumber: student.roleInfo?.rollNumber || "",
         admissionDate: student.roleInfo?.admissionDate
           ? student.roleInfo.admissionDate.split("T")[0]
@@ -89,6 +89,16 @@ export default function EditStudentPage() {
       },
     });
   }, [student, reset]);
+
+  useEffect(() => {
+    if (!student || programs.length === 0) return;
+    setValue("roleInfo.programId", student.roleInfo?.programId || "");
+  }, [student, programs, setValue]);
+
+  useEffect(() => {
+    if (!student || !selectedProgram || batches.length === 0) return;
+    setValue("roleInfo.batchId", student.roleInfo?.batchId || "");
+  }, [student, selectedProgram, batches, setValue]);
 
   const onSubmit = (formData: Record<string, any>) => {
     const payload: Record<string, unknown> = {
@@ -119,7 +129,7 @@ export default function EditStudentPage() {
 
     update(
       { id: id!, data: payload },
-      { onSuccess: () => navigate("/student") }
+      { onSuccess: () => navigate(-1 as any) }
     );
   };
 
@@ -146,7 +156,7 @@ export default function EditStudentPage() {
       <div className="sticky top-0 z-10 bg-background border-b">
         <div className="container max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon-sm" onClick={() => navigate("/student")}>
+            <Button variant="ghost" size="icon-sm" onClick={() => navigate(-1 as any)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
@@ -294,7 +304,7 @@ export default function EditStudentPage() {
         </Card>
 
         <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline" onClick={() => navigate("/student")}>
+          <Button type="button" variant="outline" onClick={() => navigate(-1 as any)}>
             Cancel
           </Button>
           <Button type="submit" disabled={saving}>

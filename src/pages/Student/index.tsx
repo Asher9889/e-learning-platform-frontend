@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useStudents } from "./hooks/useStudentsList";
@@ -17,13 +17,46 @@ import type { StudentDataFromApi } from "./schema/student.schema";
 
 export default function StudentsPage() {
   const navigate = useNavigate();
-  const [programId, setProgramId] = useState("");
-  const [batchId, setBatchId] = useState("");
-  const [status, setStatus] = useState("");
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const programId = searchParams.get("programId") || "";
+  const batchId = searchParams.get("batchId") || "";
+  const status = searchParams.get("status") || "";
+  const search = searchParams.get("search") || "";
+  const page = parseInt(searchParams.get("page") || "1", 10);
+
   const [selectedStudent, setSelectedStudent] = useState<StudentDataFromApi | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const setFilters = useCallback(
+    (updates: Record<string, string>) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        for (const [key, value] of Object.entries(updates)) {
+          if (value) next.set(key, value);
+          else next.delete(key);
+        }
+        next.set("page", "1");
+        return next;
+      });
+    },
+    [setSearchParams]
+  );
+
+  const handlePageChange = useCallback(
+    (p: number) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set("page", String(p));
+        return next;
+      });
+    },
+    [setSearchParams]
+  );
+
+  const clearFilters = useCallback(() => {
+    setSearchParams(new URLSearchParams());
+  }, [setSearchParams]);
 
   const filters = useMemo(
     () => ({
@@ -88,14 +121,6 @@ export default function StudentsPage() {
     [bulkStatus]
   );
 
-  const clearFilters = useCallback(() => {
-    setProgramId("");
-    setBatchId("");
-    setStatus("");
-    setSearch("");
-    setPage(1);
-  }, []);
-
   return (
     <div className="space-y-6 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -116,23 +141,10 @@ export default function StudentsPage() {
         batchId={batchId}
         status={status}
         search={search}
-        onProgramChange={(v) => {
-          setProgramId(v);
-          setBatchId("");
-          setPage(1);
-        }}
-        onBatchChange={(v) => {
-          setBatchId(v);
-          setPage(1);
-        }}
-        onStatusChange={(v) => {
-          setStatus(v);
-          setPage(1);
-        }}
-        onSearchChange={(v) => {
-          setSearch(v);
-          setPage(1);
-        }}
+        onProgramChange={(v) => setFilters({ programId: v, batchId: "" })}
+        onBatchChange={(v) => setFilters({ batchId: v })}
+        onStatusChange={(v) => setFilters({ status: v })}
+        onSearchChange={(v) => setFilters({ search: v })}
         onClear={clearFilters}
       />
 
@@ -153,7 +165,7 @@ export default function StudentsPage() {
           students={students}
           pagination={pagination}
           page={page}
-          onPageChange={setPage}
+          onPageChange={handlePageChange}
           onStudentClick={handleStudentClick}
           onEditStudent={handleEditStudent}
           onDeleteStudent={handleDeleteStudent}
