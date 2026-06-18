@@ -6,21 +6,20 @@ import { useNavigate } from "react-router-dom";
 import { useStudents } from "./hooks/useStudentsList";
 
 export default function StudentsPage() {
-const navigate = useNavigate();
-const {data, isLoading, isError } = useStudents();
+  const navigate = useNavigate();
+  const { data, isLoading, isError } = useStudents();
 
 
   const students = data?.students || [];
-console.log(students,"studentsstudents")
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  
+
 
   if (isError) {
     return (
       <div>
-        Failed to load teachers
+        Failed to load STUDENTS
       </div>
     );
   }

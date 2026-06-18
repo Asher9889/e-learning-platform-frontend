@@ -45,6 +45,10 @@ export function StudentsTable({ students }: Props) {
             </TableHead>
 
             <TableHead className="font-semibold">
+              Program
+            </TableHead>
+
+            <TableHead className="font-semibold">
               Batch
             </TableHead>
 
@@ -104,7 +108,11 @@ export function StudentsTable({ students }: Props) {
                 </TableCell>
 
                 <TableCell>
-                  {student.roleInfo?.batchId}
+                  {student.roleInfo?.programName?.join(", ") || "-"}
+                </TableCell>
+
+                <TableCell>
+                  {student.roleInfo?.batchName || "-"}
                 </TableCell>
 
                 <TableCell className="text-muted-foreground">
@@ -155,7 +163,7 @@ export function StudentsTable({ students }: Props) {
           ) : (
             <TableRow>
               <TableCell
-                colSpan={8}
+                colSpan={9}
                 className="h-32 text-center text-muted-foreground"
               >
                 No students found
