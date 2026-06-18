@@ -43,7 +43,7 @@ export function StudentFilters({
   onClear,
 }: StudentFiltersProps) {
   const { data: programData } = useGetPrograms();
-  const { data: batchesData } = useGetBatches(programId || undefined);
+  const { data: batchesData } = useGetBatches(programId);
 
   const programs = programData?.programs || [];
   const batches = batchesData?.batches || [];

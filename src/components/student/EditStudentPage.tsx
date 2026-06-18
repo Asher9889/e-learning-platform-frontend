@@ -57,7 +57,7 @@ export default function EditStudentPage() {
   const programs = programData?.programs || [];
 
   const selectedProgram = watch("roleInfo.programId");
-  const { data: batchesData } = useGetBatches(selectedProgram || undefined);
+  const { data: batchesData } = useGetBatches(selectedProgram);
   const batches = batchesData?.batches || [];
 
   useEffect(() => {
