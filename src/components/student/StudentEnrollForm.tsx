@@ -51,6 +51,7 @@ export default function StudentEnrollForm() {
   } = useCreateStudent();
   const {
     uploadAvatarAsync,
+    isUploading,
   } = useUploadAvatar();
   const { data: programData } = useGetPrograms();
   console.log(programData, "programData")
@@ -79,37 +80,11 @@ export default function StudentEnrollForm() {
   //   console.log("phoneNumber (E.164):", values.phoneNumber); // +919876543210
   // };
 
-  const onSubmit = async (
+  const onSubmit = (
     values: StudentEnrollFormOutput
   ) => {
-    console.log(values, "asdfghjkl")
-
-    let avatarUrl = "";
-    console.log(values.personalInfo.profileImage,
-      "SUBMIT CALLED   debugging",
-      currentStep
-    );
-    console.log("asdasdasdasdasd", currentStep)
-    if (
-      values.personalInfo.profileImage
-    ) {
-      const uploadResponse =
-        await uploadAvatarAsync(
-          values.personalInfo.profileImage
-        );
-
-      avatarUrl =
-        uploadResponse?.key;
-    }
-
     handleCreateStudent(
-      {
-        ...values,
-        personalInfo: {
-          ...values.personalInfo,
-          profileImage: avatarUrl,
-        },
-      },
+      values,
       {
         onSuccess: (response) => {
           sileo.success({
@@ -136,7 +111,7 @@ export default function StudentEnrollForm() {
   const renderStep = () => {
     switch (currentStep) {
       case 0: return <AccountInformation />;
-      case 1: return <PersonalInformation />;
+      case 1: return <PersonalInformation uploadAvatarAsync={uploadAvatarAsync} isUploading={isUploading} />;
       case 2: return <AddressInformation />;
       case 3: return <StudentInformation programOptions={mapToLabelValue(allProgramData, "name", "id")} batchesOptions={mapToLabelValue(allBactchesData, "name", "id")} />;
       case 4: return <GuardianInformation />;
