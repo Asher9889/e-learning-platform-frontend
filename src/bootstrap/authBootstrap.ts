@@ -10,7 +10,6 @@ export const authBootstrap = async () => {
 
       const user = await authService.getMe();
 
-      console.log(user,"useruseruseruser")
       store.dispatch(authenticated());
       store.dispatch(setUser(user));
 
