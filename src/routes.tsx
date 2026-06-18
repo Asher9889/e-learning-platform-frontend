@@ -8,6 +8,7 @@ import type { AppRoutes, ChildRoute } from "./types/route.type";
 import LiveClassPage from "@/pages/Live-Classes";
 import StudentsPage from "@/pages/Student";
 import EnrollStudentPage from "@/components/student/EnrollStudentPage";
+import EditStudentPage from "@/components/student/EditStudentPage";
 import TeachersPage from "@/pages/Teacher";
 import AddTeacher from "@/components/teacher/AddTeacher";
 import ProgramsPage from "@/pages/Programs";
@@ -114,6 +115,10 @@ export const APP_ROUTES: AppRoutes = {
       {
         path: "add",
         element: EnrollStudentPage,
+      },
+      {
+        path: ":id/edit",
+        element: EditStudentPage,
       },
     ],
   },

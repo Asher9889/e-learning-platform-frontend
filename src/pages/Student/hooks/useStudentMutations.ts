@@ -5,6 +5,7 @@ import {
   deleteStudent,
   updateStudentStatus,
   bulkUpdateStudentStatus,
+  updateStudent,
 } from "../api/student.api";
 import type { UpdateStudentStatusInput, BulkUpdateStatusInput } from "../schema/student.schema";
 
@@ -33,6 +34,21 @@ export function useUpdateStudentStatus() {
     },
     onError: (error: Error) => {
       sileo.error({ title: "Status update failed", description: error.message });
+    },
+  });
+}
+
+export function useUpdateStudent() {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Record<string, unknown> }) =>
+      updateStudent(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["students"] });
+      queryClient.invalidateQueries({ queryKey: ["student"] });
+      sileo.success({ title: "Student updated" });
+    },
+    onError: (error: Error) => {
+      sileo.error({ title: "Update failed", description: error.message });
     },
   });
 }
