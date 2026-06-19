@@ -8,6 +8,7 @@ interface PublishedGridProps {
   isLoading: boolean;
   hasFilters: boolean;
   onEdit: (material: Material) => void;
+  onPreview?: (material: Material) => void;
 }
 
 export function PublishedGrid({
@@ -15,6 +16,7 @@ export function PublishedGrid({
   isLoading,
   hasFilters,
   onEdit,
+  onPreview,
 }: PublishedGridProps) {
   if (isLoading) {
     return (
@@ -59,6 +61,7 @@ export function PublishedGrid({
             size: formatSize(material.file.size),
           }}
           onEdit={() => onEdit(material)}
+          onPreview={() => onPreview?.(material)}
         />
       ))}
     </div>

@@ -40,6 +40,7 @@ interface ContentCardItem {
 interface ContentCardProps {
   item: ContentCardItem
   onEdit?: (item: ContentCardItem) => void
+  onPreview?: (item: ContentCardItem) => void
 }
 
 const TYPE_ICONS: Record<ContentType, LucideIcon> = {
@@ -86,7 +87,7 @@ const TYPE_STYLES: Record<ContentType, { cover: string; icon: string; badge: str
   },
 }
 
-export function ContentCard({ item, onEdit }: ContentCardProps) {
+export function ContentCard({ item, onEdit, onPreview }: ContentCardProps) {
   const Icon = TYPE_ICONS[item.type] || File
   const styles = TYPE_STYLES[item.type] || TYPE_STYLES.DOCUMENT
   const label = TYPE_LABELS[item.type]
@@ -108,7 +109,7 @@ export function ContentCard({ item, onEdit }: ContentCardProps) {
 
         {/* Hover action overlay */}
         <div className="absolute inset-0 flex translate-y-1 items-center justify-center gap-1.5 bg-black/0 opacity-0 transition-all duration-200 group-hover/card:translate-y-0 group-hover/card:bg-black/[0.04] group-hover/card:opacity-100">
-          <Button variant="secondary" size="icon" className="h-8 w-8 shadow-sm">
+          <Button variant="secondary" size="icon" className="h-8 w-8 shadow-sm" onClick={() => onPreview?.(item)}>
             <Eye className="h-3.5 w-3.5" />
           </Button>
           <Button variant="secondary" size="icon" className="h-8 w-8 shadow-sm" onClick={() => onEdit?.(item)}>

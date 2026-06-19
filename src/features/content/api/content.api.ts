@@ -48,7 +48,7 @@ export async function restoreMaterial(id: string) {
 
 export async function getMaterialsStats() {
   const { url, method } = apiEndPoints.MATERIALS.STATS;
-  const res = await api.request<MaterialsStatsResponse>({ url, method });
+  const res = await api.request<MaterialsStatsResponse>({ url, method, data: {} });
   return res as unknown as MaterialsStatsResponse;
 }
 

@@ -41,12 +41,12 @@ export interface MaterialsStatsResponse {
   success: boolean;
   statusCode: number;
   message: string;
-  data: {
+  data: [{
     totalMaterials: number;
     publishedMaterials: number;
     draftMaterials: number;
     storageUsed: number;
-  };
+  }];
 }
 
 export interface MaterialFilters {

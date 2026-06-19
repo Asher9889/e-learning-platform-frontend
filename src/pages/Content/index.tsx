@@ -21,6 +21,8 @@ import {
   useRestoreMaterial,
 } from "@/features/content/hooks/useContentMutations";
 import type { Material, MaterialType } from "@/features/content/types/content.types";
+import { PreviewModal } from "@/components/material-preview/PreviewModal";
+import { getMaterialFileUrl } from "@/components/material-preview/MaterialPreview";
 
 export default function ContentPage() {
   const [uploadOpen, setUploadOpen] = useState(false);
@@ -33,6 +35,7 @@ export default function ContentPage() {
   const [limit, setLimit] = useState(20);
   const [drawerMaterial, setDrawerMaterial] = useState<Material | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [previewMaterial, setPreviewMaterial] = useState<Material | null>(null);
 
   const { data: programData } = useGetPrograms();
   const { data: subjectsData } = useGetSubjects(programId || undefined);
@@ -105,7 +108,7 @@ export default function ContentPage() {
         </Button>
       </div>
 
-      <ContentStatsCards stats={statsData?.data} />
+      <ContentStatsCards stats={statsData?.data[0]} />
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="mb-4">
@@ -138,6 +141,7 @@ export default function ContentPage() {
             isLoading={isLoading}
             hasFilters={hasFilters}
             onEdit={handleOpenDrawer}
+            onPreview={setPreviewMaterial}
           />
         </TabsContent>
 
@@ -180,6 +184,13 @@ export default function ContentPage() {
         onSaveDraft={handleSaveDraft}
         onPublish={(id) => publishMaterial(id)}
         onDelete={(id) => deleteMaterial(id)}
+      />
+
+      <PreviewModal
+        material={previewMaterial}
+        fileUrl={previewMaterial ? getMaterialFileUrl(previewMaterial.objectKey) : ""}
+        open={!!previewMaterial}
+        onOpenChange={(open) => { if (!open) setPreviewMaterial(null) }}
       />
     </div>
   );
