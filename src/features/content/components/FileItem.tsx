@@ -11,7 +11,7 @@ import {
   TYPE_COLORS,
   formatSize,
   formatSpeed,
-  formatTime,
+  // formatTime,
 } from "../types/content.types"
 import type { UploadFile } from "../types/content.types"
 
@@ -40,7 +40,7 @@ export function FileItem({ file, onRemove, onPauseResume }: FileItemProps) {
             colorClass
           )}
         >
-          <Icon className="h-4 w-4" />
+          <Icon />
         </div>
 
         <div className="min-w-0 flex-1">
@@ -92,8 +92,8 @@ export function FileItem({ file, onRemove, onPauseResume }: FileItemProps) {
             <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
               {file.status === "uploading" && (
                 <>
-                  <span>{formatSpeed(file.speed)}</span>
-                  {file.eta > 0 && <span>{formatTime(file.eta)} remaining</span>}
+                  <span>{formatSpeed(file.speed || 0)}</span>
+                  {/* {file.eta > 0 && <span>{formatTime(file.eta)} remaining</span>} */}
                 </>
               )}
               {file.status === "waiting" && (

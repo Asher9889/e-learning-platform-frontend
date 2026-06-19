@@ -6,7 +6,7 @@ import {
   updateProgress,
   setStatus,
   removeItem,
-  addPendingMetadata,
+  // addPendingMetadata,
 } from "../store/upload.slice"
 import { api, apiEndPoints } from "@/config"
 import { sileo } from "sileo"
@@ -33,6 +33,8 @@ function createUppy(): Uppy {
     },
   })
 
+  const fileMap = new Map<string, { materialId: string }>();
+
   uppy.use(AwsS3, {
     limit: 4,
     shouldUseMultipart: true,
@@ -52,9 +54,16 @@ function createUppy(): Uppy {
         method,
         data: payload,
       })
+
+      uppy.setFileMeta(file.id, {
+        materialId: res.data.materialId,
+      });
+      fileMap.set(file.id, { materialId: res.data.materialId });
+
       return {
         uploadId: res.data.uploadId,
         key: res.data.key,
+        materialId: res.data.materialId,
       }
 
     },
@@ -72,25 +81,38 @@ function createUppy(): Uppy {
 
     },
 
-    completeMultipartUpload: async (_, { uploadId, key, parts }) => {
+    completeMultipartUpload: async (file, { uploadId, key, parts }) => {
+
+      const materialId = file.meta.materialId;
+
 
       const { url, method } = apiEndPoints.UPLOADS.COMPLETE_MULTIPART_UPLOAD;
       const res = await api.request({
         url,
         method,
-        data: { uploadId, key, parts }
+        data: { uploadId, key, parts, materialId }
       })
+      fileMap.delete(file.id);
+
+      uppy.setFileMeta(file.id, {
+        materialData: JSON.stringify(res.data.material || res.data)
+      });
+
       return {
-        location: res.data.location,
+        location: res.data.location || "",
       }
     },
 
-    abortMultipartUpload: async (_, { uploadId, key }) => {
+    abortMultipartUpload: async (file, { uploadId, key }) => {
 
+      const materialId = fileMap.get(file.id)?.materialId;
+      fileMap.delete(file.id);
+      
+      console.log("[abortMultipartUpload] Aborting upload for file:", file.name, "uploadId:", uploadId, "key:", key, "materialId:", materialId);
       await api.request({
         url: apiEndPoints.UPLOADS.ABORT_MULTIPART_UPLOAD.url,
         method: apiEndPoints.UPLOADS.ABORT_MULTIPART_UPLOAD.method,
-        data: { uploadId, key }
+        data: { uploadId, key, materialId   }
       })
     },
 
@@ -122,7 +144,6 @@ function createUppy(): Uppy {
 
   uppy.on("upload-start", (files) => {
     if (!files) return
-    console.log("upload-start event:===== all files are", files);
     Object.values(files).forEach((file) => {
       store.dispatch(
         setStatus({
@@ -150,16 +171,26 @@ function createUppy(): Uppy {
     )
   })
 
-  uppy.on("upload-success", (file, response) => {
+  uppy.on("upload-success", (file, _) => {
     store.dispatch(setStatus({ id: file?.id, status: "COMPLETED" }))
-    store.dispatch(
-      addPendingMetadata({
-        fileId: file?.id ?? "",
-        fileName: file?.name ?? "Unknown",
-        fileSize: file?.size ?? 0,
-        uploadUrl: response.uploadURL ?? "",
-      })
-    )
+
+    // try {
+    //   materialData = JSON.parse(file?.meta?.materialId ?? "{}") as Record<string, unknown>
+    // } catch { /* ignore */ }
+
+    // store.dispatch(
+    //   addPendingMetadata({
+    //     fileId: file?.id ?? "",
+    //     fileName: file?.name ?? "Unknown",
+    //     fileSize: file?.size ?? 0,
+    //     uploadUrl: response.uploadURL ?? "",
+    //     materialId: (materialData?.id as string) ?? (file?.meta?.materialId as string) ?? "",
+    //     status: (materialData?.status as string) ?? "DRAFT",
+    //     materialType: (materialData?.materialType as string) ?? "",
+    //     title: (materialData?.title as string) ?? file?.name ?? "Unknown",
+    //     description: (materialData?.description as string) ?? "",
+    //   })
+    // )
   })
 
   uppy.on("upload-error", (file, error) => {

@@ -3,7 +3,7 @@ import { getSubjects } from "../api/subject.api";
 
 export function useGetSubjects(programId?: string) {
   return useQuery({
-    queryKey: programId ? ["subjects", programId] : ["subjects"],
+    queryKey: ["subjects", "list", programId],
     queryFn: () => getSubjects(programId || undefined),
     enabled: programId !== "",
     staleTime: 5 * 60 * 1000,

@@ -80,7 +80,7 @@ export function UploadManager() {
     [items]
   )
 
-  // Show a toast instead of auto-navigating
+  // Show a toast when all uploads finish
   useEffect(() => {
     if (
       items.length > 0 &&
@@ -90,13 +90,15 @@ export function UploadManager() {
     ) {
       hasNavigated.current = true
       const completedCount = items.filter((i) => i.status === "COMPLETED").length
+      const draftCount = pendingMetadata.filter((p) => p.status === "DRAFT").length
+      const publishedCount = pendingMetadata.filter((p) => p.status === "PUBLISHED").length
       sileo.success({
         title: "Upload Complete",
-        description: `${completedCount} file${completedCount !== 1 ? "s" : ""} uploaded successfully`,
+        description: `${completedCount} file${completedCount !== 1 ? "s" : ""} uploaded — ${publishedCount} published, ${draftCount} draft${draftCount !== 1 ? "s" : ""}`,
         duration: 10_000,
         button: {
-          title: "Add Metadata",
-          onClick: () => navigate("/content/upload/metadata"),
+          title: draftCount > 0 ? "Add Metadata" : "View in Library",
+          onClick: () => navigate(draftCount > 0 ? "/content/upload/metadata" : "/content"),
         },
       })
     }

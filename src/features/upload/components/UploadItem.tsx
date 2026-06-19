@@ -132,21 +132,21 @@ export const UploadItem = memo(function UploadItem({
         item.status === "FAILED" && "border-destructive/30 bg-destructive/5"
       )}
     >
-      <div className="flex items-start gap-3">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
         {/* File icon */}
         <div
           className={cn(
-            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+            "flex h-9 w-9 items-center justify-center rounded-lg",
             "bg-muted text-muted-foreground"
           )}
         >
           {createElement(fileIcon, { className: "h-4 w-4" })}
         </div>
 
-        <div className="min-w-0 flex-1">
-          {/* File name + status */}
-          <div className="flex items-start justify-between gap-2 bg-red-500">
-            <div className="min-w-0">
+        <div className="min-w-0">
+          {/* File name + status + actions row */}
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0 overflow-hidden">
               <p className="truncate text-sm font-medium">{item.fileName}</p>
               <span
                 className={cn(

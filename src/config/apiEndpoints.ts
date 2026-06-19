@@ -236,6 +236,40 @@ const apiEndpoints = {
             method: "DELETE" as Method
         }
     },
+    MATERIALS: {
+        LIST: {
+            url: "/materials",
+            method: "GET" as Method
+        },
+        GET: (id: string) => ({
+            url: `/materials/${id}`,
+            method: "GET" as Method,
+        }),
+        UPDATE: (id: string) => ({
+            url: `/materials/${id}`,
+            method: "PATCH" as Method,
+        }),
+        PUBLISH: (id: string) => ({
+            url: `/materials/${id}/publish`,
+            method: "POST" as Method,
+        }),
+        DELETE: (id: string) => ({
+            url: `/materials/${id}`,
+            method: "DELETE" as Method,
+        }),
+        RESTORE: (id: string) => ({
+            url: `/materials/${id}/restore`,
+            method: "POST" as Method,
+        }),
+        STATS: {
+            url: "/materials/stats",
+            method: "GET" as Method
+        },
+        METADATA: {
+            url: "/materials/metadata",
+            method: "POST" as Method
+        }
+    },
     UPLOADS: {
         CREATE_MULTIPART_UPLOAD: {
             url: "/uploads/materials/s3/multipart/create",

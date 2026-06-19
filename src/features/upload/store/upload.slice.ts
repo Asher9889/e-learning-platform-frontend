@@ -1,11 +1,17 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { UploadItem, UploadStatus } from "../types/upload.types"
+import type { MaterialStatus } from "@/constants/material/material.constant"
 
 export interface PendingMetadataItem {
   fileId: string
   fileName: string
   fileSize: number
   uploadUrl: string
+  materialId: string
+  status: MaterialStatus
+  materialType: string
+  title: string
+  description: string
 }
 
 interface UploadState {

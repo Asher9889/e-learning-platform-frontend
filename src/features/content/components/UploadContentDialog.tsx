@@ -21,7 +21,8 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { getUppy } from "@/features/upload/services/upload-engine"
 import { formatFileSize } from "@/utils/helper"
-import { ScrollArea } from "#components/ui/scroll-area"
+
+import { sileo } from "sileo"
 
 
 const EXT_ICONS: Record<string, React.ReactNode> = {
@@ -56,16 +57,15 @@ interface UploadContentDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-interface UploadFile {
+interface LocalUploadFile {
   id: string;
   file: File;
   status: "idle" | "uploading" | "done" | "error";
   progress: number;
 }
 
-
 export function UploadContentDialog({ open, onOpenChange }: UploadContentDialogProps) {
-  const [files, setFiles] = useState<UploadFile[]>([]);
+  const [files, setFiles] = useState<LocalUploadFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [, setDragCounter] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -74,7 +74,7 @@ export function UploadContentDialog({ open, onOpenChange }: UploadContentDialogP
 
   const addFiles = useCallback((newFiles: FileList | null) => {
     if (!newFiles) return
-    const filesArray: UploadFile[] = Array.from(newFiles).map(
+    const filesArray: LocalUploadFile[] = Array.from(newFiles).map(
       (file) => ({
         id: generateId(),
         file,
@@ -131,19 +131,31 @@ export function UploadContentDialog({ open, onOpenChange }: UploadContentDialogP
   }, [])
 
   const handleUpload = useCallback(async () => {
-    const uppy = getUppy();
-    files.forEach((file) => {
-      uppy.addFile({
-        name: file.file.name,
-        type: file.file.type,
-        data: file.file,
+    try {
+      const uppy = getUppy();
+      files.forEach((file) => {
+        uppy.addFile({
+          name: file.file.name,
+          type: file.file.type,
+          data: file.file,
+        })
       })
-    })
 
-    await uppy.upload();
+      uppy.upload();
 
-    setFiles([])
-    onOpenChange(false)
+      setFiles([])
+      onOpenChange(false)
+    } catch (error: any) {
+      sileo.error({
+        title: "Upload Failed",
+        description: error.message || "An error occurred during upload. Please try again.",
+      })
+      console.error("Upload failed:", error)
+    }
+    finally {
+      setFiles([])
+      onOpenChange(false)
+    }
   }, [files, onOpenChange])
 
   const handleClose = useCallback(() => {
@@ -222,7 +234,7 @@ export function UploadContentDialog({ open, onOpenChange }: UploadContentDialogP
             </div>
 
             {isDragging && (
-              <div className="absolute inset-0 rounded-xl bg-primary/[0.03]" />
+              <div className="absolute inset-0 rounded-xl bg-primary/3" />
             )}
           </div>
 
@@ -237,40 +249,38 @@ export function UploadContentDialog({ open, onOpenChange }: UploadContentDialogP
                 </span>
               </div>
 
-              <ul className="max-h-50 overflow-y-auto">
+              <div className="divide-y max-h-50 overflow-y-auto">
                 {files.map((file) => (
-                  <ScrollArea >
-                    <li
-                      key={file.id}
-                      className="group flex items-center gap-3 px-4 py-2.5 hover:bg-muted/30 transition-colors"
+                  <div
+                    key={file.id}
+                    className="group grid grid-cols-[auto_minmax(0,1fr)_auto] gap-3 px-4 py-2.5 hover:bg-muted/30 transition-colors"
+                  >
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted">
+                      {getFileIcon(file.file.name, file.file.type, "h-4 w-4 text-muted-foreground")}
+                    </div>
+
+                    <div className="overflow-hidden">
+                      <p className="truncate text-sm font-medium text-foreground">
+                        {file.file.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatFileSize(file.file.size)}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleRemoveFile(file.id)
+                      }}
+                      className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-destructive/10 hover:text-destructive text-muted-foreground"
+                      aria-label={`Remove ${file.file.name}`}
                     >
-                      <div className="shrink-0 flex h-9 w-9 items-center justify-center rounded-lg bg-muted">
-                        {getFileIcon(file.file.name, file.file.type, "h-4 w-4 text-muted-foreground")}
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">
-                          {file.file.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatFileSize(file.file.size)}
-                        </p>
-                      </div>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleRemoveFile(file.id)
-                        }}
-                        className="shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1.5 rounded-lg hover:bg-destructive/10 hover:text-destructive text-muted-foreground"
-                        aria-label={`Remove ${file.file.name}`}
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    </li>
-                  </ScrollArea>
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
 
