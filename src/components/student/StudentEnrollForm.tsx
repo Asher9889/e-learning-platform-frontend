@@ -69,10 +69,6 @@ export default function StudentEnrollForm() {
 
   const { data: batchesData } = useGetBatches(selectedProgram);
   const allBactchesData = batchesData?.batches || [];
-  console.log(
-    methods.getValues("roleInfo.programId"),
-    "selectedProgram", batchesData
-  );
 
   // ✅ onSubmit ko Output type milta hai — transform ke baad (phoneNumber: string E.164)
   // const onSubmit = (values: StudentEnrollFormOutput) => {
@@ -80,18 +76,23 @@ export default function StudentEnrollForm() {
   //   console.log("phoneNumber (E.164):", values.phoneNumber); // +919876543210
   // };
 
-  const onSubmit = (
-    values: StudentEnrollFormOutput
-  ) => {
+  const onSubmit = async (values: StudentEnrollFormOutput) => {
+
+
+    // let avatarUrl = "";
+    // if (values.personalInfo.profileImage) {
+    //   const uploadResponse = await uploadAvatarAsync(values.personalInfo.profileImage);
+
+    //   avatarUrl = uploadResponse?.key;
+    // }
+
     handleCreateStudent(
       values,
       {
         onSuccess: (response) => {
           sileo.success({
             title: "Student Created",
-            description:
-              response?.message ||
-              "Student created successfully",
+            description: response?.message || "Student created successfully",
           });
           navigate("/student");
         },

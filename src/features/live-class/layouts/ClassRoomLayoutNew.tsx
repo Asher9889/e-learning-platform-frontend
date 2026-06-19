@@ -15,6 +15,7 @@ import { useEffect, useRef, useMemo } from "react";
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
 // import {
 //     Mic,
 //     MicOff,
@@ -38,20 +39,22 @@ import { ClassroomControls } from "../components/controls/ClassroomControls";
 import { useMediaQuery } from "#hooks/use-media-query";
 import { setChatOpen } from "../store/liveClass.slice";
 // import { RoomEvent } from "livekit-client";
-import notificationSound from "@/assets/sounds/notification.mp3";
-// import { useRoomContext } from "@livekit/components-react";
+// import notificationSound from "@/assets/sounds/notification.mp3";
+import { useRoomContext } from "@livekit/components-react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import handRaiseAnimation from "@/assets/animations/hand-raise.lottie";
 import { useSingleSpeakerSystem } from "../hooks/useSingleSpeakerSystem";
+import { Mic, MicOff, Video, VideoOff } from "lucide-react";
+import { RoomEvent } from "livekit-client";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface Student {
-    id: string;
-    name: string;
-    initials: string;
-    gradient: string;
-    status: "speaking" | "online" | "hand" | "muted";
-}
+// interface Student {
+//     id: string;
+//     name: string;
+//     initials: string;
+//     gradient: string;
+//     status: "speaking" | "online" | "hand" | "muted";
+// }
 
 // interface ChatMessage {
 //     id: string;
@@ -110,12 +113,12 @@ interface Student {
 //     );
 // }
 
-function StudentStatusLabel({ status }: { status: Student["status"] }) {
-    if (status === "speaking") return <span className="text-[10px] text-emerald-600 font-medium">● Speaking</span>;
-    if (status === "online") return <span className="text-[10px] text-emerald-500 font-medium">● Online</span>;
-    if (status === "hand") return <span className="text-[10px] text-amber-500">✋ Raised</span>;
-    return <span className="text-[10px] text-slate-400">🔇 Muted</span>;
-}
+// function StudentStatusLabel({ status }: { status: Student["status"] }) {
+//     if (status === "speaking") return <span className="text-[10px] text-emerald-600 font-medium">● Speaking</span>;
+//     if (status === "online") return <span className="text-[10px] text-emerald-500 font-medium">● Online</span>;
+//     if (status === "hand") return <span className="text-[10px] text-amber-500">✋ Raised</span>;
+//     return <span className="text-[10px] text-slate-400">🔇 Muted</span>;
+// }
 
 // ─── Chat Panel ───────────────────────────────────────────────────────────────
 
@@ -201,13 +204,30 @@ export default function ClassRoomLayoutNew() {
     //     Record<string, boolean>
     // >({});
     const previousRaisedUsers = useRef(new Set<string>());
-    // const room = useRoomContext();
+    const room = useRoomContext();
     // const [chatOpen, setChatOpen] = useState(false);
     const chatOpen = useAppSelector((state) => state.liveClass.chatOpen);
     const title = useAppSelector(
         (state) => state.liveClass.title
     );
-    const liveKitParticipants = useParticipants();
+    const liveKitParticipants = useParticipants({
+        updateOnlyOn: [
+            RoomEvent.ParticipantConnected,
+            RoomEvent.ParticipantDisconnected,
+            RoomEvent.ActiveSpeakersChanged,
+            RoomEvent.TrackMuted,
+            RoomEvent.TrackUnmuted,
+
+            RoomEvent.LocalTrackPublished,
+            RoomEvent.LocalTrackUnpublished,
+
+            RoomEvent.TrackPublished,
+            RoomEvent.TrackUnpublished,
+
+            RoomEvent.ParticipantAttributesChanged,
+            RoomEvent.ParticipantMetadataChanged,
+        ],
+    });
     // const participantIdentities = useMemo(
     //     () => liveKitParticipants.map(p => p.identity).join(","),
     //     [liveKitParticipants]
@@ -269,8 +289,8 @@ export default function ClassRoomLayoutNew() {
                 name: p.name || p.identity,
                 avatar: p.metadata ? extractAvatar(p.metadata) : undefined,
                 role: (p.identity === teacherIdentity?.id ? "TEACHER" : "STUDENT") as "TEACHER" | "STUDENT",
-                isMuted: p.isMicrophoneEnabled === false,
-                isCameraOff: p.isCameraEnabled === false,
+                isMuted: p.isMicrophoneEnabled,
+                isCameraOff: p.isCameraEnabled,
                 handRaised: p.attributes?.handRaised === "true",
                 // isSpeaking: p.isSpeaking,
                 audioLevel: p.audioLevel || 0,
@@ -296,22 +316,102 @@ export default function ClassRoomLayoutNew() {
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
-        audioRef.current = new Audio(notificationSound);
-        audioRef.current.volume = 0.8;
-        audioRef.current.load();
+        participants.forEach((participant) => {
+            if (
+                participant.handRaised &&
+                !previousRaisedUsers.current.has(participant.identity)
+            ) {
+                if (audioRef.current) {
+                    audioRef.current.currentTime = 0;
+                    audioRef.current.play().catch((err) => {
+                        console.error("🔔 Audio play failed:", err);
+                    });
+                }
+                previousRaisedUsers.current.add(participant.identity);
+            }
 
-        const unlock = () => {
-            audioRef.current?.play().then(() => {
-                audioRef.current?.pause();
-                audioRef.current!.currentTime = 0;
-            }).catch(() => { });
-            document.removeEventListener("click", unlock);
-            document.removeEventListener("touchstart", unlock);
+            if (!participant.handRaised) {
+                previousRaisedUsers.current.delete(participant.identity);
+            }
+        });
+    }, [participants]);
+    useEffect(() => {
+        const handleData = async (
+            payload: Uint8Array,
+            participant: any
+        ) => {
+            const text = new TextDecoder().decode(payload);
+
+            console.log("📩 Data received:", text, "CONTROLLLLLL");
+            console.log("📩 From:", participant?.identity, "CONTROLLLLLL");
+
+            const data = JSON.parse(text);
+
+            console.log("Parsed data:", data, "CONTROLLLLLL");
+            if (
+                data.type === "CAMERA_OFF_ALL" &&
+                data.targetStudentId === room.localParticipant.identity
+            ) {
+                console.log("✅ This message is for me CAMERA_OFF_ALL", "CONTROLLLLLL");
+                room.localParticipant.setCameraEnabled(false);
+            }
+            if (
+                data.type === "toggle-mic" &&
+                data.targetId === room.localParticipant.identity
+            ) {
+                console.log("✅ This message is for me", "CONTROLLLLLL");
+
+                await room.localParticipant.setMicrophoneEnabled(
+                    data.enabled
+                );
+                //       await room.localParticipant.setAttributes({
+                //     isMuted: (!data.enabled).toString(),
+                //   });
+                //  room.localParticipant.setAttributes({
+                //   isMuted: `${data.enabled}`,
+                // });
+
+
+
+                console.log(
+                    "Mic state changed:",
+                    data.enabled, "CONTROLLLLLL"
+                );
+            }
+            if (
+                data.type === "toggle-video" &&
+                data.targetId === room.localParticipant.identity
+            ) {
+                console.log("✅ This message is for me", "CONTROLLLLLL");
+
+                await Promise.all([
+                    room.localParticipant.setCameraEnabled(data.enabled),
+                    room.localParticipant.setAttributes({
+                        cameraOnAt: Date.now().toString(),
+                    }),
+                ]);
+                //       await room.localParticipant.setAttributes({
+                //     isMuted: (!data.enabled).toString(),
+                //   });
+                //  room.localParticipant.setAttributes({
+                //   isMuted: `${data.enabled}`,
+                // });
+
+
+
+                console.log(
+                    "Mic state changed:",
+                    data.enabled, "CONTROLLLLLL"
+                );
+            }
         };
 
-        document.addEventListener("click", unlock, { once: true });
-        document.addEventListener("touchstart", unlock, { once: true });
-    }, []);
+        room.on(RoomEvent.DataReceived, handleData);
+        console.log("Listener attached", "CONTROLLLLLL");
+        return () => {
+            room.off(RoomEvent.DataReceived, handleData);
+        };
+    }, [room]);
     // const formatTime = (s: number) => {
     //     const h = Math.floor(s / 3600);
     //     const m = Math.floor((s % 3600) / 60);
@@ -368,7 +468,7 @@ export default function ClassRoomLayoutNew() {
     //     "data-[state=active]:shadow-none";
 
 
-    console.log(visibleStudents, "visibleStudentsvisibleStudentsvisibleStudents", liveKitParticipants)
+    console.log(visibleStudents, "visibleStudentsvisibleStudentsvisibleStudents CONTROLLLLLL", liveKitParticipants)
     return (
         <>
             <style>{`
@@ -495,74 +595,155 @@ export default function ClassRoomLayoutNew() {
                         </Sheet>
                         <ClassroomControls />
                         {/* Students strip */}
-                        <div className="flex gap-1.5 sm:gap-2">
-                            {visibleStudents.map((s) => (
-
-                                <div
-                                    key={s.identity}
-                                    className="flex-1 rounded-lg bg-white border px-2 py-1.5 sm:px-2.5 sm:py-2 flex items-center gap-1.5 sm:gap-2 min-w-0 shadow-sm"
-                                    style={{
-                                        borderColor: s.isSpeaking ? "#4ade80" : "#e2e8f0",
-                                        boxShadow: s.isSpeaking
-                                            ? "0 0 0 1.5px #4ade8066"
-                                            : "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-                                        // Smooth transition on border/shadow — duration matches hook fade
-                                        transition: `border-color ${fadeDuration}ms ease, box-shadow ${fadeDuration}ms ease`,
-                                    }}
-                                >
-                                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-slate-500 to-slate-300 flex items-center justify-center text-[11px] sm:text-[13px] font-semibold text-white shrink-0">
-                                        {s.avatar ? (
-                                            <img
-                                                src={s.avatar}
-                                                alt={s.name}
-                                                className="w-full h-full object-cover"
-                                                onError={(e) => {
-                                                    e.currentTarget.style.display = "none";
-                                                }}
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full rounded-full bg-gradient-to-br from-slate-500 to-slate-300 flex items-center justify-center text-[11px] sm:text-[13px] font-semibold text-white">
-                                                {s.name.charAt(0).toUpperCase()}
+                        {/* ══════════════ STUDENTS STRIP (responsive grid cards) ══════════════ */}
+                        <div
+                            className="grid gap-2"
+                            style={{
+                                gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+                            }}
+                        >
+                            {participants.map((s) => {
+                                console.log(
+                                    s.name,
+                                    "cameraEnabled:awdawd",
+                                    s.isCameraOff,
+                                    "actual:",
+                                    liveKitParticipants.find(
+                                        (p) => p.identity === s.identity
+                                    )?.isCameraEnabled
+                                );
+                                return (
+                                    <div
+                                        key={s.identity}
+                                        className="rounded-xl bg-white border px-3 py-2.5 flex items-center gap-2.5 min-w-0"
+                                        style={{
+                                            borderColor: s.isSpeaking ? "#4ade80" : "#e2e8f0",
+                                            boxShadow: s.isSpeaking
+                                                ? "0 0 0 2px #4ade8066"
+                                                : "0 1px 3px rgb(0 0 0 / 0.08)",
+                                            transition: `all ${fadeDuration}ms ease`,
+                                        }}
+                                    >
+                                        {/* Avatar + status overlay */}
+                                        <div className="relative shrink-0">
+                                            <div className="w-[38px] h-[38px] rounded-full overflow-hidden bg-gradient-to-br from-slate-500 to-slate-300 flex items-center justify-center">
+                                                {s.avatar ? (
+                                                    <img
+                                                        src={s.avatar}
+                                                        alt={s.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <span className="text-white font-semibold text-sm">
+                                                        {s.name.charAt(0).toUpperCase()}
+                                                    </span>
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
 
-                                    <div className="min-w-0 hidden sm:block">
-                                        <div className="flex items-center gap-1">
-                                            <p className="text-[11px] sm:text-[12px] font-semibold text-slate-700 truncate">
-                                                {s.name}
-                                            </p>
-
-                                            {s.handRaised && (
-                                                <DotLottieReact src={handRaiseAnimation} autoplay loop />
+                                            {/* Speaking indicator (green pulse dot) */}
+                                            {s.isSpeaking && (
+                                                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse border-2 border-white" />
                                             )}
 
-                                            {/* Speaking indicator — fades in/out via opacity transition */}
-                                            <span
-                                                className="ml-1 flex items-center gap-[2px]"
-                                                style={{
-                                                    opacity: s.isSpeaking ? 1 : 0,
-                                                    transition: `opacity ${fadeDuration}ms ease`,
-                                                    // pointer-events none when hidden so it doesn't block clicks
-                                                    pointerEvents: s.isSpeaking ? "auto" : "none",
-                                                }}
-                                            >
-                                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                                                <span className="text-[10px] text-green-600 font-medium">speaking</span>
-                                            </span>
+                                            {/* Hand raised indicator (overrides speaking dot visually if both — hand takes priority on the corner) */}
+                                            {s.handRaised && (
+                                                <span className="absolute -top-1.5 -right-1.5 w-[18px] h-[18px] rounded-full bg-white flex items-center justify-center">
+                                                    <DotLottieReact
+                                                        src={handRaiseAnimation}
+                                                        autoplay
+                                                        loop
+                                                        className="w-4 h-4"
+                                                    />
+                                                </span>
+                                            )}
                                         </div>
 
-                                        <StudentStatusLabel status="online" />
-                                    </div>
-                                </div>
-                            ))}
+                                        {/* Name + status text */}
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-medium truncate">{s.name}</p>
+                                            <p
+                                                className={`text-[11px] font-medium mt-0.5 ${s.handRaised
+                                                    ? "text-amber-500"
+                                                    : s.isSpeaking
+                                                        ? "text-green-600"
+                                                        : "text-slate-500"
+                                                    }`}
+                                            >
+                                                {s.handRaised
+                                                    ? "Hand raised"
+                                                    : s.isSpeaking
+                                                        ? "Speaking"
+                                                        : "Online"}
+                                            </p>
+                                        </div>
 
-                            {participants.length > visibleStudents.length && (
-                                <div className="shrink-0 rounded-lg bg-white border border-slate-200 px-2 py-1.5 flex items-center justify-center shadow-sm">
-                                    <span className="text-[11px] text-slate-400 font-medium">
-                                        +{participants.length - visibleStudents.length}
-                                    </span>
-                                </div>
+                                        {/* Mic / Video controls */}
+                                        <div className="flex items-center gap-1 shrink-0">
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
+                                                    console.log("Teacher sending mute request", "CONTROLLLLLL");
+
+                                                    const payload = {
+                                                        type: "toggle-mic",
+                                                        targetId: s.identity,
+                                                        enabled: !s.isMuted,
+                                                    };
+
+                                                    console.log("Payload:", payload, "CONTROLLLLLL");
+
+                                                    await room.localParticipant.publishData(
+                                                        new TextEncoder().encode(JSON.stringify(payload)),
+                                                        { reliable: true }
+                                                    );
+
+                                                    console.log("Mute request sent", "CONTROLLLLLL");
+                                                }}
+                                                aria-label={!s.isMuted ? `Unmute ${s.name}` : `Mute ${s.name}`}
+                                                className={`w-[26px] h-[26px] rounded-md flex items-center justify-center ${!s.isMuted
+                                                    ? "bg-red-50 text-red-500"
+                                                    : "bg-slate-100 text-slate-600"
+                                                    }`}
+                                            >
+                                                {!s.isMuted ? <MicOff size={14} /> : <Mic size={14} />}
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
+                                                    console.log("Teacher sending mute request", "CONTROLLLLLL");
+
+                                                    const payload = {
+                                                        type: "toggle-video",
+                                                        targetId: s.identity,
+                                                        enabled: !s.isCameraOff,
+                                                    };
+
+                                                    console.log("Payload:", payload, "CONTROLLLLLL");
+
+                                                    await room.localParticipant.publishData(
+                                                        new TextEncoder().encode(JSON.stringify(payload)),
+                                                        { reliable: true }
+                                                    );
+
+                                                    console.log("Mute request sent", "CONTROLLLLLL");
+                                                }}
+                                                aria-label={
+                                                    !s.isCameraOff
+                                                        ? `Turn on ${s.name}'s video`
+                                                        : `Turn off ${s.name}'s video`
+                                                }
+                                                className={`w-[26px] h-[26px] rounded-md flex items-center justify-center ${!s.isCameraOff
+                                                    ? "bg-red-50 text-red-500"
+                                                    : "bg-slate-100 text-slate-600"
+                                                    }`}
+                                            >
+                                                {!s.isCameraOff ? <VideoOff size={14} /> : <Video size={14} />}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )
+                            }
                             )}
                         </div>
                     </main>

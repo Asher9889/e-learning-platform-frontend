@@ -54,7 +54,7 @@ export function SubjectForm({
   isLoading = false,
 }: SubjectFormProps) {
   const isEditing = !!subjectData;
-
+console.log(subjectData,"subjectData")
   const methods = useForm<SubjectFormValues>({
     resolver: zodResolver(createSubjectSchema),
     mode: "onChange",
@@ -76,9 +76,10 @@ export function SubjectForm({
   } = methods;
 
   useEffect(() => {
+    if (!isOpen) return;
     if (subjectData) {
       reset({
-        programId: subjectData.programId,
+        programId: subjectData.program?.id,
         name: subjectData.name,
         description: subjectData.description ?? "",
         isActive: subjectData.isActive,
@@ -91,7 +92,7 @@ export function SubjectForm({
         isActive: true,
       });
     }
-  }, [subjectData, reset]);
+  }, [isOpen, subjectData, reset]);
 
   const submitHandler = (data: SubjectFormValues) => {
     if (isEditing && subjectData) {
@@ -99,11 +100,17 @@ export function SubjectForm({
       return;
     }
     onSubmit(data as CreateSubjectInput);
+    reset({
+        programId: "",
+        name: "",
+        description: "",
+        isActive: true,
+      });
   };
 
   const handleDialogClose = () => {
     if (isLoading) return;
-    reset();
+    // reset();
     onClose();
   };
 

@@ -3,11 +3,10 @@ import { useAppSelector } from '@/store/hooks';
 import { getInitials } from '@/utils/helper';
 import { cn } from "@/lib/utils";
 
-interface TeacherAudioOnlyCardProps {
+interface AudioOnlyCardProps {
   hasScreenShare?: boolean;
   isSpeaking?: boolean
 }
-
 
 function AudioBars({ className = "" ,isSpeaking}: { className?: string, isSpeaking?:boolean}) {
   console.log(isSpeaking ,"isSpeakingaudio")
@@ -27,8 +26,8 @@ function AudioBars({ className = "" ,isSpeaking}: { className?: string, isSpeaki
   );
 }
 
-function TeacherAudioOnlyCard({ hasScreenShare = false,isSpeaking }: TeacherAudioOnlyCardProps) {
-  console.log(isSpeaking ,"isSpeakingaudio TeacherAudioOnlyCard")
+function AudioOnlyCard({ hasScreenShare = false,isSpeaking }: AudioOnlyCardProps) {
+  console.log(isSpeaking ,"isSpeakingaudio AudioOnlyCard")
 
   const teacherIdentity = useAppSelector(
     (state) => state.liveClass.teacherIdentity
@@ -134,4 +133,4 @@ function TeacherAudioOnlyCard({ hasScreenShare = false,isSpeaking }: TeacherAudi
   );
 }
 
-export default TeacherAudioOnlyCard;
+export default AudioOnlyCard;

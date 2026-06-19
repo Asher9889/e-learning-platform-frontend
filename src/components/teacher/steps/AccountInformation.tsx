@@ -5,19 +5,29 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "#components/ui/inp
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { Label } from "#components/ui/label";
+import { getPasswordScore } from "@/utils/helper";
 // import { StudentEnrollFormData } from "@/sche";
 
 export default function AccountInformation() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
-
+ const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/;
   const {
     register,
     watch,
     formState: { errors },
   } =
     useFormContext<StudentEnrollFormInput>();
+const password = watch("password");
+  const score = getPasswordScore(password);
 
+  const progressColor =
+    score <= 2
+      ? "bg-red-500"
+      : score <= 4
+        ? "bg-yellow-500"
+        : "bg-green-500";
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold">
@@ -56,12 +66,19 @@ export default function AccountInformation() {
             placeholder="Password"
             {...register("password")}
           /> */}
+           <div className="relative">
           <InputGroup>
             <InputGroupInput
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter password"
-              {...register("password")}
+              {...register("password",{
+                  pattern: {
+                    value: passwordRegex,
+                    message:
+                      "Password must contain uppercase, lowercase, number and special character",
+                  },
+                })}
             />
 
             <InputGroupAddon
@@ -78,6 +95,19 @@ export default function AccountInformation() {
               )}
             </InputGroupAddon>
           </InputGroup>
+           {password && (
+                        <>
+                          <div className="absolute bottom-[1px] left-0 h-0.5 px-[3px] w-full overflow-hidden ">
+                            <div
+                              className={`h-full transition-all duration-300 ${progressColor} rounded-b-md`}
+                              style={{
+                                width: `${(score / 5) * 100}%`,
+                              }}
+                            />
+                          </div>
+                        </>
+                      )}
+                      </div>
           <p className="text-red-500 text-sm">
             {errors.password?.message}
           </p>
