@@ -89,7 +89,6 @@ export default function StudentEnrollForm() {
       "SUBMIT CALLED   debugging",
       currentStep
     );
-    console.log("asdasdasdasdasd", currentStep)
     if (
       values.personalInfo.profileImage
     ) {

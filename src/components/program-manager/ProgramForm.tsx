@@ -55,7 +55,7 @@ export function ProgramForm({
 
   const methods = useForm<ProgramFormValues>({
     resolver: zodResolver(createProgramSchema),
-    mode: "onChange",
+    mode: "onSubmit",
     defaultValues: {
       name: "",
       programType: undefined,
@@ -80,27 +80,29 @@ export function ProgramForm({
     ? HIGHER_ED_TYPES.includes(programType)
     : false;
 
-  useEffect(() => {
-    if (programData) {
-      reset({
-        name: programData.name,
-        programType: programData.programType,
-        fullName: programData.fullName ?? "",
-        description: programData.description ?? "",
-        durationMonths: programData.durationMonths ?? undefined,
-        isActive: programData.isActive,
-      });
-    } else {
-      reset({
-        name: "",
-        programType: undefined,
-        fullName: "",
-        description: "",
-        durationMonths: undefined,
-        isActive: true,
-      });
-    }
-  }, [programData, reset]);
+ useEffect(() => {
+  if (!isOpen) return;
+
+  if (programData) {
+    reset({
+      name: programData.name,
+      programType: programData.programType,
+      fullName: programData.fullName ?? "",
+      description: programData.description ?? "",
+      durationMonths: programData.durationMonths ?? undefined,
+      isActive: programData.isActive,
+    });
+  } else {
+    reset({
+      name: "",
+      programType: undefined,
+      fullName: "",
+      description: "",
+      durationMonths: undefined,
+      isActive: true,
+    });
+  }
+}, [isOpen, programData, reset]);
 
   const submitHandler = (data: ProgramFormValues) => {
     if (isEditing && programData) {
@@ -112,8 +114,8 @@ export function ProgramForm({
 
   const handleDialogClose = () => {
     if (isLoading) return;
-    reset();
     onClose();
+    // reset();
   };
 
   return (
@@ -159,9 +161,7 @@ export function ProgramForm({
                     watch("programType") ? watch("programType") : undefined
                   }
                   onValueChange={(value) => {
-                    setValue("programType", value as any, {
-                      shouldValidate: true,
-                    });
+                    setValue("programType", value as any);
                     if (!HIGHER_ED_TYPES.includes(value as any)) {
                       setValue("fullName", "", { shouldValidate: true });
                       setValue("durationMonths", undefined as any, {

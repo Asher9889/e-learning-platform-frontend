@@ -57,7 +57,7 @@ export function BatchForm({
 
   const methods = useForm<BatchFormValues>({
     resolver: zodResolver(createBatchSchema),
-    mode: "onChange",
+    mode: "onSubmit",
     defaultValues: {
       programId: "",
       academicSession: "",
@@ -79,7 +79,7 @@ export function BatchForm({
   useEffect(() => {
     if (batchData) {
       reset({
-        programId: batchData.programId,
+        programId: batchData.program?.id,
         academicSession: batchData.academicSession,
         name: batchData.name,
         maxStudents: batchData.maxStudents ?? undefined,
@@ -102,12 +102,29 @@ export function BatchForm({
       return;
     }
     onSubmit(data as CreateBatchInput);
+    reset({
+        programId: "",
+        academicSession: "",
+        name: "",
+        maxStudents: undefined,
+        isActive: true,
+      });
   };
 
   const handleDialogClose = () => {
     if (isLoading) return;
-    reset();
+  //  clearErrors();
+//  setTimeout(() => {
+//     reset({
+//       programId: "",
+//       academicSession: "",
+//       name: "",
+//       maxStudents: undefined,
+//       isActive: true,
+//     });
+//   }, 300);
     onClose();
+
   };
 
   return (
@@ -134,7 +151,7 @@ export function BatchForm({
                 <Select
                   value={watch("programId") || undefined}
                   onValueChange={(value) =>
-                    setValue("programId", value, { shouldValidate: true })
+                    setValue("programId", value)
                   }
                 >
                   <SelectTrigger>
@@ -164,9 +181,7 @@ export function BatchForm({
                   <Select
                     value={watch("academicSession") || undefined}
                     onValueChange={(value) =>
-                      setValue("academicSession", value, {
-                        shouldValidate: true,
-                      })
+                      setValue("academicSession", value)
                     }
                   >
                     <SelectTrigger>
