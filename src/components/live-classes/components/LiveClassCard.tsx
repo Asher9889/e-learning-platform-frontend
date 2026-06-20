@@ -1,7 +1,8 @@
-import { Video, Users, Clock, Calendar, Radio } from "lucide-react";
+import { Video, Users, Clock, Calendar, Radio, GraduationCap, Layers, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import type { ILiveSession } from "../../../pages/Live-Classes/types";
 
@@ -10,6 +11,15 @@ interface LiveClassCardProps {
   onStart?: (id: string) => void;
   onJoin?: (roomName: string) => void;
   variant?: "UPCOMING" | "LIVE" | "ENDED";
+}
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 }
 
 const LiveClassCard = ({
@@ -23,7 +33,6 @@ const LiveClassCard = ({
 
   const scheduledAt = liveClass.scheduledAt ? new Date(liveClass.scheduledAt) : null;
 
-  console.log("LiveClassCard Rendered", { liveClass, variant });
   return (
     <Card
       className={cn(
@@ -44,6 +53,7 @@ const LiveClassCard = ({
       )}
 
       <CardContent className="p-5">
+        {/* Title + Subject */}
         <div className="mb-3 flex items-start gap-3">
           <div
             className={cn(
@@ -65,12 +75,49 @@ const LiveClassCard = ({
           </div>
         </div>
 
+        {/* Program & Batch chips */}
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          {liveClass.program && (
+            <Badge variant="outline" className="gap-1 text-[10px] font-normal">
+              <GraduationCap className="h-3 w-3" />
+              {liveClass.program.name}
+            </Badge>
+          )}
+          {liveClass.batch && (
+            <Badge variant="secondary" className="gap-1 text-[10px] font-normal">
+              <Layers className="h-3 w-3" />
+              {liveClass.batch.name}
+            </Badge>
+          )}
+        </div>
+
+        {/* Description */}
         {liveClass.description && (
           <p className="mb-3 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
             {liveClass.description}
           </p>
         )}
 
+        {/* Teacher + Created by */}
+        <div className="mb-3 space-y-1.5">
+          <div className="flex items-center gap-2">
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={liveClass.teacher.profileImage} />
+              <AvatarFallback className="text-[10px]">{getInitials(liveClass.teacher.name)}</AvatarFallback>
+            </Avatar>
+            <span className="text-xs text-muted-foreground">
+              {liveClass.teacher.name}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <User className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+            <span className="text-[11px] text-muted-foreground">
+              Created by {liveClass.createdBy.name}
+            </span>
+          </div>
+        </div>
+
+        {/* Meta row */}
         <div className="mb-4 flex flex-wrap gap-2">
           <div className="flex items-center gap-1 rounded-md bg-muted/60 px-2 py-1 text-[11px] text-muted-foreground">
             <Calendar className="h-3 w-3" />
@@ -91,6 +138,7 @@ const LiveClassCard = ({
           </div>
         </div>
 
+        {/* Actions */}
         <div className="flex items-center gap-2">
           {isUpcoming && onStart && (
             <Button
@@ -107,7 +155,6 @@ const LiveClassCard = ({
               size="sm"
               variant="destructive"
               className="h-8 flex-1 gap-1.5 text-xs font-medium cursor-pointer"
-              
               onClick={() => onJoin(liveClass?.roomName!)}
             >
               <Video className="h-3.5 w-3.5" />

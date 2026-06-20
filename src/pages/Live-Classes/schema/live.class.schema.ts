@@ -12,13 +12,15 @@ export const startLiveClassSchema = z.object({
     .min(1, "Description is required")
     .max(500, "Description must be less than 500 characters"),
 
-  gradeId: z.string().min(1, "Grade is required"),
+  programId: z.string().min(1, "Program is required"),
+
+  batchId: z.string().optional(),
 
   subjectId: z.string().min(1, "Subject is required"),
 
   teacherId: z.string().min(1, "Teacher is required"),
  scheduledAt: z.iso.datetime().optional(),
- status: z.enum(Object.values(CLASS_STATUS)).default("SCHEDULED"),
+  status: z.enum(Object.values(CLASS_STATUS)),
   durationMinutes: z
     .number()
     .min(1, "Duration must be at least 1 minute"),

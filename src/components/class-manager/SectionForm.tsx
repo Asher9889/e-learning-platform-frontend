@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import type { Section, CreateSectionInput, UpdateSectionInput } from "@/pages/Classes/types/index";
+import type { Section } from "@/pages/Classes/types/index";
+import type { CreateSectionInput, UpdateSectionInput } from "@/pages/Classes/schema/class.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +17,7 @@ import { Loader2 } from "lucide-react";
 interface SectionFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateSectionInput | UpdateSectionInput) => void;
+  onSubmit: (data: CreateSectionInput | UpdateSectionInput) => void | Promise<void>;
   classId: string;
   section?: Section | null;
   isLoading?: boolean;

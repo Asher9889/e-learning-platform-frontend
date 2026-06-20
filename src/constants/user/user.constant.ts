@@ -25,7 +25,7 @@ export type TUserRole = typeof USER_ROLE[keyof typeof USER_ROLE];
 
 
 // Role-specific information interfaces
-interface IAdminRoleInfo { }
+// interface IAdminRoleInfo { }
 interface ITeacherRoleInfo {
   qualification: string;
   specialization: string;
@@ -43,7 +43,7 @@ interface IStudentRoleInfo {
 
 // Main user state interface
 export interface IUserState {
-  // id: string;
+  id: string;
 
   email: string;
   phoneNumber: string;
@@ -65,7 +65,9 @@ export interface IUserState {
     };
   };
 
-  roleInfo: IAdminRoleInfo | ITeacherRoleInfo | IStudentRoleInfo;
+  // roleInfo: IAdminRoleInfo | ITeacherRoleInfo | IStudentRoleInfo;
+  roleInfo:  ITeacherRoleInfo | IStudentRoleInfo;
+
 
   lastLoginAt?: string;
 

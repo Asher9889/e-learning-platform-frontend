@@ -1,11 +1,17 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { UploadItem, UploadStatus } from "../types/upload.types"
+import type { MaterialStatus } from "@/constants/material/material.constant"
 
 export interface PendingMetadataItem {
   fileId: string
   fileName: string
   fileSize: number
   uploadUrl: string
+  materialId: string
+  status: MaterialStatus
+  materialType: string
+  title: string
+  description: string
 }
 
 interface UploadState {
@@ -69,6 +75,7 @@ const uploadSlice = createSlice({
         error?: string
       }>
     ) {
+      console.log("[REDUX SETSTATUS] Updating status for", action.payload.id, "to", action.payload.status);
       const item = state.items.find((i) => i.id === action.payload.id)
       if (item) {
         item.status = action.payload.status

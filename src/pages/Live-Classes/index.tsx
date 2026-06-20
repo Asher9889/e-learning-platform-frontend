@@ -4,7 +4,7 @@ import { useUpcomingLiveClasses, useActiveLiveClasses, useCompletedLiveClasses, 
 import { queryClient } from "@/config";
 import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
-import { useGetGrades } from "../Classes/hooks/useGetGrades";
+import { useGetPrograms } from "../Programs/hooks/useGetPrograms";
 import { useTeachersSummary } from "../Teacher/hooks/useTeachersSummary";
 import {
   EmptyLiveClassState, LiveClassCard, LiveClassSection, LiveClassStats,
@@ -65,9 +65,9 @@ export default function LiveClassPage() {
   const startLiveClassMutation = useStartLiveClass();
 
   const { data: teachersData } = useTeachersSummary();
-  const { data: gradeData } = useGetGrades();
+  const { data: programData } = useGetPrograms();
   const teachers = teachersData?.teachers ?? [];
-  const allGrades = gradeData?.grades || [];
+  const allPrograms = programData?.programs || [];
 
   const [selectedClass, setSelectedClass] = useState<ILiveSession | null>(null);
   const [open, setOpen] = useState(false);
@@ -172,13 +172,13 @@ export default function LiveClassPage() {
               <StartLiveClassForm
                 onSuccess={() => setOpen(false)}
                 teachersOptions={mapToLabelValue(teachers, "name", "id")}
-                gradeOptions={mapToLabelValue(allGrades, "name", "id")}
+                programOptions={mapToLabelValue(allPrograms, "name", "id")}
               />
             ) : (
               <ScheduleLiveClassForm
                 onSuccess={() => setOpen(false)}
                 teachersOptions={mapToLabelValue(teachers, "name", "id")}
-                gradeOptions={mapToLabelValue(allGrades, "name", "id")}
+                programOptions={mapToLabelValue(allPrograms, "name", "id")}
               />
             )}
           </DialogContent>

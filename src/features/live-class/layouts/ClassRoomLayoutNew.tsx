@@ -7,28 +7,29 @@
 // }
 
 // export default ClassRoomLayoutNew
-import { useState, useEffect, useRef, useMemo } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
+import { useEffect, useRef, useMemo } from "react";
+// import { Badge } from "@/components/ui/badge";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { ScrollArea } from "@/components/ui/scroll-area";
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-    Mic,
-    MicOff,
-    Video,
-    VideoOff,
-    Monitor,
-    Hand,
-    PhoneOff,
-    Send,
-    Users,
-    MessageSquare,
-} from "lucide-react";
+
+// import {
+//     Mic,
+//     MicOff,
+//     Video,
+//     VideoOff,
+//     Monitor,
+//     Hand,
+//     PhoneOff,
+//     Send,
+//     Users,
+//     MessageSquare,
+// } from "lucide-react";
 import { LiveBadge } from "../components/status/LiveBadge";
-import { RecordingIndicator } from "../components/status/RecordingIndicator";
+// import { RecordingIndicator } from "../components/status/RecordingIndicator";
 import { ConnectionIndicator } from "../components/status/ConnectionIndicator";
 import { ChatPanel } from "../components/chat/ChatPanel";
 import { RoomAudioRenderer, useParticipants } from "@livekit/components-react";
@@ -37,25 +38,32 @@ import MainStageNew from "../components/stage/MainStageNew";
 import { ClassroomControls } from "../components/controls/ClassroomControls";
 import { useMediaQuery } from "#hooks/use-media-query";
 import { setChatOpen } from "../store/liveClass.slice";
-
+// import { RoomEvent } from "livekit-client";
+// import notificationSound from "@/assets/sounds/notification.mp3";
+import { useRoomContext } from "@livekit/components-react";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import handRaiseAnimation from "@/assets/animations/hand-raise.lottie";
+import { useSingleSpeakerSystem } from "../hooks/useSingleSpeakerSystem";
+import { Mic, MicOff, Video, VideoOff } from "lucide-react";
+import { RoomEvent } from "livekit-client";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface Student {
-    id: string;
-    name: string;
-    initials: string;
-    gradient: string;
-    status: "speaking" | "online" | "hand" | "muted";
-}
+// interface Student {
+//     id: string;
+//     name: string;
+//     initials: string;
+//     gradient: string;
+//     status: "speaking" | "online" | "hand" | "muted";
+// }
 
-interface ChatMessage {
-    id: string;
-    user: string;
-    role?: "teacher";
-    time: string;
-    text: string;
-    color: string;
-}
+// interface ChatMessage {
+//     id: string;
+//     user: string;
+//     role?: "teacher";
+//     time: string;
+//     text: string;
+//     color: string;
+// }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -68,49 +76,49 @@ interface ChatMessage {
 //     { id: "6", name: "Karan", initials: "K", gradient: "from-slate-400 to-slate-500", status: "muted" },
 // ];
 
-const INITIAL_MESSAGES: ChatMessage[] = [
-    { id: "1", user: "Priya", time: "10:32", text: "Sir, can you explain the quadratic formula again?", color: "text-violet-600" },
-    { id: "2", user: "Rajeev Sir", role: "teacher", time: "10:33", text: "Sure Priya, let me write it on the board.", color: "text-blue-600" },
-    { id: "3", user: "Arjun", time: "10:34", text: "👍 Thank you sir", color: "text-emerald-600" },
-    { id: "4", user: "Sneha", time: "10:35", text: "Sir I have a doubt about the discriminant value", color: "text-pink-600" },
-    { id: "5", user: "Rahul", time: "10:36", text: "Same doubt as Sneha 🙋", color: "text-violet-600" },
-    { id: "6", user: "Rajeev Sir", role: "teacher", time: "10:37", text: "Good question! When discriminant b²−4ac > 0, we get 2 real roots. Let me demonstrate.", color: "text-blue-600" },
-];
+// const INITIAL_MESSAGES: ChatMessage[] = [
+//     { id: "1", user: "Priya", time: "10:32", text: "Sir, can you explain the quadratic formula again?", color: "text-violet-600" },
+//     { id: "2", user: "Rajeev Sir", role: "teacher", time: "10:33", text: "Sure Priya, let me write it on the board.", color: "text-blue-600" },
+//     { id: "3", user: "Arjun", time: "10:34", text: "👍 Thank you sir", color: "text-emerald-600" },
+//     { id: "4", user: "Sneha", time: "10:35", text: "Sir I have a doubt about the discriminant value", color: "text-pink-600" },
+//     { id: "5", user: "Rahul", time: "10:36", text: "Same doubt as Sneha 🙋", color: "text-violet-600" },
+//     { id: "6", user: "Rajeev Sir", role: "teacher", time: "10:37", text: "Good question! When discriminant b²−4ac > 0, we get 2 real roots. Let me demonstrate.", color: "text-blue-600" },
+// ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function LiveDot() {
-    return (
-        <span className="relative flex h-2 w-2 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
-        </span>
-    );
-}
+// function LiveDot() {
+//     return (
+//         <span className="relative flex h-2 w-2 shrink-0">
+//             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+//             <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+//         </span>
+//     );
+// }
 
-function AudioBars({ className = "" }: { className?: string }) {
-    return (
-        <div className={`flex items-end gap-[2px] ${className}`}>
-            {[6, 12, 8, 15, 6].map((h, i) => (
-                <div
-                    key={i}
-                    className="w-[3px] rounded-sm bg-emerald-500"
-                    style={{
-                        height: `${h}px`,
-                        animation: `audioPulse 0.8s ${i * 0.15}s ease-in-out infinite`,
-                    }}
-                />
-            ))}
-        </div>
-    );
-}
+// function AudioBars({ className = "" }: { className?: string }) {
+//     return (
+//         <div className={`flex items-end gap-[2px] ${className}`}>
+//             {[6, 12, 8, 15, 6].map((h, i) => (
+//                 <div
+//                     key={i}
+//                     className="w-[3px] rounded-sm bg-emerald-500"
+//                     style={{
+//                         height: `${h}px`,
+//                         animation: `audioPulse 0.8s ${i * 0.15}s ease-in-out infinite`,
+//                     }}
+//                 />
+//             ))}
+//         </div>
+//     );
+// }
 
-function StudentStatusLabel({ status }: { status: Student["status"] }) {
-    if (status === "speaking") return <span className="text-[10px] text-emerald-600 font-medium">● Speaking</span>;
-    if (status === "online") return <span className="text-[10px] text-emerald-500 font-medium">● Online</span>;
-    if (status === "hand") return <span className="text-[10px] text-amber-500">✋ Raised</span>;
-    return <span className="text-[10px] text-slate-400">🔇 Muted</span>;
-}
+// function StudentStatusLabel({ status }: { status: Student["status"] }) {
+//     if (status === "speaking") return <span className="text-[10px] text-emerald-600 font-medium">● Speaking</span>;
+//     if (status === "online") return <span className="text-[10px] text-emerald-500 font-medium">● Online</span>;
+//     if (status === "hand") return <span className="text-[10px] text-amber-500">✋ Raised</span>;
+//     return <span className="text-[10px] text-slate-400">🔇 Muted</span>;
+// }
 
 // ─── Chat Panel ───────────────────────────────────────────────────────────────
 
@@ -185,22 +193,54 @@ function extractAvatar(metadata: string): string | undefined {
     }
 }
 export default function ClassRoomLayoutNew() {
-    const [seconds, setSeconds] = useState(42 * 60 + 17);
-    const [message, setMessage] = useState("");
+    // const [seconds, setSeconds] = useState(42 * 60 + 17);
+    // const [message, setMessage] = useState("");
     const isTablet = useMediaQuery("(max-width: 1024px)");
     const isMobile = useMediaQuery("(max-width: 768px)");
     const dispatch = useAppDispatch();
-    const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
-    const [micOn, setMicOn] = useState(true);
-    const [camOn, setCamOn] = useState(false);
+    // const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
+
+    // const [raisedHands, setRaisedHands] = useState<
+    //     Record<string, boolean>
+    // >({});
+    const previousRaisedUsers = useRef(new Set<string>());
+    const room = useRoomContext();
     // const [chatOpen, setChatOpen] = useState(false);
     const chatOpen = useAppSelector((state) => state.liveClass.chatOpen);
     const title = useAppSelector(
-  (state) => state.liveClass.title
-);
-    const liveKitParticipants = useParticipants();
+        (state) => state.liveClass.title
+    );
+    const liveKitParticipants = useParticipants({
+        updateOnlyOn: [
+            RoomEvent.ParticipantConnected,
+            RoomEvent.ParticipantDisconnected,
+            RoomEvent.ActiveSpeakersChanged,
+            RoomEvent.TrackMuted,
+            RoomEvent.TrackUnmuted,
+
+            RoomEvent.LocalTrackPublished,
+            RoomEvent.LocalTrackUnpublished,
+
+            RoomEvent.TrackPublished,
+            RoomEvent.TrackUnpublished,
+
+            RoomEvent.ParticipantAttributesChanged,
+            RoomEvent.ParticipantMetadataChanged,
+        ],
+    });
+    // const participantIdentities = useMemo(
+    //     () => liveKitParticipants.map(p => p.identity).join(","),
+    //     [liveKitParticipants]
+    // );
+    const myIdentity = useAppSelector(
+        (state) => state?.auth?.user?.id
+    );
     const teacherIdentity = useAppSelector((state) => state.liveClass.teacherIdentity);
-    console.log(isTablet, "isTabletisTablet", isMobile)
+    // const myId = myIdentity;
+    const teacherId = teacherIdentity?.id;
+    const { activeSpeaker, fadeDuration } =
+        useSingleSpeakerSystem(liveKitParticipants, teacherId);
+
 
     // useEffect(() => {
     //     const check = () => {
@@ -211,66 +251,224 @@ export default function ClassRoomLayoutNew() {
     //     window.addEventListener("resize", check);
     //     return () => window.removeEventListener("resize", check);
     // }, []);
+
+    // useEffect(() => {
+    //     const handleData = (
+    //         payload: Uint8Array,
+    //         participant?: any
+    //     ) => {
+    //         try {
+    //             const data = JSON.parse(
+    //                 new TextDecoder().decode(payload)
+    //             );
+
+    //             if (data.type === "hand_raise") {
+    //                 setRaisedHands((prev) => ({
+    //                     ...prev,
+    //                     [participant?.identity]: data.raised,
+    //                 }));
+    //             }
+    //         } catch (err) {
+    //             console.error(err);
+    //         }
+    //     };
+
+    //     room.on(RoomEvent.DataReceived, handleData);
+
+    //     return () => {
+    //         room.off(RoomEvent.DataReceived, handleData);
+    //     };
+    // }, [room]);
+
     const participants = useMemo(() => {
         return liveKitParticipants
-            .filter((p) => p.identity !== teacherIdentity?.id)
+            .filter((p) => p.identity &&
+                p.identity.trim() !== "" && p.identity !== teacherIdentity?.id && p.identity !== myIdentity)
             .map((p) => ({
                 identity: p.identity,
                 name: p.name || p.identity,
                 avatar: p.metadata ? extractAvatar(p.metadata) : undefined,
                 role: (p.identity === teacherIdentity?.id ? "TEACHER" : "STUDENT") as "TEACHER" | "STUDENT",
-                isMuted: p.isMicrophoneEnabled === false,
-                isCameraOff: p.isCameraEnabled === false,
-                handRaised: false,
-                isSpeaking: p.isSpeaking,
-            }))
+                isMuted: p.isMicrophoneEnabled,
+                isCameraOff: p.isCameraEnabled,
+                handRaised: p.attributes?.handRaised === "true",
+                // isSpeaking: p.isSpeaking,
+                audioLevel: p.audioLevel || 0,
+                isSpeaking: p.identity === activeSpeaker,
+            })).sort((a, b) => {
+                if (a.handRaised && !b.handRaised) return -1;
+                if (!a.handRaised && b.handRaised) return 1;
+
+                return 0;
+            });
         // .filter((p) =>
         //     searchQuery
         //         ? p.name.toLowerCase().includes(searchQuery.toLowerCase())
         //         : true
         // );
-    }, [liveKitParticipants, teacherIdentity]);
+    }, [liveKitParticipants, teacherIdentity, myIdentity, activeSpeaker]);
 
-    console.log(participants, "participants1458", liveKitParticipants, "teacherIdentity", teacherIdentity)
     // Timer
+    // useEffect(() => {
+    //     const id = setInterval(() => setSeconds((s) => s + 1), 1000);
+    //     return () => clearInterval(id);
+    // }, []);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+
     useEffect(() => {
-        const id = setInterval(() => setSeconds((s) => s + 1), 1000);
-        return () => clearInterval(id);
-    }, []);
+        participants.forEach((participant) => {
+            if (
+                participant.handRaised &&
+                !previousRaisedUsers.current.has(participant.identity)
+            ) {
+                if (audioRef.current) {
+                    audioRef.current.currentTime = 0;
+                    audioRef.current.play().catch((err) => {
+                        console.error("🔔 Audio play failed:", err);
+                    });
+                }
+                previousRaisedUsers.current.add(participant.identity);
+            }
 
-    const formatTime = (s: number) => {
-        const h = Math.floor(s / 3600);
-        const m = Math.floor((s % 3600) / 60);
-        const sec = s % 60;
-        return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
-    };
+            if (!participant.handRaised) {
+                previousRaisedUsers.current.delete(participant.identity);
+            }
+        });
+    }, [participants]);
+    useEffect(() => {
+        const handleData = async (
+            payload: Uint8Array,
+            participant: any
+        ) => {
+            const text = new TextDecoder().decode(payload);
 
-    const handleSend = () => {
-        if (!message.trim()) return;
-        setMessages((prev) => [
-            ...prev,
-            {
-                id: Date.now().toString(),
-                user: "You",
-                time: new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
-                text: message.trim(),
-                color: "text-violet-600",
-            },
-        ]);
-        setMessage("");
-    };
-const totalSudents = participants || [];
+            console.log("📩 Data received:", text, "CONTROLLLLLL");
+            console.log("📩 From:", participant?.identity, "CONTROLLLLLL");
+
+            const data = JSON.parse(text);
+
+            console.log("Parsed data:", data, "CONTROLLLLLL");
+            if (
+                data.type === "CAMERA_OFF_ALL" &&
+                data.targetStudentId === room.localParticipant.identity
+            ) {
+                console.log("✅ This message is for me CAMERA_OFF_ALL", "CONTROLLLLLL");
+                room.localParticipant.setCameraEnabled(false);
+            }
+            if (
+                data.type === "toggle-mic" &&
+                data.targetId === room.localParticipant.identity
+            ) {
+                console.log("✅ This message is for me", "CONTROLLLLLL");
+
+                await room.localParticipant.setMicrophoneEnabled(
+                    data.enabled
+                );
+                //       await room.localParticipant.setAttributes({
+                //     isMuted: (!data.enabled).toString(),
+                //   });
+                //  room.localParticipant.setAttributes({
+                //   isMuted: `${data.enabled}`,
+                // });
+
+
+
+                console.log(
+                    "Mic state changed:",
+                    data.enabled, "CONTROLLLLLL"
+                );
+            }
+            if (
+                data.type === "toggle-video" &&
+                data.targetId === room.localParticipant.identity
+            ) {
+                console.log("✅ This message is for me", "CONTROLLLLLL");
+
+                await Promise.all([
+                    room.localParticipant.setCameraEnabled(data.enabled),
+                    room.localParticipant.setAttributes({
+                        cameraOnAt: Date.now().toString(),
+                    }),
+                ]);
+                //       await room.localParticipant.setAttributes({
+                //     isMuted: (!data.enabled).toString(),
+                //   });
+                //  room.localParticipant.setAttributes({
+                //   isMuted: `${data.enabled}`,
+                // });
+
+
+
+                console.log(
+                    "Mic state changed:",
+                    data.enabled, "CONTROLLLLLL"
+                );
+            }
+        };
+
+        room.on(RoomEvent.DataReceived, handleData);
+        console.log("Listener attached", "CONTROLLLLLL");
+        return () => {
+            room.off(RoomEvent.DataReceived, handleData);
+        };
+    }, [room]);
+    // const formatTime = (s: number) => {
+    //     const h = Math.floor(s / 3600);
+    //     const m = Math.floor((s % 3600) / 60);
+    //     const sec = s % 60;
+    //     return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+    // };
+
+    // const handleSend = () => {
+    //     if (!message.trim()) return;
+    //     setMessages((prev) => [
+    //         ...prev,
+    //         {
+    //             id: Date.now().toString(),
+    //             user: "You",
+    //             time: new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
+    //             text: message.trim(),
+    //             color: "text-violet-600",
+    //         },
+    //     ]);
+    //     setMessage("");
+    // };
+    useEffect(() => {
+        participants.forEach((participant) => {
+            if (
+                participant.handRaised &&
+                !previousRaisedUsers.current.has(participant.identity)
+            ) {
+                if (audioRef.current) {
+                    audioRef.current.currentTime = 0;
+                    audioRef.current.play().catch((err) => {
+                        console.error("🔔 Audio play failed:", err);
+                    });
+                }
+                previousRaisedUsers.current.add(participant.identity);
+            }
+
+            if (!participant.handRaised) {
+                previousRaisedUsers.current.delete(participant.identity);
+            }
+        });
+    }, [participants]);
+    const totalSudents = liveKitParticipants
+        .filter((p) => p.identity &&
+            p.identity.trim() !== "" && p.identity !== teacherIdentity?.id) || [];
     const visibleStudents = isMobile
         ? participants.slice(0, 3)
         : isTablet
             ? participants.slice(0, 4)
             : participants;
-    const tabTriggerClass =
-        "flex-1 rounded-none py-2.5 text-xs font-semibold tracking-wide text-slate-400 " +
-        "data-[state=active]:text-violet-600 data-[state=active]:border-b-2 " +
-        "data-[state=active]:border-violet-500 data-[state=active]:bg-transparent " +
-        "data-[state=active]:shadow-none";
+    // const tabTriggerClass =
+    //     "flex-1 rounded-none py-2.5 text-xs font-semibold tracking-wide text-slate-400 " +
+    //     "data-[state=active]:text-violet-600 data-[state=active]:border-b-2 " +
+    //     "data-[state=active]:border-violet-500 data-[state=active]:bg-transparent " +
+    //     "data-[state=active]:shadow-none";
 
+
+    console.log(visibleStudents, "visibleStudentsvisibleStudentsvisibleStudents CONTROLLLLLL", liveKitParticipants)
     return (
         <>
             <style>{`
@@ -311,7 +509,7 @@ const totalSudents = participants || [];
                     <main className="flex flex-col flex-1 p-2 sm:p-3 lg:p-4 gap-2 sm:gap-3 overflow-hidden min-w-0">
 
                         {/* Teacher video */}
-                        <MainStageNew />
+                        <MainStageNew participants={liveKitParticipants} />
 
                         {/* Controls */}
                         {/* <div className="flex items-center justify-center gap-2 sm:gap-2.5 py-0.5 sm:py-1">
@@ -397,34 +595,155 @@ const totalSudents = participants || [];
                         </Sheet>
                         <ClassroomControls />
                         {/* Students strip */}
-                        <div className="flex gap-1.5 sm:gap-2">
-                            {visibleStudents.map((s) => (
-                                <div
-                                    key={s.identity}
-                                    className={`flex-1 rounded-lg bg-white border px-2 py-1.5 sm:px-2.5 sm:py-2 flex items-center gap-1.5 sm:gap-2 min-w-0 transition-all duration-200 shadow-sm ${s.status === "speaking"
-                                        ? "border-emerald-300 shadow-emerald-100"
-                                        : "border-slate-200"
-                                        }`}
-                                >
+                        {/* ══════════════ STUDENTS STRIP (responsive grid cards) ══════════════ */}
+                        <div
+                            className="grid gap-2"
+                            style={{
+                                gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+                            }}
+                        >
+                            {participants.map((s) => {
+                                console.log(
+                                    s.name,
+                                    "cameraEnabled:awdawd",
+                                    s.isCameraOff,
+                                    "actual:",
+                                    liveKitParticipants.find(
+                                        (p) => p.identity === s.identity
+                                    )?.isCameraEnabled
+                                );
+                                return (
                                     <div
-                                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-slate-500 to-slate-300  flex items-center justify-center text-[11px] sm:text-[13px] font-semibold text-white shrink-0`}
+                                        key={s.identity}
+                                        className="rounded-xl bg-white border px-3 py-2.5 flex items-center gap-2.5 min-w-0"
+                                        style={{
+                                            borderColor: s.isSpeaking ? "#4ade80" : "#e2e8f0",
+                                            boxShadow: s.isSpeaking
+                                                ? "0 0 0 2px #4ade8066"
+                                                : "0 1px 3px rgb(0 0 0 / 0.08)",
+                                            transition: `all ${fadeDuration}ms ease`,
+                                        }}
                                     >
-                                        {s.avatar || s.name.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div className="min-w-0 hidden sm:block">
-                                        <p className="text-[11px] sm:text-[12px] font-semibold text-slate-700 truncate">{s.name}</p>
-                                        <StudentStatusLabel status={"online"} />
+                                        {/* Avatar + status overlay */}
+                                        <div className="relative shrink-0">
+                                            <div className="w-[38px] h-[38px] rounded-full overflow-hidden bg-gradient-to-br from-slate-500 to-slate-300 flex items-center justify-center">
+                                                {s.avatar ? (
+                                                    <img
+                                                        src={s.avatar}
+                                                        alt={s.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <span className="text-white font-semibold text-sm">
+                                                        {s.name.charAt(0).toUpperCase()}
+                                                    </span>
+                                                )}
+                                            </div>
 
-                                    </div>
-                                </div>
-                            ))}
+                                            {/* Speaking indicator (green pulse dot) */}
+                                            {s.isSpeaking && (
+                                                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse border-2 border-white" />
+                                            )}
 
-                            {participants.length > visibleStudents.length && (
-                                <div className="shrink-0 rounded-lg bg-white border border-slate-200 px-2 py-1.5 flex items-center justify-center shadow-sm">
-                                    <span className="text-[11px] text-slate-400 font-medium">
-                                        +{participants.length - visibleStudents.length}
-                                    </span>
-                                </div>
+                                            {/* Hand raised indicator (overrides speaking dot visually if both — hand takes priority on the corner) */}
+                                            {s.handRaised && (
+                                                <span className="absolute -top-1.5 -right-1.5 w-[18px] h-[18px] rounded-full bg-white flex items-center justify-center">
+                                                    <DotLottieReact
+                                                        src={handRaiseAnimation}
+                                                        autoplay
+                                                        loop
+                                                        className="w-4 h-4"
+                                                    />
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {/* Name + status text */}
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-medium truncate">{s.name}</p>
+                                            <p
+                                                className={`text-[11px] font-medium mt-0.5 ${s.handRaised
+                                                    ? "text-amber-500"
+                                                    : s.isSpeaking
+                                                        ? "text-green-600"
+                                                        : "text-slate-500"
+                                                    }`}
+                                            >
+                                                {s.handRaised
+                                                    ? "Hand raised"
+                                                    : s.isSpeaking
+                                                        ? "Speaking"
+                                                        : "Online"}
+                                            </p>
+                                        </div>
+
+                                        {/* Mic / Video controls */}
+                                        <div className="flex items-center gap-1 shrink-0">
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
+                                                    console.log("Teacher sending mute request", "CONTROLLLLLL");
+
+                                                    const payload = {
+                                                        type: "toggle-mic",
+                                                        targetId: s.identity,
+                                                        enabled: !s.isMuted,
+                                                    };
+
+                                                    console.log("Payload:", payload, "CONTROLLLLLL");
+
+                                                    await room.localParticipant.publishData(
+                                                        new TextEncoder().encode(JSON.stringify(payload)),
+                                                        { reliable: true }
+                                                    );
+
+                                                    console.log("Mute request sent", "CONTROLLLLLL");
+                                                }}
+                                                aria-label={!s.isMuted ? `Unmute ${s.name}` : `Mute ${s.name}`}
+                                                className={`w-[26px] h-[26px] rounded-md flex items-center justify-center ${!s.isMuted
+                                                    ? "bg-red-50 text-red-500"
+                                                    : "bg-slate-100 text-slate-600"
+                                                    }`}
+                                            >
+                                                {!s.isMuted ? <MicOff size={14} /> : <Mic size={14} />}
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
+                                                    console.log("Teacher sending mute request", "CONTROLLLLLL");
+
+                                                    const payload = {
+                                                        type: "toggle-video",
+                                                        targetId: s.identity,
+                                                        enabled: !s.isCameraOff,
+                                                    };
+
+                                                    console.log("Payload:", payload, "CONTROLLLLLL");
+
+                                                    await room.localParticipant.publishData(
+                                                        new TextEncoder().encode(JSON.stringify(payload)),
+                                                        { reliable: true }
+                                                    );
+
+                                                    console.log("Mute request sent", "CONTROLLLLLL");
+                                                }}
+                                                aria-label={
+                                                    !s.isCameraOff
+                                                        ? `Turn on ${s.name}'s video`
+                                                        : `Turn off ${s.name}'s video`
+                                                }
+                                                className={`w-[26px] h-[26px] rounded-md flex items-center justify-center ${!s.isCameraOff
+                                                    ? "bg-red-50 text-red-500"
+                                                    : "bg-slate-100 text-slate-600"
+                                                    }`}
+                                            >
+                                                {!s.isCameraOff ? <VideoOff size={14} /> : <Video size={14} />}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )
+                            }
                             )}
                         </div>
                     </main>
@@ -457,7 +776,7 @@ const totalSudents = participants || [];
                     {/* </aside> */}
                 </div>
 
- <RoomAudioRenderer />
+                <RoomAudioRenderer />
             </div>
         </>
     );

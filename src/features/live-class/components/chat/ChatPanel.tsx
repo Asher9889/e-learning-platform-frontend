@@ -1,24 +1,27 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+// import { X } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   setActiveTab,
-  setChatOpen,
+  // setChatOpen,
 } from "@/features/live-class/store/liveClass.slice";
 import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import type { ChatTab } from "../../types";
 import { useEffect, useRef } from "react";
-import { useMediaQuery } from "#hooks/use-media-query";
-
+// import { useMediaQuery } from "#hooks/use-media-query";
+import { useParticipants } from "@livekit/components-react";
+import { useRoomContext } from "@livekit/components-react";
 export function ChatPanel() {
-  const isTablet = useMediaQuery("(max-width: 1024px)");
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  // const isTablet = useMediaQuery("(max-width: 1024px)");
+  // const isMobile = useMediaQuery("(max-width: 768px)");
 
   const dispatch = useAppDispatch();
-  const chatOpen = useAppSelector((state) => state.liveClass.chatOpen);
+  const participants = useParticipants();
+const room = useRoomContext();
+  // const chatOpen = useAppSelector((state) => state.liveClass.chatOpen);
   const activeTab = useAppSelector((state) => state.liveClass.activeTab);
   const messages = useAppSelector((state) => state.liveClass.messages);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -44,7 +47,11 @@ export function ChatPanel() {
     { value: "announcements", label: "Announcements" },
   ];
   // if (!chatOpen) return null;
-
+const typingUsers = participants.filter(
+  (p) =>
+    p.attributes?.typing === "true" &&
+    p.identity !== room.localParticipant.identity
+);
   return (
     <aside className="flex flex-col w-80 border-l h-full w-full bg-background shrink-0 ">
       <Tabs
@@ -104,7 +111,13 @@ export function ChatPanel() {
               )}
             </ScrollArea>
             <div className="shrink-0 border-t">
-
+ {typingUsers.length > 0 && (
+    <div className="px-3 py-2 text-xs text-muted-foreground italic">
+      {typingUsers.length === 1
+        ? `${typingUsers[0].name} is typing...`
+        : `${typingUsers.length} students are typing...`}
+    </div>
+  )}
               <ChatInput
                 placeholder={
                   tab.value === "chat"

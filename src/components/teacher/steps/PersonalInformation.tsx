@@ -9,7 +9,6 @@ import { useEffect } from "react";
 export default function PersonalInformation() {
   const {
     register,
-    setValue,
     watch,
     formState: { errors },
   } =
@@ -27,23 +26,7 @@ console.log(image);
 
       <div className="md:col-span-2 flex flex-col ">
         <div className="md:col-span-2 flex justify-start ">
-          <AvatarUpload
-          value={image}
-            onFileChange={(file) => {
-              const uploadedFile = file?.file;
-
-              if (uploadedFile instanceof File) {
-                setValue(
-                  "personalInfo.profileImage",
-                  uploadedFile,
-                  {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  }
-                );
-              }
-            }}
-          />
+          <AvatarUpload value={image}/>
         </div>
         <p className="text-red-500 text-sm mt-2">
           {errors.personalInfo?.profileImage?.message as string}

@@ -12,46 +12,56 @@ import {
 } from "#components/ui/select";
 import type { Options } from "@/pages/Teacher/schema/teacher.schema";
 interface Props {
-  gradeOptions: Options[];
+  programOptions: Options[];
+  batchesOptions: Options[];
 }
 export default function StudentInformation({
-  gradeOptions = [],
+  programOptions = [],
+  batchesOptions =[],
 }: Props) {
-  const { register, setValue, formState: { errors } } =
+  const { register, setValue,watch, formState: { errors } } =
     useFormContext<StudentEnrollFormInput>();
+const selectedProgram = watch("roleInfo.programId");
+const selectedBatch = watch("roleInfo.batchId");
 
   return (
     <div className="grid md:grid-cols-2 gap-4">
       <div className="space-y-2">
-        <Label htmlFor="gradeId">Grade</Label>
+        <Label htmlFor="programId">Program</Label>
 
         <Select
+        value={selectedProgram}
           onValueChange={(value) =>
-            setValue("roleInfo.gradeId", value, {
+           {
+             setValue("roleInfo.programId", value, {
               shouldValidate: true,
             })
+            setValue("roleInfo.batchId", "", {
+              shouldValidate: true,
+            })
+           }
           }
           // className={"w-full"}
 
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select Grade" />
+            <SelectValue placeholder="Select Program" />
           </SelectTrigger>
 
           <SelectContent>
-            {gradeOptions.map((grade) => (
+            {programOptions.map((program) => (
               <SelectItem
-                key={grade.value}
-                value={grade.value}
+                key={program.value}
+                value={program.value}
               >
-                {grade.label}
+                {program.label}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
 
         <p className="text-red-500 text-sm">
-          {errors.roleInfo?.gradeId?.message}
+          {errors.roleInfo?.programId?.message}
         </p>
       </div>
       <div className="space-y-2">
@@ -66,7 +76,8 @@ export default function StudentInformation({
           {errors.roleInfo?.rollNumber?.message}
         </p>
       </div>
-      <div className="space-y-2">
+
+      {/* <div className="space-y-2">
         <Label htmlFor="Batch">Batch</Label>
         <Input
           placeholder="Batch"
@@ -76,6 +87,41 @@ export default function StudentInformation({
         />
         <p className="text-red-500 text-sm">
           {errors.roleInfo?.batch?.message}
+        </p>
+      </div> */}
+
+         <div className="space-y-2">
+        <Label htmlFor="programId">Batch</Label>
+
+        <Select
+        value={selectedBatch}
+          onValueChange={(value) =>
+            setValue("roleInfo.batchId", value, {
+              shouldValidate: true,
+            })
+
+          }
+          // className={"w-full"}
+
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Batch" />
+          </SelectTrigger>
+
+          <SelectContent>
+            {batchesOptions.map((batch) => (
+              <SelectItem
+                key={batch.value}
+                value={batch.value}
+              >
+                {batch.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <p className="text-red-500 text-sm">
+          {errors.roleInfo?.batchId?.message}
         </p>
       </div>
       <div className="space-y-2">

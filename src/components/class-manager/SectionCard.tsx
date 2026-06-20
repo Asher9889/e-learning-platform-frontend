@@ -13,10 +13,9 @@ interface SectionCardProps {
   section: Section;
   onEdit: (section: Section) => void;
   onDelete: (section: Section) => void;
-  editingSection: Section | null;
 }
 
-export function SectionCard({ section, onEdit, onDelete ,editingSection}: SectionCardProps) {
+export function SectionCard({ section, onEdit, onDelete }: SectionCardProps) {
   return (
     <div className="group flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
       <div className="flex items-center gap-3">

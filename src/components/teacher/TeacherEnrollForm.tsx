@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import AccountInformation from "./steps/AccountInformation";
@@ -16,8 +16,11 @@ import { useUploadAvatar } from "@/pages/Teacher/hooks/useUploadAvtar";
 import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
 
-const steps = ["Account", "Personal", "Address", "Teacher", "Review"];
-const stepFields: Record<number, string[]> = {
+// const steps = ["Account", "Personal", "Address", "Teacher", "Review"];
+const stepFields: Record<
+    number,
+    FieldPath<TeacherEnrollFormInput>[]
+> = {
     0: [
         "email",
         "phoneNumber",
@@ -50,7 +53,16 @@ const stepFields: Record<number, string[]> = {
 };
 export default function TeacherEnrollForm() {
     const [currentStep, setCurrentStep] = useState(0);
-      const navigate = useNavigate();
+    const navigate = useNavigate();
+    const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+    const steps = [
+        { label: "Account", completed: completedSteps.includes(0) },
+        { label: "Personal", completed: completedSteps.includes(1) },
+        { label: "Address", completed: completedSteps.includes(2) },
+        { label: "Teacher", completed: completedSteps.includes(3) },
+        //   { label: "Guardian", completed: completedSteps.includes(4) },
+        { label: "Review", completed: false },
+    ];
     const {
 
         mutate: handleCreateTeacher,
@@ -96,27 +108,27 @@ export default function TeacherEnrollForm() {
                 ...values.personalInfo,
                 profileImage: avatarUrl
             },
-        },  {
-        onSuccess: (response) => {
-          sileo.success({
-            title: "Student Created",
-            description:
-              response?.message ||
-              "Student created successfully",
-          });
-          navigate("/teachers");
-        },
+        }, {
+            onSuccess: (response) => {
+                sileo.success({
+                    title: "Student Created",
+                    description:
+                        response?.message ||
+                        "Student created successfully",
+                });
+                navigate("/teachers");
+            },
 
-        onError: (error) => {
-          sileo.error({
-            title: "Failed to Create Student",
-            description:
-              error instanceof Error
-                ? error.message
-                : "Something went wrong",
-          });
-        },
-      });
+            onError: (error) => {
+                sileo.error({
+                    title: "Failed to Create Student",
+                    description:
+                        error instanceof Error
+                            ? error.message
+                            : "Something went wrong",
+                });
+            },
+        });
     };
 
     const renderStep = () => {
@@ -129,13 +141,17 @@ export default function TeacherEnrollForm() {
             default: return null;
         }
     };
-    const nextStep = async () => {
+    const nextStep = async (step?: number) => {
         const fields = stepFields[currentStep];
 
-        const isValid = await methods.trigger(fields as any);
+        const isValid = await methods.trigger(fields);
 
         if (!isValid) return;
-
+        setCompletedSteps((prev) =>
+            prev.includes(currentStep)
+                ? prev
+                : [...prev, currentStep]
+        );
         if (
             currentStep === 0 &&
             methods.getValues("password") !==
@@ -149,7 +165,12 @@ export default function TeacherEnrollForm() {
             return;
         }
 
-        setCurrentStep((p) => p + 1);
+        if (step) {
+            setCurrentStep(step);
+        } else {
+            setCurrentStep((p) => p + 1);
+
+        }
     };
     return (
         <FormProvider {...methods}>
@@ -177,7 +198,9 @@ export default function TeacherEnrollForm() {
                     readOnly
                 />
                 <div className="mb-6">
-                    <EnrollmentStepper currentStep={currentStep} steps={steps} onNext={() => nextStep()} onPrevious={() => setCurrentStep((p) => p - 1)} />
+                    <EnrollmentStepper currentStep={currentStep} steps={steps} onNext={(step) => nextStep(step)} onPrevious={(step) => {
+                        setCurrentStep(step)
+                    }} />
                 </div>
 
                 <div className="flex-1 overflow-y-auto">

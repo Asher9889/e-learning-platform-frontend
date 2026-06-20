@@ -6,6 +6,7 @@ import SplashScreen from "#components/common/SplashScreen";
 
 export default function PublicRoute() {
   const status = useAppSelector((state) => state.auth.status);
+  const user = useAppSelector((state) => state.auth.user);
 
   if (status === AUTH_STATUS.CHECKING) {
     return (
@@ -13,7 +14,7 @@ export default function PublicRoute() {
     );
   }
 
-  if (status === AUTH_STATUS.AUTHENTICATED) {
+  if (user) {
     return (
       <Navigate to="/dashboard" replace/>
     );

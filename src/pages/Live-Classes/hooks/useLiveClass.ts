@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { liveClassApi } from "../api/live.api";
-import type { TStartLiveClassInput, TJoinLiveClassInput } from "../schema/live.schema";
+import type { TStartLiveClassInput } from "../schema/live.schema";
 import type { LiveClassFilters } from "../types";
 import { useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";

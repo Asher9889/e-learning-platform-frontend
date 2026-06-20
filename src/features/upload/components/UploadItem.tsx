@@ -1,4 +1,4 @@
-import { createElement, useMemo } from "react"
+import { createElement, memo, useMemo } from "react"
 import {
   FileVideo,
   FileText,
@@ -19,6 +19,17 @@ import {
 import { cn } from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import type { UploadItem as UploadItemType } from "../types/upload.types"
 
 const FILE_ICONS: Record<string, LucideIcon> = {
@@ -99,7 +110,7 @@ interface UploadItemProps {
   onRemove: (id: string) => void
 }
 
-export function UploadItem({
+export const UploadItem = memo(function UploadItem({
   item,
   onPause,
   onResume,
@@ -121,21 +132,21 @@ export function UploadItem({
         item.status === "FAILED" && "border-destructive/30 bg-destructive/5"
       )}
     >
-      <div className="flex items-start gap-3">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3">
         {/* File icon */}
         <div
           className={cn(
-            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+            "flex h-9 w-9 items-center justify-center rounded-lg",
             "bg-muted text-muted-foreground"
           )}
         >
           {createElement(fileIcon, { className: "h-4 w-4" })}
         </div>
 
-        <div className="min-w-0 flex-1">
-          {/* File name + status */}
+        <div className="min-w-0">
+          {/* File name + status + actions row */}
           <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
+            <div className="min-w-0 overflow-hidden">
               <p className="truncate text-sm font-medium">{item.fileName}</p>
               <span
                 className={cn(
@@ -175,15 +186,38 @@ export function UploadItem({
                 </Button>
               )}
               {(item.status === "QUEUED" || item.status === "UPLOADING" || item.status === "PAUSED") && (
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  className="text-muted-foreground hover:text-destructive"
-                  onClick={() => onCancel(item.id)}
-                  aria-label="Cancel upload"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      className="text-muted-foreground hover:text-destructive"
+                      aria-label="Cancel upload"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </AlertDialogTrigger>
+
+                  <AlertDialogContent size="sm">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Cancel upload?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to cancel uploading{" "}
+                        <span className="font-medium text-foreground">{item.fileName}</span>
+                        ?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Keep uploading</AlertDialogCancel>
+                      <AlertDialogAction
+                        variant="destructive"
+                        onClick={() => onCancel(item.id)}
+                      >
+                        Yes, cancel
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
               {item.status === "FAILED" && (
                 <>
@@ -257,4 +291,4 @@ export function UploadItem({
       </div>
     </div>
   )
-}
+})

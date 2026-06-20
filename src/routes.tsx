@@ -8,9 +8,12 @@ import type { AppRoutes, ChildRoute } from "./types/route.type";
 import LiveClassPage from "@/pages/Live-Classes";
 import StudentsPage from "@/pages/Student";
 import EnrollStudentPage from "@/components/student/EnrollStudentPage";
+import EditStudentPage from "@/components/student/EditStudentPage";
 import TeachersPage from "@/pages/Teacher";
 import AddTeacher from "@/components/teacher/AddTeacher";
-import ClassesPage from "@/pages/Classes";
+import ProgramsPage from "@/pages/Programs";
+import BatchesPage from "@/pages/Batches";
+import SubjectsPage from "@/pages/Subjects";
 import {
   LayoutDashboard,
   BookOpen,
@@ -22,13 +25,15 @@ import {
   Library,
   FolderTree,
   Trash2,
+  Layers,
+  Book,
 } from "lucide-react";
 import { USER_ROLE } from "@/constants/user/user.constant";
 import RouteOutlet from "./routeOutlet";
 
 import ActiveLiveClassPage from "@/features/live-class/pages/ActiveLiveClassPage";
 
-import DashboardPage from "./pages/dashboard";
+import DashboardPage from "./pages/Dashboard";
 import ContentPage from "./pages/Content";
 import UploadMetadataPage from "./pages/Content/UploadMetadata";
 
@@ -42,12 +47,45 @@ export const APP_ROUTES: AppRoutes = {
     roles: Object.values(USER_ROLE),
   },
 
+  // ── Academics ──────────────────────────────────────────
+  programs: {
+    title: "Programs",
+    path: "/programs",
+    icon: School,
+    element: ProgramsPage,
+    showInSidebar: true,
+    group: "Academics",
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+  },
+
+  batches: {
+    title: "Batches",
+    path: "/batches",
+    icon: Layers,
+    element: BatchesPage,
+    showInSidebar: true,
+    group: "Academics",
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+  },
+
+  subjects: {
+    title: "Subjects",
+    path: "/subjects",
+    icon: Book,
+    element: SubjectsPage,
+    showInSidebar: true,
+    group: "Academics",
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+  },
+
+  // ── People ─────────────────────────────────────────────
   teachers: {
     title: "Teachers",
     path: "/teachers",
     icon: Users,
     element: RouteOutlet,
     showInSidebar: true,
+    group: "People",
     roles: [USER_ROLE.ADMIN],
     children: [
       {
@@ -61,29 +99,40 @@ export const APP_ROUTES: AppRoutes = {
     ],
   },
 
+  students: {
+    title: "Students",
+    path: "/student",
+    icon: GraduationCap,
+    element: RouteOutlet,
+    showInSidebar: true,
+    group: "People",
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+    children: [
+      {
+        path: undefined,
+        element: StudentsPage,
+      },
+      {
+        path: "add",
+        element: EnrollStudentPage,
+      },
+      {
+        path: ":id/edit",
+        element: EditStudentPage,
+      },
+    ],
+  },
+
+  // ── Teaching ──────────────────────────────────────────
   courses: {
     title: "Courses",
     path: "/courses",
     icon: BookOpen,
     element: () => <div>Courses</div>,
     showInSidebar: true,
+    group: "Teaching",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
   },
-
-  // liveClasses: {
-  //   title: "Live Classes",
-  //   path: "/live-classes",
-  //   icon: Video,
-  //   element: LiveClassPage,
-  //   showInSidebar: true,
-  //   roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
-  //   children: [
-  //     {
-  //       path: ":roomName/class-room",
-  //       element: () => <div className="bg-red-600">Live Class Room</div>,
-  //     }
-  //   ]
-  // },
 
   liveClasses: {
     title: "Live Classes",
@@ -91,6 +140,7 @@ export const APP_ROUTES: AppRoutes = {
     icon: Video,
     element: RouteOutlet,
     showInSidebar: true,
+    group: "Teaching",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
     children: [
        {
@@ -110,37 +160,11 @@ export const APP_ROUTES: AppRoutes = {
     icon: ClipboardCheck,
     element: () => <div>Assignments</div>,
     showInSidebar: true,
+    group: "Teaching",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
   },
 
-  students: {
-    title: "Students",
-    path: "/student",
-    icon: GraduationCap,
-    element: RouteOutlet,
-    showInSidebar: true,
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
-    children: [
-      {
-        path: undefined,
-        element: StudentsPage,
-      },
-      {
-        path: "add",
-        element: EnrollStudentPage,
-      },
-    ],
-  },
-
-  academic: {
-    title: "Academics",
-    path: "/academic-management",
-    icon: School,
-    element: ClassesPage,
-    showInSidebar: true,
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
-  },
-
+  // ── Learning Content ──────────────────────────────────
   content: {
     title: "Content Library",
     path: "/content",

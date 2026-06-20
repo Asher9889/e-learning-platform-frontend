@@ -19,10 +19,10 @@ interface StartLiveClassModalProps {
   onStarted?: (url: string) => void;
 }
 
-const StartLiveClassModal = ({liveClass, open, onOpenChange, onStarted }: StartLiveClassModalProps) => {
+const StartLiveClassModal = ({liveClass, open, onOpenChange }: StartLiveClassModalProps) => {
 
   const [copied, setCopied] = useState(false);
-  const [isStarted, setIsStarted] = useState(false);
+  const [isStarted, _] = useState(false);
 
 
   
@@ -98,13 +98,13 @@ const StartLiveClassModal = ({liveClass, open, onOpenChange, onStarted }: StartL
               </label>
               <div className="flex items-center gap-2">
                 <code className="flex-1 truncate rounded-lg bg-muted px-3 py-2.5 text-xs">
-                  {liveClass.meetingUrl || "https://live.example.com/room-123"}
+                  {"https://live.example.com/room-123"}
                 </code>
                 <Button
                   variant="outline"
                   size="icon"
                   className="h-10 w-10 shrink-0"
-                  onClick={() => handleCopy(liveClass.meetingUrl || "https://live.example.com/room-123")}
+                  onClick={() => handleCopy("https://live.example.com/room-123")}
                 >
                   {copied ? (
                     <Check className="h-4 w-4 text-green-500" />
@@ -121,13 +121,13 @@ const StartLiveClassModal = ({liveClass, open, onOpenChange, onStarted }: StartL
               </label>
               <div className="flex items-center gap-2">
                 <code className="flex-1 rounded-lg bg-muted px-3 py-2.5 text-xs font-mono tracking-widest">
-                  {liveClass.passcode || "ABC123"}
+                  { "ABC123"}
                 </code>
                 <Button
                   variant="outline"
                   size="icon"
                   className="h-10 w-10 shrink-0"
-                  onClick={() => handleCopy(liveClass.passcode || "ABC123")}
+                  onClick={() => handleCopy("ABC123")}
                 >
                   {copied ? (
                     <Check className="h-4 w-4 text-green-500" />
@@ -141,7 +141,7 @@ const StartLiveClassModal = ({liveClass, open, onOpenChange, onStarted }: StartL
             <Button
               className="w-full gap-2"
               size="lg"
-              onClick={() => window.open(liveClass.meetingUrl || "https://live.example.com/room-123", "_blank")}
+              onClick={() => window.open("https://live.example.com/room-123", "_blank")}
             >
               <ExternalLink className="h-4 w-4" />
               Enter Live Room

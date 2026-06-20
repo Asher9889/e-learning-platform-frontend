@@ -4,10 +4,10 @@ import { Check } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 interface Props {
-  onNext: () => void;
+  onNext: (index:number) => void;
   currentStep: number;
-  onPrevious: () => void;
-  steps: string[];
+  onPrevious: (index:number) => void;
+  steps: {label:string,completed:boolean }[];
 }
 
 export default function EnrollmentStepper({ currentStep, steps, onNext,onPrevious }: Props) {
@@ -24,21 +24,23 @@ export default function EnrollmentStepper({ currentStep, steps, onNext,onPreviou
         const isActive = index === currentStep;
         const isNextStep = index === currentStep + 1;
         return (
-          <div key={step} className="flex items-center flex-1">
+          <div key={step?.label} className="flex items-center flex-1">
             <div className="flex flex-col items-center">
               {/* Circle */}
               <div
                 onClick={() => {
-                  if (isNextStep ) {
-                    onNext();
+                  if (index > currentStep ) {
+                    onNext(index);
                   }
                   if(index < currentStep){
-                    onPrevious();
+                  console.log("index", index, "currentStep000000", currentStep,"isNextStep",isNextStep)
+
+                    onPrevious(index);
                   }
                 }}
                 className={`
                   relative h-10 w-10 rounded-full flex items-center justify-center
-                  text-sm font-medium select-none  ${(isNextStep || index < currentStep)
+                  text-sm font-medium select-none   ${(step?.completed || step?.label ==="Review")
                     ? "cursor-pointer"
                     : "cursor-not-allowed"
                   }
@@ -74,7 +76,7 @@ export default function EnrollmentStepper({ currentStep, steps, onNext,onPreviou
                   ${isActive ? "text-primary font-medium" : isDone ? "text-foreground" : "text-muted-foreground"}
                 `}
               >
-                {step}
+                {step?.label}
               </span>
             </div>
 

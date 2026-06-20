@@ -25,7 +25,7 @@ export function ParticipantSidebar() {
         identity: p.identity,
         name: p.name || p.identity,
         avatar: p.metadata ? extractAvatar(p.metadata) : undefined,
-        role: (p.identity === teacherIdentity ? "TEACHER" : "STUDENT") as "TEACHER" | "STUDENT",
+        role: (p.identity === teacherIdentity?.id ? "teacher" : "student") as "teacher" | "student",
         isMuted: p.isMicrophoneEnabled === false,
         isCameraOff: p.isCameraEnabled === false,
         handRaised: false,

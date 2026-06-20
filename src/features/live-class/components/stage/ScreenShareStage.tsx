@@ -1,4 +1,4 @@
-import { ParticipantTile } from "@livekit/components-react";
+import {  VideoTrack } from "@livekit/components-react";
 import type { TrackReference } from "@livekit/components-react";
 import { Monitor } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -18,7 +18,7 @@ export function ScreenShareStage({ tracks, className }: ScreenShareStageProps) {
         Screen Share
       </div>
       {tracks.slice(0, 1).map((track) => (
-        <ParticipantTile
+        <VideoTrack
           key={track.participant.identity}
           trackRef={track}
           className="w-full h-full [&>video]:object-contain [&>video]:w-full [&>video]:h-full rounded-xl bg-black/40"

@@ -3,6 +3,8 @@ import {
   FileText,
   Book,
   Image,
+  Music,
+  File,
   MoreHorizontal,
   Eye,
   Pencil,
@@ -22,7 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 
-type ContentType = "VIDEO" | "PDF" | "DOCUMENT" | "IMAGE"
+type ContentType = "VIDEO" | "PDF" | "DOCUMENT" | "IMAGE" | "AUDIO"
 
 interface ContentCardItem {
   id: string
@@ -38,6 +40,7 @@ interface ContentCardItem {
 interface ContentCardProps {
   item: ContentCardItem
   onEdit?: (item: ContentCardItem) => void
+  onPreview?: (item: ContentCardItem) => void
 }
 
 const TYPE_ICONS: Record<ContentType, LucideIcon> = {
@@ -45,6 +48,7 @@ const TYPE_ICONS: Record<ContentType, LucideIcon> = {
   PDF: FileText,
   DOCUMENT: Book,
   IMAGE: Image,
+  AUDIO: Music,
 }
 
 const TYPE_LABELS: Record<ContentType, string> = {
@@ -52,6 +56,7 @@ const TYPE_LABELS: Record<ContentType, string> = {
   PDF: "PDF",
   DOCUMENT: "Document",
   IMAGE: "Image",
+  AUDIO: "Audio",
 }
 
 const TYPE_STYLES: Record<ContentType, { cover: string; icon: string; badge: string }> = {
@@ -75,11 +80,16 @@ const TYPE_STYLES: Record<ContentType, { cover: string; icon: string; badge: str
     icon: "text-[oklch(0.5_0.12_170)]",
     badge: "bg-[oklch(0.93_0.025_170)] text-[oklch(0.4_0.12_170)] border-[oklch(0.85_0.03_170)]",
   },
+  AUDIO: {
+    cover: "bg-[oklch(0.95_0.02_60)]",
+    icon: "text-[oklch(0.5_0.12_60)]",
+    badge: "bg-[oklch(0.93_0.025_60)] text-[oklch(0.4_0.12_60)] border-[oklch(0.85_0.03_60)]",
+  },
 }
 
-export function ContentCard({ item, onEdit }: ContentCardProps) {
-  const Icon = TYPE_ICONS[item.type]
-  const styles = TYPE_STYLES[item.type]
+export function ContentCard({ item, onEdit, onPreview }: ContentCardProps) {
+  const Icon = TYPE_ICONS[item.type] || File
+  const styles = TYPE_STYLES[item.type] || TYPE_STYLES.DOCUMENT
   const label = TYPE_LABELS[item.type]
 
   return (
@@ -99,7 +109,7 @@ export function ContentCard({ item, onEdit }: ContentCardProps) {
 
         {/* Hover action overlay */}
         <div className="absolute inset-0 flex translate-y-1 items-center justify-center gap-1.5 bg-black/0 opacity-0 transition-all duration-200 group-hover/card:translate-y-0 group-hover/card:bg-black/[0.04] group-hover/card:opacity-100">
-          <Button variant="secondary" size="icon" className="h-8 w-8 shadow-sm">
+          <Button variant="secondary" size="icon" className="h-8 w-8 shadow-sm" onClick={() => onPreview?.(item)}>
             <Eye className="h-3.5 w-3.5" />
           </Button>
           <Button variant="secondary" size="icon" className="h-8 w-8 shadow-sm" onClick={() => onEdit?.(item)}>

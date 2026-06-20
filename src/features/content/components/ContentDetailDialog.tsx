@@ -32,7 +32,7 @@ type ContentType = "VIDEO" | "PDF" | "DOCUMENT" | "IMAGE"
 interface ContentDetailData {
   id: string
   title: string
-  description: string
+  description?: string
   subject: string
   type: ContentType
   coverUrl?: string

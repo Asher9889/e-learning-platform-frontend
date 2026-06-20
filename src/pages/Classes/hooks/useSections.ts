@@ -1,6 +1,5 @@
 // hooks/useSections.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { mockApi } from "../mock-api";
 
 const CLASSES_KEY = ["classes"] as const;
 
@@ -8,10 +7,11 @@ export function useCreateSection() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: mockApi.createSection,
-    onSuccess: (_, variables) => {
+    mutationFn: async (data: unknown) => {
+      console.log("createSection", data);
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: CLASSES_KEY });
-      queryClient.invalidateQueries({ queryKey: [...CLASSES_KEY, variables.classId] });
     },
   });
 }
@@ -20,10 +20,11 @@ export function useUpdateSection() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: mockApi.updateSection,
-    onSuccess: (_, variables) => {
+    mutationFn: async (data: unknown) => {
+      console.log("updateSection", data);
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: CLASSES_KEY });
-      queryClient.invalidateQueries({ queryKey: [...CLASSES_KEY, variables.classId] });
     },
   });
 }
@@ -32,11 +33,11 @@ export function useDeleteSection() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ classId, sectionId }: { classId: string; sectionId: string }) =>
-      mockApi.deleteSection(classId, sectionId),
-      onSuccess: (_, variables) => {
+    mutationFn: async ({ classId, sectionId }: { classId: string; sectionId: string }) => {
+      console.log("deleteSection", classId, sectionId);
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: CLASSES_KEY });
-      queryClient.invalidateQueries({ queryKey: [...CLASSES_KEY, variables.classId] });
     },
   });
 }

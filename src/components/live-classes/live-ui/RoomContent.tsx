@@ -1,5 +1,5 @@
 import { ParticipantName, ParticipantTile, TrackLoop, useTracks } from "@livekit/components-react";
-import { ConnectionState, Track } from "livekit-client";
+import { Track } from "livekit-client";
 
 function RoomContent() {
   const tracks = useTracks([

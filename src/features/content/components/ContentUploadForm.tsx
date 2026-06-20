@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { ContentUploadFormData } from "../schema/content.schema"
-import { CONTENT_TYPES } from "../constants/content.constants"
+import { MATERIAL_TYPES } from "@/constants/material/material.constant"
 
 interface ContentUploadFormProps {
   form: UseFormReturn<ContentUploadFormData>
@@ -72,7 +72,7 @@ export function ContentUploadForm({ form }: ContentUploadFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {CONTENT_TYPES.map((type) => (
+                  {MATERIAL_TYPES.map((type) => (
                     <SelectItem key={type.value} value={type.value}>
                       {type.label}
                     </SelectItem>
