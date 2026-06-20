@@ -172,7 +172,7 @@ export const APP_ROUTES: AppRoutes = {
     element: RouteOutlet,
     showInSidebar: true,
     group: "Learning Content",
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER,USER_ROLE.STUDENT],
     children: [
       { path: undefined, element: ContentPage },
       { path: "upload/metadata", element: UploadMetadataPage },
@@ -186,7 +186,7 @@ export const APP_ROUTES: AppRoutes = {
     element: () => <div className="p-6"><h1 className="text-2xl font-bold">Categories</h1></div>,
     showInSidebar: true,
     group: "Learning Content",
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER,USER_ROLE.STUDENT],
   },
 
   contentTrash: {

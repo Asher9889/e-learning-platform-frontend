@@ -26,6 +26,7 @@ interface ContentFiltersProps {
   onTypeChange: (v: string) => void;
   onSearchChange: (v: string) => void;
   onClear: () => void;
+  isVisible: boolean;
 }
 
 export function ContentFilters({
@@ -40,14 +41,16 @@ export function ContentFilters({
   onTypeChange,
   onSearchChange,
   onClear,
+  isVisible
 }: ContentFiltersProps) {
   const hasFilters = programId || subjectId || (type && type !== "all") || search;
 
   return (
     <div className="flex flex-wrap items-end gap-3">
+
       <div className="w-full sm:w-[180px] space-y-1.5">
         <label className="text-xs font-medium text-muted-foreground">Program</label>
-        <Select value={programId || "all"} onValueChange={(v) => onProgramChange(v === "all" ? "" : v)}>
+        <Select value={programId || "all"} disabled={!isVisible} onValueChange={(v) => onProgramChange(v === "all" ? "" : v)}>
           <SelectTrigger>
             <SelectValue placeholder="All Programs" />
           </SelectTrigger>

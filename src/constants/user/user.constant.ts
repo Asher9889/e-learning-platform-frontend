@@ -33,8 +33,9 @@ interface ITeacherRoleInfo {
   joiningDate: string;
   bio?: string;
 }
-interface IStudentRoleInfo {
+export interface IStudentRoleInfo {
   rollNumber: string;
+  programId: string;
   batch: string;
   admissionDate: string;
   guardianName: string;
