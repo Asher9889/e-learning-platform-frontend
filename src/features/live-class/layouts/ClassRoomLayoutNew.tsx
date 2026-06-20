@@ -49,7 +49,6 @@ import { RoomEvent } from "livekit-client";
 import { ParticipantSidebar } from "../components/participants/ParticipantSidebar";
 import { setParticipantsOpen } from "@/features/live-class/store/liveClass.slice";
 // ─── Types ────────────────────────────────────────────────────────────────────
-
 // interface Student {
 //     id: string;
 //     name: string;
