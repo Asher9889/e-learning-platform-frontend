@@ -18,6 +18,7 @@ export function Header() {
 
         <nav style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
           <a href="#features" className="nav-link">features</a>
+          <a href="/programs" className="nav-link">programs</a>
           <a href="#classroom" className="nav-link">live classes</a>
           <a href="#why-us" className="nav-link">why us</a>
           <a href="#contact" className="nav-link">contact</a>

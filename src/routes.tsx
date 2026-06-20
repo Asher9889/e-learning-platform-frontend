@@ -12,6 +12,7 @@ import EditStudentPage from "@/components/student/EditStudentPage";
 import TeachersPage from "@/pages/Teacher";
 import AddTeacher from "@/components/teacher/AddTeacher";
 import ProgramsPage from "@/pages/Programs";
+import PublicProgramsPage from "@/features/programs/pages/ProgramsPage";
 import BatchesPage from "@/pages/Batches";
 import SubjectsPage from "@/pages/Subjects";
 import {
@@ -50,7 +51,7 @@ export const APP_ROUTES: AppRoutes = {
   // ── Academics ──────────────────────────────────────────
   programs: {
     title: "Programs",
-    path: "/programs",
+    path: "/programs/manage",
     icon: School,
     element: ProgramsPage,
     showInSidebar: true,
@@ -233,6 +234,11 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
+  },
+
+  {
+    path: "/programs",
+    element: <PublicProgramsPage />,
   },
 
   {
