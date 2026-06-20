@@ -3,7 +3,7 @@ import { getPrograms } from "../api/program.api";
 
 export function useGetPrograms() {
   return useQuery({
-    queryKey: ["programs"],
+    queryKey: ["programs", "list"],
     queryFn: getPrograms,
     staleTime: 5 * 60 * 1000,
   });

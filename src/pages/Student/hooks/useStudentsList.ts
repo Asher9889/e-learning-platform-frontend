@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { getStudents } from "../api/student.api";
+import type { StudentFilters } from "../schema/student.schema";
 
+export function useStudents(filters?: StudentFilters) {
+  const enabled = !!(filters?.programId && filters?.batchId);
 
-
-export function useStudents() {
-  const query = useQuery({
-    queryKey: ["students"],
-    queryFn: getStudents,
+  return useQuery({
+    queryKey: ["students", filters],
+    queryFn: () => getStudents(filters),
     staleTime: 5 * 60 * 1000,
-      
+    enabled,
   });
-  return query;
 }

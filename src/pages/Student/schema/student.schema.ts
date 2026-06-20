@@ -33,12 +33,7 @@ export const studentEnrollSchema = z
         .string()
         .nonempty("Date of birth is required"),
       gender: z.enum(["MALE", "FEMALE", "OTHER"]),
-       profileImage: z
-        .union([
-          z.instanceof(File),
-          z.string(),
-        ])
-        .optional(),
+       profileImage: z.string().optional(),
 
 
       address: z.object({
@@ -91,7 +86,8 @@ export type StudentDataFromApi = Omit<
   StudentEnrollFormInput,
   "confirmPassword" | "personalInfo"
 > & {
-  role: "TEACHER";
+  id: string;
+  role: "STUDENT";
   createdAt: string;
   updatedAt: string;
   status: TUserStatus;
@@ -100,12 +96,100 @@ export type StudentDataFromApi = Omit<
     StudentEnrollFormInput["personalInfo"],
     "profileImage"
   > & {
-    profileImage: string;
+    profileImage: string | null;
+  };
+  roleInfo: {
+    rollNumber: string;
+    admissionDate: string;
+    guardianName: string;
+    guardianPhoneNumber: string;
+    batchId: string;
+    batchName: string;
+    programId: string;
+    programName: string;
   };
 };
- export type StudentsListResponse = {
-  students: StudentDataFromApi[];
-  totalStudents: number;
+
+export type Pagination = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 };
+
+export type StudentsListResponse = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    students: StudentDataFromApi[];
+    pagination: Pagination;
+  };
+};
+
+export type StudentStatsResponse = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    totalStudents: number;
+    activeStudents: number;
+    inactiveStudents: number;
+    newlyAddedThisMonth: number;
+  };
+};
+
+export type StudentFilters = {
+  programId?: string;
+  batchId?: string;
+  status?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+};
+export type UpdateStudentStatusInput = {
+  status: "ACTIVE" | "INACTIVE" | "SUSPENDED";
+};
+
+export type BulkUpdateStatusInput = {
+  studentIds: string[];
+  status: "ACTIVE" | "INACTIVE" | "SUSPENDED";
+};
+
+export type UpdateStatusResponse = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    id: string;
+    status: string;
+  };
+};
+
+export type BulkUpdateStatusResponse = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    updatedCount: number;
+  };
+};
+
+export type DeleteStudentResponse = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: null;
+};
+
+export type SingleStudentResponse = {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: StudentDataFromApi;
+};
+
 // ✅ Output type — onSubmit mein use karo (after transform, phoneNumber: string)
 export type StudentEnrollFormOutput = z.output<typeof studentEnrollSchema>;

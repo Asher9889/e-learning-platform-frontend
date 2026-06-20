@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import {
   UserIcon,
   XIcon,
+  Loader2,
 } from "lucide-react";
 
 interface AvatarUploadProps {
@@ -21,9 +22,8 @@ interface AvatarUploadProps {
     file: FileWithPreview | null
   ) => void;
   defaultAvatar?: string;
-
-  // NEW
   value?: File | string;
+  isUploading?: boolean;
 }
 
 export function AvatarUpload({
@@ -32,6 +32,7 @@ export function AvatarUpload({
   onFileChange,
   defaultAvatar,
   value,
+  isUploading,
 }: AvatarUploadProps) {
   const [formPreview, setFormPreview] = useState<string>("");
 
@@ -82,7 +83,6 @@ export function AvatarUpload({
   const currentFile = files[0];
 
   const previewUrl =
-    currentFile?.preview ||
     formPreview ||
     defaultAvatar;
 
@@ -105,25 +105,30 @@ export function AvatarUpload({
       <div className="relative">
         <div
           className={cn(
-            "group/avatar relative h-24 w-24 cursor-pointer overflow-hidden rounded-full border border-dashed transition-colors",
+            "group/avatar relative h-24 w-24 overflow-hidden rounded-full border border-dashed transition-colors",
             isDragging
               ? "border-primary bg-primary/5"
               : "border-muted-foreground/25 hover:border-muted-foreground/20",
             previewUrl &&
-              "border-solid"
+              "border-solid",
+            isUploading && "pointer-events-none opacity-60"
           )}
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
-          onClick={openFileDialog}
+          onClick={isUploading ? undefined : openFileDialog}
         >
           <input
             {...getInputProps()}
             className="sr-only"
           />
 
-          {previewUrl ? (
+          {isUploading ? (
+            <div className="flex h-full w-full items-center justify-center">
+              <Loader2 className="text-muted-foreground size-6 animate-spin" />
+            </div>
+          ) : previewUrl ? (
             <img
               src={previewUrl}
               alt="Avatar"
@@ -152,9 +157,11 @@ export function AvatarUpload({
 
       <div className="space-y-0.5 text-center">
         <p className="text-sm font-medium">
-          {previewUrl
-            ? "Avatar uploaded"
-            : "Upload avatar"}
+          {isUploading
+            ? "Uploading..."
+            : previewUrl
+              ? "Avatar uploaded"
+              : "Upload avatar"}
         </p>
 
         <p className="text-muted-foreground text-xs">

@@ -51,6 +51,7 @@ export default function StudentEnrollForm() {
   } = useCreateStudent();
   const {
     uploadAvatarAsync,
+    isUploading,
   } = useUploadAvatar();
   const { data: programData } = useGetPrograms();
   console.log(programData, "programData")
@@ -68,10 +69,6 @@ export default function StudentEnrollForm() {
 
   const { data: batchesData } = useGetBatches(selectedProgram);
   const allBactchesData = batchesData?.batches || [];
-  console.log(
-    methods.getValues("roleInfo.programId"),
-    "selectedProgram", batchesData
-  );
 
   // ✅ onSubmit ko Output type milta hai — transform ke baad (phoneNumber: string E.164)
   // const onSubmit = (values: StudentEnrollFormOutput) => {
@@ -79,43 +76,23 @@ export default function StudentEnrollForm() {
   //   console.log("phoneNumber (E.164):", values.phoneNumber); // +919876543210
   // };
 
-  const onSubmit = async (
-    values: StudentEnrollFormOutput
-  ) => {
-    console.log(values, "asdfghjkl")
+  const onSubmit = async (values: StudentEnrollFormOutput) => {
 
-    let avatarUrl = "";
-    console.log(values.personalInfo.profileImage,
-      "SUBMIT CALLED   debugging",
-      currentStep
-    );
-    if (
-      values.personalInfo.profileImage
-    ) {
-      const uploadResponse =
-        await uploadAvatarAsync(
-          values.personalInfo.profileImage
-        );
 
-      avatarUrl =
-        uploadResponse?.key;
-    }
+    // let avatarUrl = "";
+    // if (values.personalInfo.profileImage) {
+    //   const uploadResponse = await uploadAvatarAsync(values.personalInfo.profileImage);
+
+    //   avatarUrl = uploadResponse?.key;
+    // }
 
     handleCreateStudent(
-      {
-        ...values,
-        personalInfo: {
-          ...values.personalInfo,
-          profileImage: avatarUrl,
-        },
-      },
+      values,
       {
         onSuccess: (response) => {
           sileo.success({
             title: "Student Created",
-            description:
-              response?.message ||
-              "Student created successfully",
+            description: response?.message || "Student created successfully",
           });
           navigate("/student");
         },
@@ -135,11 +112,11 @@ export default function StudentEnrollForm() {
   const renderStep = () => {
     switch (currentStep) {
       case 0: return <AccountInformation />;
-      case 1: return <PersonalInformation />;
+      case 1: return <PersonalInformation uploadAvatarAsync={uploadAvatarAsync} isUploading={isUploading} />;
       case 2: return <AddressInformation />;
       case 3: return <StudentInformation programOptions={mapToLabelValue(allProgramData, "name", "id")} batchesOptions={mapToLabelValue(allBactchesData, "name", "id")} />;
       case 4: return <GuardianInformation />;
-      case 5: return <ReviewSubmit />;
+      case 5: return <ReviewSubmit programOptions={mapToLabelValue(allProgramData, "name", "id")} batchesOptions={mapToLabelValue(allBactchesData, "name", "id")} />;
       default: return null;
     }
   };

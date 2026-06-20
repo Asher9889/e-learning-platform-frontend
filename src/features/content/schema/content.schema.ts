@@ -4,10 +4,10 @@ export const contentUploadFormSchema = z.object({
   title: z
     .string()
     .min(1, "Title is required")
-    .max(100, "Title must be at most 100 characters"),
+    .max(200, "Title must be at most 200 characters"),
   description: z
     .string()
-    .max(300, "Description must be at most 300 characters")
+    .max(1000, "Description must be at most 1000 characters")
     .optional()
     .default(""),
   contentType: z
