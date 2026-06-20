@@ -23,7 +23,7 @@ const initialState: LiveClassState = {
   title: null,
   isConnected: false,
   chatOpen: false,
-  participantsOpen: true,
+  participantsOpen: false,
   activeTab: "chat",
   handRaised: false,
   messages: [],
