@@ -52,6 +52,7 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
       batchId: "",
       teacherId: "",
       durationMinutes: 60,
+      status: "LIVE",
       maxParticipants: 50,
       isRecordingEnabled: true,
       isChatEnabled: true,
