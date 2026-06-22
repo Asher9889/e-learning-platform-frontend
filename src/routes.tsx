@@ -37,7 +37,7 @@ import ActiveLiveClassPage from "@/features/live-class/pages/ActiveLiveClassPage
 import DashboardPage from "./pages/Dashboard";
 import ContentPage from "./pages/Content";
 import UploadMetadataPage from "./pages/Content/UploadMetadata";
-import CreateAssessmentPage from "./features/assessments/pages/CreateAssessmentPage";
+import CreateAssessmentPage from "./pages/Assessments";
 
 export const APP_ROUTES: AppRoutes = {
   dashboard: {
