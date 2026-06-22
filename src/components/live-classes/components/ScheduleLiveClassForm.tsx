@@ -53,6 +53,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
       scheduledAt: new Date().toISOString(),
       durationMinutes: 60,
       maxParticipants: 50,
+      status: "SCHEDULED",
       isRecordingEnabled: true,
       isChatEnabled: true,
       isScreenShareAllowed: true,
@@ -75,7 +76,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
     setValue("batchId", "");
   }, [selectedProgram]);
  const onSubmit = async (data: TStartLiveClassInput) => {
-     console.log(data);
+     console.log(data,"awdawdawdawdawd");
      startLiveClassMutation({...data,status:"SCHEDULED"}, {
      onSuccess: (response) => {
        console.log(response);
@@ -92,10 +93,13 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
      },
    });
    };
-
+console.log(errors);
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, (errors) => {
+      console.log("Validation Failed", errors);
+      
+    })}
       className="flex flex-col gap-4 max-h-[75vh] overflow-y-auto px-1 pb-2"
     >
 

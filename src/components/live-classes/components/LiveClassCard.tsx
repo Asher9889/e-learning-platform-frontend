@@ -32,7 +32,7 @@ const LiveClassCard = ({
   const isUpcoming = variant === "UPCOMING";
 
   const scheduledAt = liveClass.scheduledAt ? new Date(liveClass.scheduledAt) : null;
-
+console.log(liveClass,"liveClassliveClassliveClass")
   return (
     <Card
       className={cn(
@@ -144,7 +144,11 @@ const LiveClassCard = ({
             <Button
               size="sm"
               className="h-8 flex-1 gap-1.5 text-xs font-medium"
-              onClick={() => onStart(liveClass.id)}
+              onClick={() => {
+
+                console.log("start class clicked");
+                onStart(liveClass.id);
+              }}
             >
               <Radio className="h-3.5 w-3.5" />
               Start Class
@@ -155,7 +159,7 @@ const LiveClassCard = ({
               size="sm"
               variant="destructive"
               className="h-8 flex-1 gap-1.5 text-xs font-medium cursor-pointer"
-              onClick={() => onJoin(liveClass?.roomName!)}
+              onClick={() => onJoin(liveClass.roomName!)}
             >
               <Video className="h-3.5 w-3.5" />
               Join Room
