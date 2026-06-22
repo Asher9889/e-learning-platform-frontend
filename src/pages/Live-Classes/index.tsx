@@ -285,7 +285,8 @@ export default function LiveClassPage() {
           liveClass={selectedClass}
           open={startModalOpen}
           onOpenChange={setStartModalOpen}
-          onStarted={handleLiveClassJoin}
+          onStarted={handleLiveClassStarted}
+
         />
       )}
     </div>

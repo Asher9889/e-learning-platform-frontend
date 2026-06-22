@@ -31,7 +31,10 @@ const StartLiveClassModal = ({liveClass, open, onOpenChange,onStarted }: StartLi
     // setIsStarted(true);
     // onStarted?.(liveClass.meetingUrl || "https://live.example.com/room-123");
     console.log(liveClass,"selcetd class")
-    onStarted(liveClass?.roomName);
+    if(!liveClass?.roomName) return;
+    onStarted?.(liveClass?.roomName);
+
+    
   };
 
   const handleCopy = (text: string) => {

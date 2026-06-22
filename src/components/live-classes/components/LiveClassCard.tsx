@@ -2,7 +2,7 @@ import { Video, Users, Clock, Calendar, Radio, GraduationCap, Layers, User, Grad
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+// import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import type { ILiveSession } from "../../../pages/Live-Classes/types";
 import { useEffect, useState } from "react";
@@ -14,14 +14,14 @@ interface LiveClassCardProps {
   variant?: "UPCOMING" | "LIVE" | "ENDED";
 }
 
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
+// function getInitials(name: string) {
+//   return name
+//     .split(" ")
+//     .map((n) => n[0])
+//     .join("")
+//     .toUpperCase()
+//     .slice(0, 2);
+// }
 
 const LiveClassCard = ({
   liveClass,
