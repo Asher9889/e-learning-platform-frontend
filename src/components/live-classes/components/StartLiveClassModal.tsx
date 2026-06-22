@@ -19,10 +19,10 @@ interface StartLiveClassModalProps {
   onStarted?: (url: string) => void;
 }
 
-const StartLiveClassModal = ({liveClass, open, onOpenChange }: StartLiveClassModalProps) => {
+const StartLiveClassModal = ({liveClass, open, onOpenChange,onStarted }: StartLiveClassModalProps) => {
 
   const [copied, setCopied] = useState(false);
-  const [isStarted, _] = useState(false);
+  const [isStarted, ] = useState(false);
 
 
   
@@ -30,7 +30,11 @@ const StartLiveClassModal = ({liveClass, open, onOpenChange }: StartLiveClassMod
   const handleStart = async () => { // go live now
     // setIsStarted(true);
     // onStarted?.(liveClass.meetingUrl || "https://live.example.com/room-123");
+    console.log(liveClass,"selcetd class")
+    if(!liveClass?.roomName) return;
+    onStarted?.(liveClass?.roomName);
 
+    
   };
 
   const handleCopy = (text: string) => {

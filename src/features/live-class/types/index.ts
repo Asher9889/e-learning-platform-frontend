@@ -1,6 +1,6 @@
 import type { TrackReference } from "@livekit/components-react";
 
-export type ParticipantRole = "teacher" | "student";
+export type ParticipantRole = "TEACHER" | "STUDENT";
 
 export interface ParticipantInfo {
   identity: string;
@@ -10,8 +10,9 @@ export interface ParticipantInfo {
   isMuted: boolean;
   isCameraOff: boolean;
   handRaised: boolean;
-  isSpeaking: boolean;
   isPinned?: boolean;
+   audioLevel?:number,
+        isSpeaking?:boolean
 }
 
 export interface ChatMessage {

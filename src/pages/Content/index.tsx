@@ -23,11 +23,16 @@ import {
 import type { Material, MaterialType } from "@/features/content/types/content.types";
 import { PreviewModal } from "@/components/material-preview/PreviewModal";
 import { getMaterialFileUrl } from "@/components/material-preview/MaterialPreview";
+import { useAppSelector } from "@/store/hooks";
+import type { IStudentRoleInfo } from "@/constants/user/user.constant";
 
 export default function ContentPage() {
+  const userData = useAppSelector((state) => state.auth.user);  
+  const myRole = userData?.role;
+
   const [uploadOpen, setUploadOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("PUBLISHED");
-  const [programId, setProgramId] = useState("");
+  const [programId, setProgramId] = useState(userData ? (userData.roleInfo as IStudentRoleInfo)?.programId  : "");
   const [subjectId, setSubjectId] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [search, setSearch] = useState("");
@@ -49,7 +54,6 @@ export default function ContentPage() {
     limit,
   });
   const { data: statsData } = useMaterialsStats();
-
   const { mutate: updateMaterial } = useUpdateMaterial();
   const { mutate: publishMaterial } = usePublishMaterial();
   const { mutate: deleteMaterial } = useDeleteMaterial();
@@ -102,20 +106,21 @@ export default function ContentPage() {
             Manage all learning materials across programs and subjects.
           </p>
         </div>
-        <Button className="gap-2" onClick={() => setUploadOpen(true)}>
+        {myRole !== "STUDENT" &&   <Button className="gap-2" onClick={() => setUploadOpen(true)}>
           <Upload className="h-4 w-4" />
           Upload Content
-        </Button>
+        </Button>}
       </div>
 
-      <ContentStatsCards stats={statsData?.data[0]} />
+      {myRole !== "STUDENT" &&  <ContentStatsCards stats={statsData?.data[0]} />}
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="mb-4">
+       {myRole !== "STUDENT" &&  <TabsList className="mb-4">
           <TabsTrigger value="PUBLISHED">Published</TabsTrigger>
           <TabsTrigger value="DRAFT">Drafts</TabsTrigger>
           <TabsTrigger value="DELETED">Trash</TabsTrigger>
         </TabsList>
+    }
 
         {activeTab !== "DELETED" && (
           <div className="mb-4">
@@ -131,6 +136,7 @@ export default function ContentPage() {
               onTypeChange={(v) => { setTypeFilter(v); setPage(1); }}
               onSearchChange={(v) => { setSearch(v); setPage(1); }}
               onClear={clearFilters}
+              isVisible={myRole !== "STUDENT"}
             />
           </div>
         )}

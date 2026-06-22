@@ -41,13 +41,14 @@ import { setChatOpen } from "../store/liveClass.slice";
 // import { RoomEvent } from "livekit-client";
 // import notificationSound from "@/assets/sounds/notification.mp3";
 import { useRoomContext } from "@livekit/components-react";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import handRaiseAnimation from "@/assets/animations/hand-raise.lottie";
+// import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+// import handRaiseAnimation from "@/assets/animations/hand-raise.lottie";
 import { useSingleSpeakerSystem } from "../hooks/useSingleSpeakerSystem";
-import { Mic, MicOff, Video, VideoOff } from "lucide-react";
+// import { Mic, MicOff, Video, VideoOff } from "lucide-react";
 import { RoomEvent } from "livekit-client";
+import { ParticipantSidebar } from "../components/participants/ParticipantSidebar";
+import { setParticipantsOpen } from "@/features/live-class/store/liveClass.slice";
 // ─── Types ────────────────────────────────────────────────────────────────────
-
 // interface Student {
 //     id: string;
 //     name: string;
@@ -198,6 +199,8 @@ export default function ClassRoomLayoutNew() {
     const isTablet = useMediaQuery("(max-width: 1024px)");
     const isMobile = useMediaQuery("(max-width: 768px)");
     const dispatch = useAppDispatch();
+
+    const participantsOpen = useAppSelector((state) => state.liveClass.participantsOpen);
     // const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
 
     // const [raisedHands, setRaisedHands] = useState<
@@ -238,7 +241,7 @@ export default function ClassRoomLayoutNew() {
     const teacherIdentity = useAppSelector((state) => state.liveClass.teacherIdentity);
     // const myId = myIdentity;
     const teacherId = teacherIdentity?.id;
-    const { activeSpeaker, fadeDuration } =
+    const { activeSpeaker } =
         useSingleSpeakerSystem(liveKitParticipants, teacherId);
 
 
@@ -433,26 +436,7 @@ export default function ClassRoomLayoutNew() {
     //     ]);
     //     setMessage("");
     // };
-    useEffect(() => {
-        participants.forEach((participant) => {
-            if (
-                participant.handRaised &&
-                !previousRaisedUsers.current.has(participant.identity)
-            ) {
-                if (audioRef.current) {
-                    audioRef.current.currentTime = 0;
-                    audioRef.current.play().catch((err) => {
-                        console.error("🔔 Audio play failed:", err);
-                    });
-                }
-                previousRaisedUsers.current.add(participant.identity);
-            }
 
-            if (!participant.handRaised) {
-                previousRaisedUsers.current.delete(participant.identity);
-            }
-        });
-    }, [participants]);
     const totalSudents = liveKitParticipants
         .filter((p) => p.identity &&
             p.identity.trim() !== "" && p.identity !== teacherIdentity?.id) || [];
@@ -468,13 +452,12 @@ export default function ClassRoomLayoutNew() {
     //     "data-[state=active]:shadow-none";
 
 
-    console.log(visibleStudents, "visibleStudentsvisibleStudentsvisibleStudents CONTROLLLLLL", liveKitParticipants)
+    console.log(visibleStudents, "visibleStudentsvisibleStudentsvisibleStudents CONTROLLLLLL88888", liveKitParticipants, "totalSudents", totalSudents)
     return (
-        <>
-            <style>{`
+        <><style>{`
         @keyframes audioPulse {
           0%, 100% { transform: scaleY(0.4); opacity: 0.5; }
-          50%       { transform: scaleY(1);   opacity: 1;   }
+          50%      { transform: scaleY(1);   opacity: 1;   }
         }
       `}</style>
 
@@ -592,160 +575,27 @@ export default function ClassRoomLayoutNew() {
                             <SheetContent side="right" className="w-80 p-0">
                                 <ChatPanel />
                             </SheetContent>
+
+                        </Sheet>
+                        <Sheet open={participantsOpen} onOpenChange={() => dispatch(setParticipantsOpen(false))}>
+                            <SheetTrigger asChild>
+                                {/* <Button
+                                        size="icon"
+                                        variant="outline"
+                                        className="rounded-full w-9 h-9 sm:w-10 sm:h-10 bg-white border-slate-200 text-slate-600 hover:bg-slate-50 lg:hidden flex"
+                                    >
+                                        <MessageSquare size={14} />
+                                    </Button> */}
+                            </SheetTrigger>
+
+                            <SheetContent side="right" className="w-80 p-0">
+                                <ParticipantSidebar />
+                            </SheetContent>
+
                         </Sheet>
                         <ClassroomControls />
                         {/* Students strip */}
-                        {/* ══════════════ STUDENTS STRIP (responsive grid cards) ══════════════ */}
-                        <div
-                            className="grid gap-2"
-                            style={{
-                                gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
-                            }}
-                        >
-                            {participants.map((s) => {
-                                console.log(
-                                    s.name,
-                                    "cameraEnabled:awdawd",
-                                    s.isCameraOff,
-                                    "actual:",
-                                    liveKitParticipants.find(
-                                        (p) => p.identity === s.identity
-                                    )?.isCameraEnabled
-                                );
-                                return (
-                                    <div
-                                        key={s.identity}
-                                        className="rounded-xl bg-white border px-3 py-2.5 flex items-center gap-2.5 min-w-0"
-                                        style={{
-                                            borderColor: s.isSpeaking ? "#4ade80" : "#e2e8f0",
-                                            boxShadow: s.isSpeaking
-                                                ? "0 0 0 2px #4ade8066"
-                                                : "0 1px 3px rgb(0 0 0 / 0.08)",
-                                            transition: `all ${fadeDuration}ms ease`,
-                                        }}
-                                    >
-                                        {/* Avatar + status overlay */}
-                                        <div className="relative shrink-0">
-                                            <div className="w-[38px] h-[38px] rounded-full overflow-hidden bg-gradient-to-br from-slate-500 to-slate-300 flex items-center justify-center">
-                                                {s.avatar ? (
-                                                    <img
-                                                        src={s.avatar}
-                                                        alt={s.name}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <span className="text-white font-semibold text-sm">
-                                                        {s.name.charAt(0).toUpperCase()}
-                                                    </span>
-                                                )}
-                                            </div>
 
-                                            {/* Speaking indicator (green pulse dot) */}
-                                            {s.isSpeaking && (
-                                                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse border-2 border-white" />
-                                            )}
-
-                                            {/* Hand raised indicator (overrides speaking dot visually if both — hand takes priority on the corner) */}
-                                            {s.handRaised && (
-                                                <span className="absolute -top-1.5 -right-1.5 w-[18px] h-[18px] rounded-full bg-white flex items-center justify-center">
-                                                    <DotLottieReact
-                                                        src={handRaiseAnimation}
-                                                        autoplay
-                                                        loop
-                                                        className="w-4 h-4"
-                                                    />
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        {/* Name + status text */}
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium truncate">{s.name}</p>
-                                            <p
-                                                className={`text-[11px] font-medium mt-0.5 ${s.handRaised
-                                                    ? "text-amber-500"
-                                                    : s.isSpeaking
-                                                        ? "text-green-600"
-                                                        : "text-slate-500"
-                                                    }`}
-                                            >
-                                                {s.handRaised
-                                                    ? "Hand raised"
-                                                    : s.isSpeaking
-                                                        ? "Speaking"
-                                                        : "Online"}
-                                            </p>
-                                        </div>
-
-                                        {/* Mic / Video controls */}
-                                        <div className="flex items-center gap-1 shrink-0">
-                                            <button
-                                                type="button"
-                                                onClick={async () => {
-                                                    console.log("Teacher sending mute request", "CONTROLLLLLL");
-
-                                                    const payload = {
-                                                        type: "toggle-mic",
-                                                        targetId: s.identity,
-                                                        enabled: !s.isMuted,
-                                                    };
-
-                                                    console.log("Payload:", payload, "CONTROLLLLLL");
-
-                                                    await room.localParticipant.publishData(
-                                                        new TextEncoder().encode(JSON.stringify(payload)),
-                                                        { reliable: true }
-                                                    );
-
-                                                    console.log("Mute request sent", "CONTROLLLLLL");
-                                                }}
-                                                aria-label={!s.isMuted ? `Unmute ${s.name}` : `Mute ${s.name}`}
-                                                className={`w-[26px] h-[26px] rounded-md flex items-center justify-center ${!s.isMuted
-                                                    ? "bg-red-50 text-red-500"
-                                                    : "bg-slate-100 text-slate-600"
-                                                    }`}
-                                            >
-                                                {!s.isMuted ? <MicOff size={14} /> : <Mic size={14} />}
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                onClick={async () => {
-                                                    console.log("Teacher sending mute request", "CONTROLLLLLL");
-
-                                                    const payload = {
-                                                        type: "toggle-video",
-                                                        targetId: s.identity,
-                                                        enabled: !s.isCameraOff,
-                                                    };
-
-                                                    console.log("Payload:", payload, "CONTROLLLLLL");
-
-                                                    await room.localParticipant.publishData(
-                                                        new TextEncoder().encode(JSON.stringify(payload)),
-                                                        { reliable: true }
-                                                    );
-
-                                                    console.log("Mute request sent", "CONTROLLLLLL");
-                                                }}
-                                                aria-label={
-                                                    !s.isCameraOff
-                                                        ? `Turn on ${s.name}'s video`
-                                                        : `Turn off ${s.name}'s video`
-                                                }
-                                                className={`w-[26px] h-[26px] rounded-md flex items-center justify-center ${!s.isCameraOff
-                                                    ? "bg-red-50 text-red-500"
-                                                    : "bg-slate-100 text-slate-600"
-                                                    }`}
-                                            >
-                                                {!s.isCameraOff ? <VideoOff size={14} /> : <Video size={14} />}
-                                            </button>
-                                        </div>
-                                    </div>
-                                )
-                            }
-                            )}
-                        </div>
                     </main>
 
                     {/* ── Desktop Sidebar (lg+) ── */}
@@ -773,7 +623,9 @@ export default function ClassRoomLayoutNew() {
                         <ChatPanel />
                     </aside>
 
-                    {/* </aside> */}
+                    <aside className="hidden lg:flex w-[280px] xl:w-[300px] flex-col border-l border-slate-200 bg-white shrink-0">
+                        <ParticipantSidebar />
+                    </aside>
                 </div>
 
                 <RoomAudioRenderer />

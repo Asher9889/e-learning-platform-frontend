@@ -94,7 +94,7 @@ export default function LiveClassPage() {
   const activePagination = activeData?.pagination;
   const completedClasses = completedData?.sessions ?? [];
   const completedPagination = completedData?.pagination;
-
+// console.log(upcomingData,"upcomingData")
   const handleStart = useCallback((liveClass: ILiveSession) => {
     setSelectedClass(liveClass);
     setStartModalOpen(true);
@@ -286,6 +286,7 @@ export default function LiveClassPage() {
           open={startModalOpen}
           onOpenChange={setStartModalOpen}
           onStarted={handleLiveClassStarted}
+
         />
       )}
     </div>

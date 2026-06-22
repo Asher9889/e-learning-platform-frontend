@@ -1,10 +1,11 @@
-import { Video, Users, Clock, Calendar, Radio, GraduationCap, Layers, User } from "lucide-react";
+import { Video, Users, Clock, Calendar, Radio, GraduationCap, Layers, User, GraduationCapIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+// import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import type { ILiveSession } from "../../../pages/Live-Classes/types";
+import { useEffect, useState } from "react";
 
 interface LiveClassCardProps {
   liveClass: ILiveSession;
@@ -13,14 +14,14 @@ interface LiveClassCardProps {
   variant?: "UPCOMING" | "LIVE" | "ENDED";
 }
 
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
+// function getInitials(name: string) {
+//   return name
+//     .split(" ")
+//     .map((n) => n[0])
+//     .join("")
+//     .toUpperCase()
+//     .slice(0, 2);
+// }
 
 const LiveClassCard = ({
   liveClass,
@@ -30,9 +31,29 @@ const LiveClassCard = ({
 }: LiveClassCardProps) => {
   const isLive = variant === "LIVE";
   const isUpcoming = variant === "UPCOMING";
-
+  const [canJoin, setCanJoin] = useState(false);
   const scheduledAt = liveClass.scheduledAt ? new Date(liveClass.scheduledAt) : null;
+  console.log(liveClass, "liveClassliveClassliveClass")
+  useEffect(() => {
+    if (!liveClass?.scheduledAt) return;
 
+    const enableAt =
+      new Date(liveClass.scheduledAt).getTime() -
+      5 * 60 * 1000;
+
+    const checkJoin = () => {
+      setCanJoin(Date.now() >= enableAt);
+    };
+
+    checkJoin();
+
+    const delay = enableAt - Date.now();
+
+    if (delay > 0) {
+      const timer = setTimeout(checkJoin, delay);
+      return () => clearTimeout(timer);
+    }
+  }, [liveClass.scheduledAt]);
   return (
     <Card
       className={cn(
@@ -52,7 +73,7 @@ const LiveClassCard = ({
         </div>
       )}
 
-      <CardContent className="p-5">
+      <CardContent className="px-5">
         {/* Title + Subject */}
         <div className="mb-3 flex items-start gap-3">
           <div
@@ -101,12 +122,13 @@ const LiveClassCard = ({
         {/* Teacher + Created by */}
         <div className="mb-3 space-y-1.5">
           <div className="flex items-center gap-2">
-            <Avatar className="h-6 w-6">
+            {/* <Avatar className="h-6 w-6">
               <AvatarImage src={liveClass.teacher.profileImage} />
               <AvatarFallback className="text-[10px]">{getInitials(liveClass.teacher.name)}</AvatarFallback>
-            </Avatar>
+            </Avatar> */}
+            <GraduationCapIcon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
             <span className="text-xs text-muted-foreground">
-              {liveClass.teacher.name}
+              By - { liveClass.teacher.name}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -119,7 +141,7 @@ const LiveClassCard = ({
 
         {/* Meta row */}
         <div className="mb-4 flex flex-wrap gap-2">
-          <div className="flex items-center gap-1 rounded-md bg-muted/60 px-2 py-1 text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-1 rounded-md bg-muted/60  py-1 text-[11px] text-muted-foreground">
             <Calendar className="h-3 w-3" />
             {scheduledAt?.toLocaleDateString("en-US", {
               month: "short",
@@ -139,23 +161,35 @@ const LiveClassCard = ({
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2">
+        <div className="w-full flex flex-col items-center justify-center gap-2">
           {isUpcoming && onStart && (
+            <>
             <Button
               size="sm"
-              className="h-8 flex-1 gap-1.5 text-xs font-medium"
-              onClick={() => onStart(liveClass.id)}
+              className="w-full h-8 gap-1.5 text-xs font-medium cursor-pointer"
+              onClick={() => {
+
+                console.log("start class clicked");
+                onStart(liveClass.id);
+              }}
+              disabled={!canJoin}
             >
               <Radio className="h-3.5 w-3.5" />
               Start Class
             </Button>
+            {!canJoin && (
+            <p className="text-xs  text-muted-foreground">
+              Available 5 minutes before class start
+            </p>
+          )}
+          </>
           )}
           {isLive && onJoin && (
             <Button
               size="sm"
               variant="destructive"
-              className="h-8 flex-1 gap-1.5 text-xs font-medium cursor-pointer"
-              onClick={() => onJoin(liveClass?.roomName!)}
+              className="h-8 w-full gap-1.5 text-xs font-medium cursor-pointer"
+              onClick={() => onJoin(liveClass.roomName!)}
             >
               <Video className="h-3.5 w-3.5" />
               Join Room
