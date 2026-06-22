@@ -27,6 +27,7 @@ import {
   Trash2,
   Layers,
   Book,
+  Sparkles,
 } from "lucide-react";
 import { USER_ROLE } from "@/constants/user/user.constant";
 import RouteOutlet from "./routeOutlet";
@@ -36,6 +37,7 @@ import ActiveLiveClassPage from "@/features/live-class/pages/ActiveLiveClassPage
 import DashboardPage from "./pages/Dashboard";
 import ContentPage from "./pages/Content";
 import UploadMetadataPage from "./pages/Content/UploadMetadata";
+import CreateAssessmentPage from "./features/assessments/pages/CreateAssessmentPage";
 
 export const APP_ROUTES: AppRoutes = {
   dashboard: {
@@ -162,6 +164,16 @@ export const APP_ROUTES: AppRoutes = {
     showInSidebar: true,
     group: "Teaching",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+  },
+
+  createAssessment: {
+    title: "Create Assessment",
+    path: "/assessments/create",
+    icon: Sparkles,
+    element: CreateAssessmentPage,
+    showInSidebar: true,
+    group: "Teaching",
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
   },
 
   // ── Learning Content ──────────────────────────────────
