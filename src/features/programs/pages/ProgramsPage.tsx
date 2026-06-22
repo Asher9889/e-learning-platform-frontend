@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { sileo } from "sileo";
+import { Header } from "#components/home/Header";
+import { Footer } from "#components/home/Footer";
 import { usePrograms } from "../hooks/usePrograms";
 import { HeroSection } from "../components/HeroSection";
 import { ProgramFilters } from "../components/ProgramFilters";
@@ -11,6 +13,7 @@ import { ProgramFAQ } from "../components/ProgramFAQ";
 import { CTASection } from "../components/CTASection";
 import { ApplyNowModal } from "../components/ApplyNowModal";
 import type { Program } from "../types/program.types";
+import "@/pages/Home/superr.css";
 
 export default function ProgramsPage() {
   const navigate = useNavigate();
@@ -58,8 +61,16 @@ export default function ProgramsPage() {
     });
   }, []);
 
+  const scrollTo = useCallback((id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="superr"
+      style={{ minHeight: "100vh", overflowX: "hidden" }}
+    >
+      <Header />
       <HeroSection
         onBrowsePrograms={handleBrowsePrograms}
         onContactAdmissions={handleContactAdmissions}
@@ -92,9 +103,12 @@ export default function ProgramsPage() {
       </div>
       <ProgramFAQ />
       <CTASection
-        onApplyNow={() => handleApplyNow(programs[0])}
+        onApplyNow={() => {
+          if (programs.length > 0) handleApplyNow(programs[0]);
+        }}
         onContactAdmissions={handleContactAdmissions}
       />
+      <Footer scrollTo={scrollTo} />
       <ApplyNowModal
         program={selectedProgram}
         open={modalOpen}

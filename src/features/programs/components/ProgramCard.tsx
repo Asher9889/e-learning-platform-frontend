@@ -1,8 +1,4 @@
-import { Clock, MapPin, GraduationCap, ArrowRight, ImageIcon } from "lucide-react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Clock, GraduationCap, IndianRupee, ArrowRight, ImageIcon } from "lucide-react";
 import type { Program } from "../types/program.types";
 
 interface ProgramCardProps {
@@ -11,81 +7,254 @@ interface ProgramCardProps {
   onApplyNow: (program: Program) => void;
 }
 
+const categoryColors: Record<string, string> = {
+  School: "#3b82f6",
+  Diploma: "#22c55e",
+  Undergraduate: "#a855f7",
+  Postgraduate: "#f97316",
+  Professional: "#e11d48",
+};
+
+const modeLabels: Record<string, string> = {
+  Online: "🌐 online",
+  Offline: "🏫 offline",
+  Hybrid: "🔄 hybrid",
+};
+
 export function ProgramCard({ program, onViewDetails, onApplyNow }: ProgramCardProps) {
   return (
-    <Card className="group flex flex-col overflow-hidden transition-all hover:shadow-md">
-      <div className="relative aspect-[16/9] overflow-hidden bg-muted">
+    <div
+      className="product-card"
+      style={{
+        padding: 0,
+        overflow: "hidden",
+        transition: "transform 0.25s ease, box-shadow 0.25s ease",
+        cursor: "default",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "translateY(-4px)";
+        e.currentTarget.style.boxShadow = "rgba(0, 0, 0, 0.1) 0px 8px 32px 0px";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "";
+        e.currentTarget.style.boxShadow = "var(--shadow-lg)";
+      }}
+    >
+      {/* Thumbnail */}
+      <div
+        style={{
+          aspectRatio: "16/9",
+          overflow: "hidden",
+          background: "var(--color-dew-drop)",
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         {program.thumbnail ? (
           <img
             src={program.thumbnail}
             alt={program.name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
-            <div className="text-center">
-              <ImageIcon className="mx-auto h-10 w-10 text-primary/30" />
-              <p className="mt-2 text-xs text-muted-foreground">{program.category}</p>
-            </div>
+          <div style={{ textAlign: "center" }}>
+            <ImageIcon
+              size={32}
+              style={{ color: "var(--color-charcoal)", opacity: 0.2 }}
+            />
+            <p
+              style={{
+                fontFamily: "var(--font-geist)",
+                fontSize: 11,
+                color: "var(--color-charcoal)",
+                opacity: 0.3,
+                marginTop: 4,
+                textTransform: "lowercase",
+              }}
+            >
+              {program.category}
+            </p>
           </div>
         )}
-        <div className="absolute left-3 top-3">
-          <Badge
-            className={cn(
-              "border-0",
-              program.category === "School" && "bg-blue-500 hover:bg-blue-500",
-              program.category === "Diploma" && "bg-green-500 hover:bg-green-500",
-              program.category === "Undergraduate" && "bg-purple-500 hover:bg-purple-500",
-              program.category === "Postgraduate" && "bg-orange-500 hover:bg-orange-500",
-              program.category === "Professional" && "bg-rose-500 hover:bg-rose-500",
-            )}
-          >
-            {program.category}
-          </Badge>
+        {/* Category badge */}
+        <div
+          style={{
+            position: "absolute",
+            left: 12,
+            top: 12,
+            display: "inline-flex",
+            alignItems: "center",
+            padding: "2px 10px",
+            borderRadius: "var(--radius-tags)",
+            fontFamily: "var(--font-geist)",
+            fontSize: 11,
+            fontWeight: 500,
+            color: "#fff",
+            background: categoryColors[program.category] || "#666",
+            textTransform: "lowercase",
+          }}
+        >
+          {program.category}
         </div>
       </div>
-      <CardContent className="flex flex-1 flex-col gap-3 p-5">
-        <h3 className="text-lg font-semibold leading-tight line-clamp-2">
+
+      {/* Content */}
+      <div style={{ padding: 24 }}>
+        <h3
+          style={{
+            fontFamily: "var(--font-gelica)",
+            fontSize: 20,
+            fontWeight: 400,
+            color: "var(--color-cocoa-ink)",
+            marginBottom: 8,
+            textTransform: "lowercase",
+            lineHeight: 1.25,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
           {program.name}
         </h3>
-        <p className="text-sm text-muted-foreground line-clamp-3">
+
+        <p
+          style={{
+            fontFamily: "var(--font-geist)",
+            fontSize: 13,
+            lineHeight: 1.5,
+            color: "var(--color-charcoal)",
+            marginBottom: 18,
+            opacity: 0.7,
+            display: "-webkit-box",
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
           {program.description}
         </p>
-        <div className="mt-auto grid grid-cols-2 gap-2 text-sm">
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Clock className="h-3.5 w-3.5 shrink-0" />
-            <span>{program.duration}</span>
+
+        {/* Info rows */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "8px",
+            marginBottom: 14,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              fontFamily: "var(--font-geist)",
+              fontSize: 12,
+              color: "var(--color-charcoal)",
+              textTransform: "lowercase",
+            }}
+          >
+            <Clock size={14} style={{ opacity: 0.5 }} />
+            {program.duration}
           </div>
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <MapPin className="h-3.5 w-3.5 shrink-0" />
-            <span>{program.mode}</span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              fontFamily: "var(--font-geist)",
+              fontSize: 12,
+              color: "var(--color-charcoal)",
+              textTransform: "lowercase",
+            }}
+          >
+            {modeLabels[program.mode] || program.mode}
           </div>
-          <div className="flex items-center gap-1.5 text-muted-foreground col-span-2">
-            <GraduationCap className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">{program.eligibility}</span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              fontFamily: "var(--font-geist)",
+              fontSize: 12,
+              color: "var(--color-charcoal)",
+              gridColumn: "1 / -1",
+              textTransform: "lowercase",
+            }}
+          >
+            <GraduationCap size={14} style={{ opacity: 0.5 }} />
+            {program.eligibility}
           </div>
         </div>
-        <div className="pt-2">
-          <p className="text-xl font-bold text-primary">{program.fee}</p>
+
+        {/* Fee */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            marginBottom: 18,
+          }}
+        >
+          <IndianRupee
+            size={16}
+            style={{ color: "var(--color-marker-orange)" }}
+          />
+          <span
+            style={{
+              fontFamily: "var(--font-gelica)",
+              fontSize: 22,
+              color: "var(--color-marker-orange)",
+              textTransform: "lowercase",
+            }}
+          >
+            {program.fee}
+          </span>
         </div>
-      </CardContent>
-      <CardFooter className="grid grid-cols-2 gap-2 p-5 pt-0">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onViewDetails(program.slug)}
-        >
-          View Details
-        </Button>
-        <Button
-          size="sm"
-          className="gap-1"
-          onClick={() => onApplyNow(program)}
-        >
-          Apply Now
-          <ArrowRight className="h-3 w-3" />
-        </Button>
-      </CardFooter>
-    </Card>
+
+        {/* Actions */}
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            className="pill-btn"
+            onClick={() => onViewDetails(program.slug)}
+            style={{
+              flex: 1,
+              padding: "8px 16px",
+              fontSize: 13,
+              fontFamily: "var(--font-gelica)",
+            }}
+          >
+            view details
+          </button>
+          <button
+            className="pill-btn"
+            onClick={() => onApplyNow(program)}
+            style={{
+              flex: 1,
+              padding: "8px 16px",
+              fontSize: 13,
+              fontFamily: "var(--font-gelica)",
+              background: "var(--color-marker-orange)",
+              color: "#fff",
+              borderColor: "var(--color-marker-orange)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 4,
+            }}
+          >
+            apply now
+            <ArrowRight size={14} />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

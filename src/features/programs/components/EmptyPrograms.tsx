@@ -1,5 +1,4 @@
 import { SearchX, RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface EmptyProgramsProps {
   onResetFilters: () => void;
@@ -7,19 +6,67 @@ interface EmptyProgramsProps {
 
 export function EmptyPrograms({ onResetFilters }: EmptyProgramsProps) {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-md text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-          <SearchX className="h-8 w-8 text-muted-foreground" />
+    <section className="superr" style={{ padding: "0 24px 80px" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <div
+          className="product-card"
+          style={{
+            padding: "56px 40px",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: "50%",
+              border: "1.5px solid var(--color-charcoal)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 16px",
+              opacity: 0.4,
+            }}
+          >
+            <SearchX size={24} />
+          </div>
+          <h2
+            style={{
+              fontFamily: "var(--font-gelica)",
+              fontSize: 22,
+              color: "var(--color-cocoa-ink)",
+              marginBottom: 8,
+              textTransform: "lowercase",
+            }}
+          >
+            no programs found
+          </h2>
+          <p
+            style={{
+              fontFamily: "var(--font-geist)",
+              fontSize: 14,
+              color: "var(--color-charcoal)",
+              marginBottom: 24,
+              textTransform: "lowercase",
+              opacity: 0.6,
+            }}
+          >
+            try adjusting your filters or search criteria.
+          </p>
+          <button
+            className="pill-btn"
+            onClick={onResetFilters}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              margin: "0 auto",
+            }}
+          >
+            <RotateCcw size={14} />
+            reset filters
+          </button>
         </div>
-        <h2 className="text-xl font-semibold">No programs found</h2>
-        <p className="mt-2 text-muted-foreground">
-          Try adjusting your filters or search criteria.
-        </p>
-        <Button variant="outline" className="mt-6 gap-2" onClick={onResetFilters}>
-          <RotateCcw className="h-4 w-4" />
-          Reset Filters
-        </Button>
       </div>
     </section>
   );

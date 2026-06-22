@@ -12,24 +12,80 @@ interface ProgramGridProps {
 
 function SkeletonCard() {
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border bg-card">
-      <div className="aspect-[16/9] animate-pulse bg-muted" />
-      <div className="flex flex-col gap-3 p-5">
-        <div className="h-5 w-3/4 animate-pulse rounded bg-muted" />
-        <div className="space-y-1.5">
-          <div className="h-3 w-full animate-pulse rounded bg-muted" />
-          <div className="h-3 w-5/6 animate-pulse rounded bg-muted" />
+    <div
+      className="product-card"
+      style={{
+        padding: 0,
+        overflow: "hidden",
+        background: "var(--surface-canvas)",
+      }}
+    >
+      <div
+        style={{
+          aspectRatio: "16/9",
+          background: "var(--color-dew-drop)",
+        }}
+      />
+      <div style={{ padding: 24 }}>
+        <div
+          style={{
+            height: 20,
+            width: "70%",
+            background: "var(--color-dew-drop)",
+            borderRadius: 4,
+            marginBottom: 12,
+          }}
+        />
+        <div
+          style={{
+            height: 12,
+            width: "100%",
+            background: "var(--color-dew-drop)",
+            borderRadius: 4,
+            marginBottom: 6,
+          }}
+        />
+        <div
+          style={{
+            height: 12,
+            width: "80%",
+            background: "var(--color-dew-drop)",
+            borderRadius: 4,
+            marginBottom: 18,
+          }}
+        />
+        <div
+          style={{
+            height: 14,
+            width: "40%",
+            background: "var(--color-dew-drop)",
+            borderRadius: 4,
+            marginBottom: 18,
+          }}
+        />
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+          }}
+        >
+          <div
+            style={{
+              flex: 1,
+              height: 36,
+              background: "var(--color-dew-drop)",
+              borderRadius: "var(--radius-buttons)",
+            }}
+          />
+          <div
+            style={{
+              flex: 1,
+              height: 36,
+              background: "var(--color-dew-drop)",
+              borderRadius: "var(--radius-buttons)",
+            }}
+          />
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="h-3 w-16 animate-pulse rounded bg-muted" />
-          <div className="h-3 w-16 animate-pulse rounded bg-muted" />
-          <div className="h-3 w-24 animate-pulse rounded bg-muted col-span-2" />
-        </div>
-        <div className="h-6 w-24 animate-pulse rounded bg-muted" />
-      </div>
-      <div className="grid grid-cols-2 gap-2 p-5 pt-0">
-        <div className="h-9 animate-pulse rounded-md bg-muted" />
-        <div className="h-9 animate-pulse rounded-md bg-muted" />
       </div>
     </div>
   );
@@ -44,11 +100,19 @@ export function ProgramGrid({
 }: ProgramGridProps) {
   if (isLoading) {
     return (
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <SkeletonCard key={i} />
-          ))}
+      <section className="superr" style={{ padding: "0 24px 64px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+              gap: 20,
+            }}
+          >
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
         </div>
       </section>
     );
@@ -59,22 +123,47 @@ export function ProgramGrid({
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold">All Programs</h2>
-        <p className="text-muted-foreground">
-          Showing {programs.length} program{programs.length !== 1 ? "s" : ""}
-        </p>
-      </div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {programs.map((program) => (
-          <ProgramCard
-            key={program.id}
-            program={program}
-            onViewDetails={onViewDetails}
-            onApplyNow={onApplyNow}
-          />
-        ))}
+    <section className="superr" style={{ padding: "0 24px 64px" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <div style={{ marginBottom: 28, position: "relative" }}>
+          <h2
+            className="display-headline"
+            style={{
+              fontSize: "clamp(1.4rem, 2.5vw, 1.8rem)",
+              margin: "0 0 4px",
+              textTransform: "lowercase",
+            }}
+          >
+            all programs
+          </h2>
+          <p
+            style={{
+              fontFamily: "var(--font-geist)",
+              fontSize: 13,
+              color: "var(--color-charcoal)",
+              opacity: 0.6,
+              textTransform: "lowercase",
+            }}
+          >
+            showing {programs.length} program{programs.length !== 1 ? "s" : ""}
+          </p>
+        </div>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+            gap: 20,
+          }}
+        >
+          {programs.map((program) => (
+            <ProgramCard
+              key={program.id}
+              program={program}
+              onViewDetails={onViewDetails}
+              onApplyNow={onApplyNow}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

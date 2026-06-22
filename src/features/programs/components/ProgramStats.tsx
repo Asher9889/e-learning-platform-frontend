@@ -1,50 +1,140 @@
 import { BookOpen, Users, Award, HeadphonesIcon } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 
 const stats = [
   {
     icon: BookOpen,
-    label: "Programs",
     value: "32",
-    description: "Diverse programs offered",
+    label: "programs",
+    desc: "diverse programs offered",
   },
   {
     icon: Users,
-    label: "Active Students",
     value: "8,500+",
-    description: "Currently enrolled learners",
+    label: "active students",
+    desc: "currently enrolled learners",
   },
   {
     icon: Award,
-    label: "Expert Faculty",
     value: "120+",
-    description: "Industry-experienced mentors",
+    label: "expert faculty",
+    desc: "industry-experienced mentors",
   },
   {
     icon: HeadphonesIcon,
-    label: "Placement Support",
     value: "24/7",
-    description: "Dedicated career assistance",
+    label: "placement support",
+    desc: "dedicated career assistance",
   },
 ];
 
 export function ProgramStats() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.label} className="border-0 bg-muted/30 shadow-sm">
-            <CardContent className="flex items-start gap-4 p-6">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-                <stat.icon className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{stat.value}</p>
-                <p className="text-sm font-medium text-foreground">{stat.label}</p>
-                <p className="text-xs text-muted-foreground">{stat.description}</p>
-              </div>
-            </CardContent>
-          </Card>
+    <section
+      className="superr"
+      style={{ padding: "0 24px 64px" }}
+    >
+      <div
+        style={{
+          maxWidth: 1200,
+          margin: "0 auto",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+          gap: 20,
+          position: "relative",
+        }}
+      >
+        {/* Sticker */}
+        <div
+          className="sticker"
+          style={{
+            position: "absolute",
+            top: -20,
+            right: "10%",
+            transform: "rotate(15deg)",
+          }}
+        >
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <circle
+              cx="14"
+              cy="14"
+              r="12"
+              fill="#22c55e"
+              stroke="#171717"
+              strokeWidth="2"
+            />
+          </svg>
+        </div>
+
+        {stats.map((s) => (
+          <div
+            key={s.label}
+            className="product-card"
+            style={{
+              padding: 28,
+              textAlign: "center",
+              transition: "transform 0.25s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-3px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "";
+            }}
+          >
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: 12,
+                border: "1.5px solid var(--color-charcoal)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 14px",
+              }}
+            >
+              <s.icon
+                size={20}
+                style={{ color: "var(--color-marker-orange)" }}
+              />
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--font-gelica)",
+                fontSize: 32,
+                fontWeight: 400,
+                color: "var(--color-cocoa-ink)",
+                lineHeight: 1.08,
+                marginBottom: 4,
+                textTransform: "lowercase",
+              }}
+            >
+              {s.value}
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--font-geist)",
+                fontSize: 14,
+                fontWeight: 500,
+                color: "var(--color-charcoal)",
+                textTransform: "lowercase",
+                marginBottom: 2,
+              }}
+            >
+              {s.label}
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--font-geist)",
+                fontSize: 12,
+                color: "var(--color-charcoal)",
+                opacity: 0.6,
+                textTransform: "lowercase",
+              }}
+            >
+              {s.desc}
+            </div>
+          </div>
         ))}
       </div>
     </section>
