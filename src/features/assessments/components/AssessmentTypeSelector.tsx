@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils"
 import type { AssessmentType } from "../types/assessment.types"
 
 const typeConfig = [
-  { value: "quiz" as const, label: "Quiz", description: "Short objective questions.", Icon: ClipboardCheck },
-  { value: "assignment" as const, label: "Assignment", description: "Long-form descriptive questions.", Icon: FileText },
-  { value: "question-paper" as const, label: "Question Paper", description: "Structured exam format.", Icon: BookOpen },
+  { value: "QUIZ" as const, label: "Quiz", description: "Short objective questions.", Icon: ClipboardCheck },
+  { value: "ASSIGNMENT" as const, label: "Assignment", description: "Long-form descriptive questions.", Icon: FileText },
+  { value: "QUESTION-PAPER" as const, label: "Question Paper", description: "Structured exam format.", Icon: BookOpen },
 ]
 
 interface AssessmentTypeSelectorProps {

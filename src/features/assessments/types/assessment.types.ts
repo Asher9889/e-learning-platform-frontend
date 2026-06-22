@@ -1,44 +1,55 @@
 import type { ASSESSMENT_DIFFICULTIES, ASSESSMENT_TYPE, QUESTION_TYPES } from "../constants/assesments.contants"
 
-
-
 export type AssessmentType = typeof ASSESSMENT_TYPE[keyof typeof ASSESSMENT_TYPE]
 
 export type Difficulty = typeof ASSESSMENT_DIFFICULTIES[keyof typeof ASSESSMENT_DIFFICULTIES]
 
 export type QuestionType = typeof QUESTION_TYPES[keyof typeof QUESTION_TYPES]
 
-export interface QuestionOption {
-  label: string
-  value: string
-}
-
 export interface Question {
   id: string
   number: number
+  question: string
   type: QuestionType
-  difficulty: Difficulty
   marks: number
-  text: string
-  options?: QuestionOption[]
+  difficulty: Difficulty
+  options?: string[]
   correctAnswer?: string
+  explanation?: string
 }
 
-export interface AssessmentConfig {
+export interface AssessmentPayload {
   assessmentType: AssessmentType
-  subject: string
-  topic: string
+  programId: string
+  subjectId: string
+  topic: string[]
   difficulty: Difficulty
   questionTypes: QuestionType[]
   questionCount: number
-  totalMarks: number
-  additionalInstructions: string
+  totalMarks?: number
+  additionalInstructions?: string
 }
 
-export interface AssessmentResult {
-  config: AssessmentConfig
-  questions: Question[]
-  generatedAt: string
+export interface AssessmentApiResponse {
+  success: boolean
+  statusCode: number
+  message: string
+  data: {
+    title: string
+    instructions: string
+    assessmentType: AssessmentType
+    program: { id: string; name: string }
+    subjectId: { id: string; name: string }
+    topic: string[]
+    difficulty: Difficulty
+    questionTypes: QuestionType[]
+    questionCount: number
+    totalMarks: number
+    additionalInstructions: string
+    status: "DRAFT" | "PUBLISHED"
+    createdBy: string
+    questions: Question[]
+  }
 }
 
 export interface AssessmentSummary {
@@ -48,7 +59,7 @@ export interface AssessmentSummary {
   difficultyDistribution: {
     easy: number
     medium: number
-    hard: number 
+    hard: number
   }
 }
 
@@ -76,14 +87,6 @@ export const ASSESSMENT_TYPES: {
     description: "Structured exam format.",
     icon: "BookOpen",
   },
-]
-
-export const SUBJECTS = [
-  "Mathematics",
-  "Physics",
-  "Chemistry",
-  "Computer Science",
-  "Data Structures",
 ]
 
 export const QUESTION_TYPE_OPTIONS: {

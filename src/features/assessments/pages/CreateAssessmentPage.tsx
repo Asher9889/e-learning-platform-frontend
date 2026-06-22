@@ -5,195 +5,112 @@ import AssessmentGeneratorForm from "../components/AssessmentGeneratorForm"
 import QuestionPreviewCard from "../components/QuestionPreviewCard"
 import AssessmentSummary from "../components/AssessmentSummary"
 import EmptyPreviewState from "../components/EmptyPreviewState"
-import type {
-  Question,
-  AssessmentSummary as AssessmentSummaryType,
-} from "../types/assessment.types"
+import { useGenerateAssessment } from "../hooks/useGenerateAssessment"
+import type { Question, AssessmentSummary as AssessmentSummaryType } from "../types/assessment.types"
 import type { AssessmentFormData } from "../schemas/assessment.schema"
 import {
   BookOpen,
   Save,
   Sparkles,
   Send,
-  Library,
+  AlertCircle,
+  RotateCcw,
 } from "lucide-react"
 
-const DUMMY_QUESTIONS: Question[] = [
-  {
-    id: "1",
-    number: 1,
-    type: "mcq",
-    difficulty: "easy",
-    marks: 2,
-    text: "Which data structure follows FIFO principle?",
-    options: [
-      { label: "A", value: "Stack" },
-      { label: "B", value: "Queue" },
-      { label: "C", value: "Tree" },
-      { label: "D", value: "Graph" },
-    ],
-    correctAnswer: "Queue",
-  },
-  {
-    id: "2",
-    number: 2,
-    type: "mcq",
-    difficulty: "easy",
-    marks: 2,
-    text: "What is the time complexity of binary search on a sorted array?",
-    options: [
-      { label: "A", value: "O(n)" },
-      { label: "B", value: "O(log n)" },
-      { label: "C", value: "O(n²)" },
-      { label: "D", value: "O(1)" },
-    ],
-    correctAnswer: "O(log n)",
-  },
-  {
-    id: "3",
-    number: 3,
-    type: "true-false",
-    difficulty: "easy",
-    marks: 1,
-    text: "A linked list allows random access to elements in O(1) time.",
-    correctAnswer: "False",
-  },
-  {
-    id: "4",
-    number: 4,
-    type: "short-answer",
-    difficulty: "medium",
-    marks: 3,
-    text: "What is a deadlock in operating systems? List any two necessary conditions for deadlock.",
-    correctAnswer: "A deadlock is a situation where two or more processes are unable to proceed because each is waiting for resources held by the other. Necessary conditions: Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait.",
-  },
-  {
-    id: "5",
-    number: 5,
-    type: "mcq",
-    difficulty: "medium",
-    marks: 2,
-    text: "Which of the following is NOT a characteristic of cloud computing?",
-    options: [
-      { label: "A", value: "On-demand self-service" },
-      { label: "B", value: "Resource pooling" },
-      { label: "C", value: "Local storage only" },
-      { label: "D", value: "Measured service" },
-    ],
-    correctAnswer: "Local storage only",
-  },
-  {
-    id: "6",
-    number: 6,
-    type: "short-answer",
-    difficulty: "medium",
-    marks: 3,
-    text: "Explain the concept of normalization in databases. Why is it important?",
-    correctAnswer: "Normalization is the process of organizing data in a database to reduce redundancy and improve data integrity. It involves dividing large tables into smaller, related tables and defining relationships between them.",
-  },
-  {
-    id: "7",
-    number: 7,
-    type: "long-answer",
-    difficulty: "hard",
-    marks: 8,
-    text: "Design a class hierarchy for a simple e-commerce system. Include classes for Product, Customer, Order, and Payment. Explain the relationships and any design patterns used.",
-    correctAnswer: "",
-  },
-  {
-    id: "8",
-    number: 8,
-    type: "long-answer",
-    difficulty: "hard",
-    marks: 10,
-    text: "Compare and contrast RESTful APIs and GraphQL. Discuss the advantages and disadvantages of each approach for building modern web services.",
-    correctAnswer: "",
-  },
-  {
-    id: "9",
-    number: 9,
-    type: "mcq",
-    difficulty: "medium",
-    marks: 2,
-    text: "Which sorting algorithm has the best average-case time complexity?",
-    options: [
-      { label: "A", value: "Bubble Sort" },
-      { label: "B", value: "Insertion Sort" },
-      { label: "C", value: "Merge Sort" },
-      { label: "D", value: "Selection Sort" },
-    ],
-    correctAnswer: "Merge Sort",
-  },
-  {
-    id: "10",
-    number: 10,
-    type: "case-study",
-    difficulty: "hard",
-    marks: 15,
-    text: "A university wants to build a student enrollment system. The system needs to handle course registration, grade tracking, and transcript generation. Design the system architecture, database schema, and key API endpoints. Discuss potential scalability challenges.",
-    correctAnswer: "",
-  },
-]
-
 export default function CreateAssessmentPage() {
-  const [isGenerating, setIsGenerating] = useState(false)
+  const [generationError, setGenerationError] = useState<string | null>(null)
   const [lastConfig, setLastConfig] = useState<AssessmentFormData | null>(null)
   const [assessmentResult, setAssessmentResult] = useState<{
     questions: Question[]
     summary: AssessmentSummaryType
   } | null>(null)
+  const [dragIndex, setDragIndex] = useState<number | null>(null)
 
-  const handleGenerate = useCallback(async (data: AssessmentFormData) => {
-    setLastConfig(data)
-    setIsGenerating(true)
+  const { mutateAsync: generateAssessment, isPending: isGenerating } = useGenerateAssessment()
 
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+  const computeSummary = useCallback((questions: Question[]): AssessmentSummaryType => ({
+    totalQuestions: questions.length,
+    totalMarks: questions.reduce((sum, q) => sum + q.marks, 0),
+    estimatedMinutes: Math.ceil(questions.length * 2.5),
+    difficultyDistribution: {
+      easy: questions.filter((q) => q.difficulty === "EASY").length,
+      medium: questions.filter((q) => q.difficulty === "MEDIUM").length,
+      hard: questions.filter((q) => q.difficulty === "HARD").length,
+    },
+  }), [])
 
-    const questions = DUMMY_QUESTIONS.map((q, i) => ({
-      ...q,
-      number: i + 1,
-    }))
+  const handleGenerate = useCallback(async (formData: AssessmentFormData) => {
+    setLastConfig(formData)
+    setGenerationError(null)
 
-    const summary: AssessmentSummaryType = {
-      totalQuestions: questions.length,
-      totalMarks: questions.reduce((sum, q) => sum + q.marks, 0),
-      estimatedMinutes: Math.ceil(questions.length * 2.5),
-      difficultyDistribution: {
-        easy: questions.filter((q) => q.difficulty === "easy").length,
-        medium: questions.filter((q) => q.difficulty === "medium").length,
-        hard: questions.filter((q) => q.difficulty === "hard").length,
-      },
+    const payload = {
+      assessmentType: formData.assessmentType,
+      programId: formData.programId,
+      subjectId: formData.subjectId,
+      topic: formData.topic,
+      difficulty: formData.difficulty,
+      questionTypes: formData.questionTypes,
+      questionCount: formData.questionCount,
+      totalMarks: formData.totalMarks,
+      additionalInstructions: formData.additionalInstructions,
     }
 
-    setAssessmentResult({ questions, summary })
-    setIsGenerating(false)
-  }, [])
+    try {
+      const response = await generateAssessment(payload)
+      const questions = response.questions.map((q, i) => ({
+        ...q,
+        id: q.id || crypto.randomUUID(),
+        number: i + 1,
+      }))
+      setAssessmentResult({ questions, summary: computeSummary(questions) })
+    } catch (error) {
+      setGenerationError(error instanceof Error ? error.message : "Failed to generate assessment")
+    }
+  }, [generateAssessment, computeSummary])
 
-  const handleEdit = useCallback((id: string) => {
-    console.log("Edit question:", id)
-  }, [])
+  const handleEdit = useCallback((id: string, updates: Partial<Question>) => {
+    setAssessmentResult((prev) => {
+      if (!prev) return prev
+      const questions = prev.questions.map((q) =>
+        q.id === id ? { ...q, ...updates } : q
+      )
+      return { questions, summary: computeSummary(questions) }
+    })
+  }, [computeSummary])
 
   const handleDelete = useCallback((id: string) => {
     setAssessmentResult((prev) => {
       if (!prev) return prev
-      const filtered = prev.questions.filter((q) => q.id !== id)
-      const updated = filtered.map((q, i) => ({ ...q, number: i + 1 }))
-      const summary: AssessmentSummaryType = {
-        totalQuestions: updated.length,
-        totalMarks: updated.reduce((sum, q) => sum + q.marks, 0),
-        estimatedMinutes: Math.ceil(updated.length * 2.5),
-        difficultyDistribution: {
-          easy: updated.filter((q) => q.difficulty === "easy").length,
-          medium: updated.filter((q) => q.difficulty === "medium").length,
-          hard: updated.filter((q) => q.difficulty === "hard").length,
-        },
-      }
-      return { questions: updated, summary }
+      const questions = prev.questions
+        .filter((q) => q.id !== id)
+        .map((q, i) => ({ ...q, number: i + 1 }))
+      return { questions, summary: computeSummary(questions) }
     })
-  }, [])
+  }, [computeSummary])
 
   const handleRegenerate = useCallback((id: string) => {
     console.log("Regenerate question:", id)
+  }, [])
+
+  const handleDragStart = useCallback((index: number) => {
+    setDragIndex(index)
+  }, [])
+
+  const handleDragOver = useCallback((index: number) => {
+    if (dragIndex === null || dragIndex === index) return
+    setAssessmentResult((prev) => {
+      if (!prev) return prev
+      const items = [...prev.questions]
+      const [moved] = items.splice(dragIndex, 1)
+      items.splice(index, 0, moved)
+      const renumbered = items.map((q, i) => ({ ...q, number: i + 1 }))
+      return { questions: renumbered, summary: computeSummary(renumbered) }
+    })
+    setDragIndex(index)
+  }, [dragIndex, computeSummary])
+
+  const handleDragEnd = useCallback(() => {
+    setDragIndex(null)
   }, [])
 
   return (
@@ -211,10 +128,6 @@ export default function CreateAssessmentPage() {
             Create quizzes, assignments and question papers in seconds using AI.
           </p>
         </div>
-        <Button variant="outline" size="sm" className="shrink-0 gap-2">
-          <Library className="size-4" />
-          View Assessment Library
-        </Button>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[35%_65%]">
@@ -263,13 +176,18 @@ export default function CreateAssessmentPage() {
               </div>
 
               <div className="space-y-3">
-                {assessmentResult.questions.map((question) => (
+                {assessmentResult.questions.map((question, i) => (
                   <QuestionPreviewCard
                     key={question.id}
                     question={question}
+                    index={i}
+                    isDragging={dragIndex === i}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                     onRegenerate={handleRegenerate}
+                    onDragStart={handleDragStart}
+                    onDragOver={handleDragOver}
+                    onDragEnd={handleDragEnd}
                   />
                 ))}
               </div>
@@ -293,12 +211,41 @@ export default function CreateAssessmentPage() {
                   </Button>
                   <Button
                     size="sm"
-                    className="gap-2 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white shadow-md hover:from-indigo-600 hover:to-indigo-700"
+                    className="gap-2 bg-linear-to-r from-indigo-500 to-indigo-600 text-white shadow-md hover:from-indigo-600 hover:to-indigo-700"
                   >
                     <Send className="size-4" />
                     Publish Assessment
                   </Button>
                 </div>
+              </div>
+            </>
+          ) : generationError ? (
+            <>
+              <div className="rounded-xl border border-border bg-card p-4">
+                <h3 className="text-base font-semibold text-foreground">
+                  Generated Assessment Preview
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Review and edit before publishing.
+                </p>
+              </div>
+              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-red-300 bg-red-50/50 p-12 text-center dark:border-red-800 dark:bg-red-950/20">
+                <AlertCircle className="mb-3 size-10 text-red-500" />
+                <h3 className="mb-1 text-lg font-semibold text-red-700 dark:text-red-400">
+                  Generation Failed
+                </h3>
+                <p className="mb-4 max-w-sm text-sm text-red-600 dark:text-red-300">
+                  {generationError}
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 border-red-300 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/40"
+                  onClick={() => lastConfig && handleGenerate(lastConfig)}
+                >
+                  <RotateCcw className="size-4" />
+                  Try Again
+                </Button>
               </div>
             </>
           ) : (

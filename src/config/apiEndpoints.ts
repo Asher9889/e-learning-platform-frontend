@@ -291,6 +291,12 @@ const apiEndpoints = {
             url: "/uploads/materials/s3/multipart/list-parts",
             method: "POST"
         }
+    },
+    ASSESSMENTS: {
+        GENERATE: {
+            url: "/assessments/generate",
+            method: "POST"
+        }
     }
 }
 

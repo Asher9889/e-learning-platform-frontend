@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 import AssessmentTypeSelector from "./AssessmentTypeSelector"
 import DifficultySelector from "./DifficultySelector"
+import TopicInput from "./TopicInput"
 import {
   assessmentFormSchema,
   type AssessmentFormData,
@@ -49,12 +50,12 @@ export default function AssessmentGeneratorForm({
     defaultValues: {
       assessmentType: "QUIZ",
       programId: "",
-      subject: "",
-      topic: "",
+      subjectId: "",
+      topic: [],
       difficulty: "MIXED",
       questionTypes: ["MCQ"],
-      questionCount: 10,
-      totalMarks: 50,
+      questionCount: 5,
+      totalMarks: 10,
       additionalInstructions: "",
     },
   })
@@ -74,7 +75,7 @@ export default function AssessmentGeneratorForm({
 
   const handleFormSubmit = (data: AssessmentFormData) => {
     console.log("Form Data:", data)
-    // onSubmit(data)
+    onSubmit(data)
   } 
 
 
@@ -104,10 +105,10 @@ export default function AssessmentGeneratorForm({
               value={programId}
               onValueChange={(v) => {
                 setValue("programId", v, { shouldValidate: true })
-                setValue("subject", "", { shouldValidate: true })
+                setValue("subjectId", "", { shouldValidate: true })
               }}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full" aria-invalid={!!errors.programId}>
                 <SelectValue placeholder={programsLoading ? "Loading programs..." : "Select a program"} />
               </SelectTrigger>
               <SelectContent>
@@ -127,11 +128,11 @@ export default function AssessmentGeneratorForm({
           <div className="space-y-2">
             <label className="text-sm font-medium">Subject</label>
             <Select
-              value={watch("subject")}
-              onValueChange={(v) => setValue("subject", v, { shouldValidate: true })}
+              value={watch("subjectId")}
+              onValueChange={(v) => setValue("subjectId", v, { shouldValidate: true })}
               disabled={!programId || subjectsLoading}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full" aria-invalid={!!errors.subjectId}>
                 <SelectValue placeholder={
                   !programId
                     ? "Select a program first"
@@ -142,27 +143,25 @@ export default function AssessmentGeneratorForm({
               </SelectTrigger>
               <SelectContent>
                 {subjects.map((subject) => (
-                  <SelectItem key={subject.id} value={subject.name}>
+                  <SelectItem key={subject.id} value={subject.id}>
                     {subject.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            {errors.subject && (
-              <p className={requiredError}>{errors.subject.message}</p>
+            {errors.subjectId && (
+              <p className={requiredError}>{errors.subjectId.message}</p>
             )}
           </div>
 
            {/* Topic */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Topic</label>
-            <Input
-              placeholder="e.g. Linear Equations, World War II, Photosynthesis"
-              {...register("topic")}
+            <label className="text-sm font-medium">Topics</label>
+            <TopicInput
+              value={watch("topic")}
+              onChange={(v) => setValue("topic", v, { shouldValidate: true })}
+              error={errors.topic?.message}
             />
-            {errors.topic && (
-              <p className={requiredError}>{errors.topic.message}</p>
-            )}
           </div>
 
           {/* Difficulty */}
@@ -177,7 +176,10 @@ export default function AssessmentGeneratorForm({
           {/* Question Types */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Question Types</label>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <div className={cn(
+              "grid grid-cols-2 gap-2 sm:grid-cols-3 rounded-lg transition-all",
+              errors.questionTypes && "ring-2 ring-destructive/20 p-0.5"
+            )}>
               {QUESTION_TYPE_OPTIONS.map(({ value, label }) => {
                 const isChecked = questionTypes.includes(value)
                 return (
@@ -218,7 +220,10 @@ export default function AssessmentGeneratorForm({
           {/* Question Count */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Question Count</label>
-            <div className="space-y-3">
+            <div className={cn(
+              "space-y-3 rounded-lg p-3 transition-all",
+              errors.questionCount && "ring-2 ring-destructive/20"
+            )}>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">5</span>
                 <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
@@ -247,11 +252,12 @@ export default function AssessmentGeneratorForm({
 
           {/* Total Marks */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Total Marks</label>
+            <label className="text-sm font-medium">Total Marks <span className="text-muted-foreground font-normal">(optional)</span></label>
             <Input
               type="number"
               placeholder="e.g. 50, 75, 100"
               {...register("totalMarks", { valueAsNumber: true })}
+              aria-invalid={!!errors.totalMarks}
             />
             {errors.totalMarks && (
               <p className="text-xs text-destructive-foreground">{errors.totalMarks.message}</p>
@@ -265,6 +271,7 @@ export default function AssessmentGeneratorForm({
               placeholder="Provide any additional context for the assessment generation."
               className="min-h-20 resize-none"
               {...register("additionalInstructions")}
+              aria-invalid={!!errors.additionalInstructions}
             />
             {errors.additionalInstructions && (
               <p className={requiredError}>{errors.additionalInstructions.message}</p>
