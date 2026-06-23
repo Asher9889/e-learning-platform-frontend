@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import type { Question } from "../types/assessment.types"
+import { QUESTION_TYPES, ASSESSMENT_DIFFICULTIES } from "../constants/assesments.contants"
 import {
   GripVertical,
   ChevronDown,
   Edit,
   Trash2,
-  RefreshCw,
+  // RefreshCw,
   HelpCircle,
   CheckCircle2,
   FileText,
@@ -22,25 +23,25 @@ import {
 } from "lucide-react"
 
 const typeIcons: Record<string, typeof HelpCircle> = {
-  MCQ: HelpCircle,
-  "TRUE-FALSE": CheckCircle2,
-  "SHORT-ANSWER": FileText,
-  "LONG-ANSWER": AlignLeft,
-  "CASE-STUDY": CaseSensitive,
+  [QUESTION_TYPES.MCQ]: HelpCircle,
+  [QUESTION_TYPES.TRUE_FALSE]: CheckCircle2,
+  [QUESTION_TYPES.SHORT_ANSWER]: FileText,
+  [QUESTION_TYPES.LONG_ANSWER]: AlignLeft,
+  [QUESTION_TYPES.CASE_STUDY]: CaseSensitive,
 }
 
 const typeLabels: Record<string, string> = {
-  MCQ: "MCQ",
-  "TRUE-FALSE": "True / False",
-  "SHORT-ANSWER": "Short Answer",
-  "LONG-ANSWER": "Long Answer",
-  "CASE-STUDY": "Case Study",
+  [QUESTION_TYPES.MCQ]: "MCQ",
+  [QUESTION_TYPES.TRUE_FALSE]: "True / False",
+  [QUESTION_TYPES.SHORT_ANSWER]: "Short Answer",
+  [QUESTION_TYPES.LONG_ANSWER]: "Long Answer",
+  [QUESTION_TYPES.CASE_STUDY]: "Case Study",
 }
 
 const difficultyColors: Record<string, string> = {
-  EASY: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
-  MEDIUM: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-  HARD: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
+  [ASSESSMENT_DIFFICULTIES.EASY]: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+  [ASSESSMENT_DIFFICULTIES.MEDIUM]: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+  [ASSESSMENT_DIFFICULTIES.HARD]: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
 }
 
 interface QuestionPreviewCardProps {
@@ -61,7 +62,7 @@ export default function QuestionPreviewCard({
   isDragging,
   onEdit,
   onDelete,
-  onRegenerate,
+  // onRegenerate,
   onDragStart,
   onDragOver,
   onDragEnd,
@@ -192,7 +193,7 @@ export default function QuestionPreviewCard({
 
       {editForm.options && renderOptions(editForm.options, editForm.correctAnswer, true)}
 
-      {editForm.type !== "MCQ" && editForm.type !== "TRUE-FALSE" && (
+      {editForm.type !== QUESTION_TYPES.MCQ && editForm.type !== QUESTION_TYPES.TRUE_FALSE && (
         <div>
           <label className="mb-1 block text-xs font-medium text-muted-foreground">Answer</label>
           <Textarea
@@ -203,7 +204,7 @@ export default function QuestionPreviewCard({
         </div>
       )}
 
-      {editForm.type === "TRUE-FALSE" && (
+      {editForm.type === QUESTION_TYPES.TRUE_FALSE && (
         <div>
           <label className="mb-1 block text-xs font-medium text-muted-foreground">Correct Answer</label>
           <div className="flex gap-2">
@@ -360,9 +361,9 @@ export default function QuestionPreviewCard({
                 <Button variant="outline" size="xs" onClick={() => onDelete(question.id)}>
                   <Trash2 className="size-3" /> Delete
                 </Button>
-                <Button variant="outline" size="xs" onClick={() => onRegenerate(question.id)}>
+                {/* <Button variant="outline" size="xs" onClick={() => onRegenerate(question.id)}>
                   <RefreshCw className="size-3" /> Regenerate
-                </Button>
+                </Button> */}
               </>
             )}
           </div>

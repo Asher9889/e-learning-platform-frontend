@@ -22,9 +22,8 @@ import {
   assessmentFormSchema,
   type AssessmentFormData,
 } from "../schemas/assessment.schema"
-import {
-  QUESTION_TYPE_OPTIONS,
-} from "../types/assessment.types"
+import { QUESTION_TYPE_OPTIONS } from "../types/assessment.types"
+import { QUESTION_TYPES } from "../constants/assesments.contants"
 import { useGetPrograms } from "@/pages/Programs/hooks/useGetPrograms"
 import { useGetSubjects } from "@/pages/Subjects/hooks/useGetSubjects"
 import { Sparkles } from "lucide-react"
@@ -53,7 +52,7 @@ export default function AssessmentGeneratorForm({
       subjectId: "",
       topic: [],
       difficulty: "MIXED",
-      questionTypes: ["MCQ"],
+      questionTypes: [QUESTION_TYPES.MCQ],
       questionCount: 5,
       totalMarks: 10,
       additionalInstructions: "",

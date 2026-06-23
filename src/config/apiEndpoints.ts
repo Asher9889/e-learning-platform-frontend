@@ -296,6 +296,10 @@ const apiEndpoints = {
         GENERATE: {
             url: "/assessments/generate",
             method: "POST"
+        },
+        PUBLISH: {
+            url: "/assessments/publish",
+            method: "POST"
         }
     }
 }

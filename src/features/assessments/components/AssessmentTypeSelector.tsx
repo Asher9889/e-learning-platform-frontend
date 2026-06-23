@@ -1,12 +1,13 @@
 import { RadioGroup as RadioGroupPrimitive } from "radix-ui"
 import { ClipboardCheck, FileText, BookOpen } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ASSESSMENT_TYPE } from "../constants/assesments.contants"
 import type { AssessmentType } from "../types/assessment.types"
 
 const typeConfig = [
-  { value: "QUIZ" as const, label: "Quiz", description: "Short objective questions.", Icon: ClipboardCheck },
-  { value: "ASSIGNMENT" as const, label: "Assignment", description: "Long-form descriptive questions.", Icon: FileText },
-  { value: "QUESTION-PAPER" as const, label: "Question Paper", description: "Structured exam format.", Icon: BookOpen },
+  { value: ASSESSMENT_TYPE.QUIZ, label: "Quiz", description: "Short objective questions.", Icon: ClipboardCheck },
+  { value: ASSESSMENT_TYPE.ASSIGNMENT, label: "Assignment", description: "Long-form descriptive questions.", Icon: FileText },
+  { value: ASSESSMENT_TYPE.QUESTION_PAPER, label: "Question Paper", description: "Structured exam format.", Icon: BookOpen },
 ]
 
 interface AssessmentTypeSelectorProps {

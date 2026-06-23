@@ -1,12 +1,13 @@
 import { ToggleGroup } from "radix-ui"
 import { cn } from "@/lib/utils"
+import { ASSESSMENT_DIFFICULTIES } from "../constants/assesments.contants"
 import type { Difficulty } from "../types/assessment.types"
 
 const levels: { value: Difficulty; label: string }[] = [
-  { value: "EASY", label: "Easy" },
-  { value: "MEDIUM", label: "Medium" },
-  { value: "HARD", label: "Hard" },
-  { value: "MIXED", label: "Mixed" },
+  { value: ASSESSMENT_DIFFICULTIES.EASY, label: "Easy" },
+  { value: ASSESSMENT_DIFFICULTIES.MEDIUM, label: "Medium" },
+  { value: ASSESSMENT_DIFFICULTIES.HARD, label: "Hard" },
+  { value: ASSESSMENT_DIFFICULTIES.MIXED, label: "Mixed" },
 ]
 
 interface DifficultySelectorProps {

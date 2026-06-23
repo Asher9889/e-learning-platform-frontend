@@ -1,17 +1,20 @@
 import { useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Skeleton } from "@/components/ui/skeleton"
 import AssessmentGeneratorForm from "../components/AssessmentGeneratorForm"
 import QuestionPreviewCard from "../components/QuestionPreviewCard"
 import AssessmentSummary from "../components/AssessmentSummary"
 import EmptyPreviewState from "../components/EmptyPreviewState"
+import PublishAssessmentDialog from "../components/PublishAssessmentDialog"
 import { useGenerateAssessment } from "../hooks/useGenerateAssessment"
 import type { Question, AssessmentSummary as AssessmentSummaryType } from "../types/assessment.types"
 import type { AssessmentFormData } from "../schemas/assessment.schema"
 import {
   BookOpen,
   Save,
-  Sparkles,
+  // Sparkles,
   Send,
   AlertCircle,
   RotateCcw,
@@ -21,10 +24,13 @@ export default function CreateAssessmentPage() {
   const [generationError, setGenerationError] = useState<string | null>(null)
   const [lastConfig, setLastConfig] = useState<AssessmentFormData | null>(null)
   const [assessmentResult, setAssessmentResult] = useState<{
+    title: string
+    instructions: string
     questions: Question[]
     summary: AssessmentSummaryType
   } | null>(null)
   const [dragIndex, setDragIndex] = useState<number | null>(null)
+  const [publishOpen, setPublishOpen] = useState(false)
 
   const { mutateAsync: generateAssessment, isPending: isGenerating } = useGenerateAssessment()
 
@@ -56,13 +62,18 @@ export default function CreateAssessmentPage() {
     }
 
     try {
-      const response = await generateAssessment(payload)
+      const response = await generateAssessment(payload);
       const questions = response.questions.map((q, i) => ({
         ...q,
         id: q.id || crypto.randomUUID(),
         number: i + 1,
       }))
-      setAssessmentResult({ questions, summary: computeSummary(questions) })
+      setAssessmentResult({
+        title: response.title,
+        instructions: response.instructions,
+        questions,
+        summary: computeSummary(questions),
+      })
     } catch (error) {
       setGenerationError(error instanceof Error ? error.message : "Failed to generate assessment")
     }
@@ -74,9 +85,17 @@ export default function CreateAssessmentPage() {
       const questions = prev.questions.map((q) =>
         q.id === id ? { ...q, ...updates } : q
       )
-      return { questions, summary: computeSummary(questions) }
+      return { ...prev, questions, summary: computeSummary(questions) }
     })
   }, [computeSummary])
+
+  const handleTitleChange = useCallback((title: string) => {
+    setAssessmentResult((prev) => prev ? { ...prev, title } : prev)
+  }, [])
+
+  const handleInstructionsChange = useCallback((instructions: string) => {
+    setAssessmentResult((prev) => prev ? { ...prev, instructions } : prev)
+  }, [])
 
   const handleDelete = useCallback((id: string) => {
     setAssessmentResult((prev) => {
@@ -84,7 +103,7 @@ export default function CreateAssessmentPage() {
       const questions = prev.questions
         .filter((q) => q.id !== id)
         .map((q, i) => ({ ...q, number: i + 1 }))
-      return { questions, summary: computeSummary(questions) }
+      return { ...prev, questions, summary: computeSummary(questions) }
     })
   }, [computeSummary])
 
@@ -104,7 +123,7 @@ export default function CreateAssessmentPage() {
       const [moved] = items.splice(dragIndex, 1)
       items.splice(index, 0, moved)
       const renumbered = items.map((q, i) => ({ ...q, number: i + 1 }))
-      return { questions: renumbered, summary: computeSummary(renumbered) }
+      return { ...prev, questions: renumbered, summary: computeSummary(renumbered) }
     })
     setDragIndex(index)
   }, [dragIndex, computeSummary])
@@ -175,6 +194,26 @@ export default function CreateAssessmentPage() {
                 </p>
               </div>
 
+              <div className="rounded-xl border border-border bg-card p-4 space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Title</label>
+                  <Input
+                    value={assessmentResult.title}
+                    onChange={(e) => handleTitleChange(e.target.value)}
+                    className="text-base font-semibold"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Instructions</label>
+                  <Textarea
+                    value={assessmentResult.instructions}
+                    onChange={(e) => handleInstructionsChange(e.target.value)}
+                    className="resize-none"
+                    rows={2}
+                  />
+                </div>
+              </div>
+
               <div className="space-y-3">
                 {assessmentResult.questions.map((question, i) => (
                   <QuestionPreviewCard
@@ -200,7 +239,7 @@ export default function CreateAssessmentPage() {
                     <Save className="size-4" />
                     Save Draft
                   </Button>
-                  <Button
+                  {/* <Button
                     variant="outline"
                     size="sm"
                     className="gap-2"
@@ -208,16 +247,29 @@ export default function CreateAssessmentPage() {
                   >
                     <Sparkles className="size-4" />
                     Generate Again
-                  </Button>
+                  </Button> */}
                   <Button
                     size="sm"
                     className="gap-2 bg-linear-to-r from-indigo-500 to-indigo-600 text-white shadow-md hover:from-indigo-600 hover:to-indigo-700"
+                    onClick={() => setPublishOpen(true)}
                   >
                     <Send className="size-4" />
                     Publish Assessment
                   </Button>
                 </div>
               </div>
+
+              {lastConfig && assessmentResult && (
+                <PublishAssessmentDialog
+                  open={publishOpen}
+                  onOpenChange={setPublishOpen}
+                  config={lastConfig}
+                  questions={assessmentResult.questions}
+                  assessmentResult={assessmentResult}
+                  title={assessmentResult.title}
+                  instructions={assessmentResult.instructions}
+                />
+              )}
             </>
           ) : generationError ? (
             <>

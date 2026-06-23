@@ -1,4 +1,4 @@
-import type { ASSESSMENT_DIFFICULTIES, ASSESSMENT_TYPE, QUESTION_TYPES } from "../constants/assesments.contants"
+import { ASSESSMENT_DIFFICULTIES, ASSESSMENT_TYPE, QUESTION_TYPES } from "../constants/assesments.contants"
 
 export type AssessmentType = typeof ASSESSMENT_TYPE[keyof typeof ASSESSMENT_TYPE]
 
@@ -16,6 +16,23 @@ export interface Question {
   options?: string[]
   correctAnswer?: string
   explanation?: string
+}
+
+export interface PublishAssessmentPayload {
+  title: string
+  instructions: string
+  assessmentType: AssessmentType
+  programId: string
+  subjectId: string
+  topic: string[]
+  difficulty: Difficulty
+  questionTypes: QuestionType[]
+  questionCount: number
+  totalMarks: number
+  additionalInstructions?: string
+  questions: Question[]
+  batchId?: string
+  allStudents: boolean
 }
 
 export interface AssessmentPayload {
@@ -93,11 +110,11 @@ export const QUESTION_TYPE_OPTIONS: {
   value: QuestionType
   label: string
 }[] = [
-  { value: "MCQ", label: "MCQ" },
-  { value: "TRUE-FALSE", label: "True / False" },
-  { value: "SHORT-ANSWER", label: "Short Answer" },
-  { value: "LONG-ANSWER", label: "Long Answer" },
-  { value: "CASE-STUDY", label: "Case Study" },
+  { value: QUESTION_TYPES.MCQ, label: "MCQ" },
+  { value: QUESTION_TYPES.TRUE_FALSE, label: "True / False" },
+  { value: QUESTION_TYPES.SHORT_ANSWER, label: "Short Answer" },
+  { value: QUESTION_TYPES.LONG_ANSWER, label: "Long Answer" },
+  { value: QUESTION_TYPES.CASE_STUDY, label: "Case Study" },
 ]
 
 export const DIFFICULTIES: Difficulty[] = ["EASY", "MEDIUM", "HARD", "MIXED"]
