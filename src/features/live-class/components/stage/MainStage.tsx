@@ -48,6 +48,7 @@ export function MainStage() {
     //     </div>
     //   </div>
     // );
+    
     return (
       <div className="flex h-full w-full items-center justify-center p-4">
         <div className="w-full max-w-4xl aspect-video overflow-hidden rounded-xl border bg-muted">

@@ -15,12 +15,14 @@ export const startLiveClassSchema = z.object({
   programId: z.string().min(1, "Program is required"),
 
   batchId: z.string().optional(),
-
+ 
   subjectId: z.string().min(1, "Subject is required"),
 
   teacherId: z.string().min(1, "Teacher is required"),
  scheduledAt: z.iso.datetime().optional(),
   status: z.enum(Object.values(CLASS_STATUS)),
+   mode: z.enum(["SCHEDULED" ,"LIVE" , "RECORDED"]),
+   recordingVideoId:z.string().optional(),
   durationMinutes: z
     .number()
     .min(1, "Duration must be at least 1 minute"),

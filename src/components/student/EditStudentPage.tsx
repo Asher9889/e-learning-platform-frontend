@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -17,16 +17,23 @@ import { useGetStudent } from "@/pages/Student/hooks/useGetStudent";
 import { useUpdateStudent } from "@/pages/Student/hooks/useStudentMutations";
 import { useGetPrograms } from "@/pages/Programs/hooks/useGetPrograms";
 import { useGetBatches } from "@/pages/Batches/hooks/useGetBatches";
+import { AvatarUpload } from "./steps/AvatarUpload";
+import { sileo } from "sileo";
+import { useUploadAvatar } from "@/pages/Teacher/hooks/useUploadAvtar";
 
 export default function EditStudentPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: fetchRes, isLoading: loadingStudent } = useGetStudent(id!);
   const { mutate: update, isPending: saving } = useUpdateStudent();
-
+const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string>("");
+  const {
+    uploadAvatarAsync,
+    isUploading,
+  } = useUploadAvatar();
   const student = fetchRes?.data;
 
-  const { register, handleSubmit, reset, setValue, watch } = useForm({
+  const { register, handleSubmit, reset, setValue, watch ,formState: { errors },} = useForm({
     defaultValues: {
       email: "",
       phoneNumber: "",
@@ -34,6 +41,7 @@ export default function EditStudentPage() {
         name: "",
         dateOfBirth: "",
         gender: "MALE",
+        profileImage: ""
       },
       personalInfoAddress: {
         line1: "",
@@ -57,11 +65,19 @@ export default function EditStudentPage() {
   const programs = programData?.programs || [];
 
   const selectedProgram = watch("roleInfo.programId");
+
+  console.log(selectedProgram,"selectedProgram0125487",student)
   const { data: batchesData } = useGetBatches(selectedProgram);
   const batches = batchesData?.batches || [];
-
   useEffect(() => {
+    console.log("useEggect")
+
+   console.log("useEffect RUNNING - student.id: 12333333333333333", student?.id);
     if (!student) return;
+    console.log("RESETTING with programId: 12333333333333333", student.roleInfo?.programId);
+    console.log(student.roleInfo?.programId,"useEggect")
+
+    setAvatarPreviewUrl(student.personalInfo?.profileImage || "");
     reset({
       email: student.email || "",
       phoneNumber: student.phoneNumber || "",
@@ -69,6 +85,7 @@ export default function EditStudentPage() {
         name: student.personalInfo?.name || "",
         dateOfBirth: student.personalInfo?.dateOfBirth || "",
         gender: student.personalInfo?.gender || "MALE",
+        profileImage: student.personalInfo?.profileImage || "",
       },
       personalInfoAddress: {
         line1: student.personalInfo?.address?.line1 || "",
@@ -78,8 +95,8 @@ export default function EditStudentPage() {
         zipCode: student.personalInfo?.address?.zipCode || "",
       },
       roleInfo: {
-        programId: "",
-        batchId: "",
+        programId: student.roleInfo?.programId || "",
+        batchId:  student.roleInfo?.batchId || "",
         rollNumber: student.roleInfo?.rollNumber || "",
         admissionDate: student.roleInfo?.admissionDate
           ? student.roleInfo.admissionDate.split("T")[0]
@@ -88,26 +105,30 @@ export default function EditStudentPage() {
         guardianPhoneNumber: student.roleInfo?.guardianPhoneNumber || "",
       },
     });
-  }, [student, reset]);
+  }, [student?.id, reset]);
 
-  useEffect(() => {
-    if (!student || programs.length === 0) return;
-    setValue("roleInfo.programId", student.roleInfo?.programId || "");
-  }, [student, programs, setValue]);
+  // useEffect(() => {
+  //   if (!student || programs.length === 0) return;
+  //   setValue("roleInfo.programId", student.roleInfo?.programId || "");
+  // }, [student, programs, setValue]);
 
-  useEffect(() => {
-    if (!student || !selectedProgram || batches.length === 0) return;
-    setValue("roleInfo.batchId", student.roleInfo?.batchId || "");
-  }, [student, selectedProgram, batches, setValue]);
-
+  // useEffect(() => {
+  //   if (!student || !selectedProgram || batches.length === 0) return;
+  //   setValue("roleInfo.batchId", student.roleInfo?.batchId || "");
+  // }, [student, selectedProgram, batches, setValue]);
+const image = watch("personalInfo.profileImage");
   const onSubmit = (formData: Record<string, any>) => {
+    console.log(formData,"formDataformDataformData")
     const payload: Record<string, unknown> = {
+      
       email: formData.email,
       phoneNumber: formData.phoneNumber,
       personalInfo: {
         name: formData.personalInfo.name,
         dateOfBirth: formData.personalInfo.dateOfBirth,
         gender: formData.personalInfo.gender,
+        profileImage: formData.personalInfo.profileImage,
+
         ...(formData.personalInfoAddress.city && {
           address: {
             line1: formData.personalInfoAddress.line1,
@@ -133,6 +154,45 @@ export default function EditStudentPage() {
     );
   };
 
+  const handleFileChange = useCallback(
+      async (file: { file: File | { url: string; id: string } } | null) => {
+        const uploadedFile = file?.file;
+  
+        if (uploadedFile instanceof File) {
+          try {
+            const response = await uploadAvatarAsync(uploadedFile);
+            if (response?.key) {
+              setValue("personalInfo.profileImage", response.key, {
+                shouldDirty: true,
+                shouldValidate: true,
+              });
+            }
+            if (response?.url) {
+              setAvatarPreviewUrl(response.url);
+            }
+          } catch (err: any) {
+            setValue("personalInfo.profileImage", "", {
+              shouldDirty: true,
+              shouldValidate: true,
+            });
+            setAvatarPreviewUrl("");
+            const message =
+              err?.response?.data?.message ||
+              err?.message ||
+              "Avatar upload failed. Only JPEG, PNG, and WEBP are allowed.";
+            sileo.error({ title: "Upload Failed", description: message });
+          }
+        } else if (!file) {
+          setValue("personalInfo.profileImage", "", {
+            shouldDirty: true,
+            shouldValidate: true,
+          });
+          setAvatarPreviewUrl("");
+        }
+      },
+      [uploadAvatarAsync, setValue]
+    );
+
   if (loadingStudent) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -151,6 +211,9 @@ export default function EditStudentPage() {
     );
   }
 
+
+  console.log(student,"programs list: debugginggggggggggg", programs);
+console.log("current programId value: debugginggggggggggg", watch("roleInfo.programId"));
   return (
     <div className="flex flex-col h-screen">
       <div className="sticky top-0 z-10 bg-background border-b">
@@ -172,6 +235,19 @@ export default function EditStudentPage() {
       <div className="flex-1 overflow-y-auto">
         <div className="container max-w-4xl mx-auto px-4 py-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+
+            <div className="md:col-span-2 flex flex-col">
+                    <div className="md:col-span-2 flex justify-start">
+                      <AvatarUpload
+                        value={avatarPreviewUrl || (typeof image === "string" ? image : "")}
+                        onFileChange={handleFileChange}
+                        isUploading={isUploading}
+                      />
+                    </div>
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors?.personalInfo?.profileImage?.message as string}
+                    </p>
+                  </div>
         <Card>
           <CardHeader>
             <CardTitle>Account</CardTitle>
@@ -246,11 +322,13 @@ export default function EditStudentPage() {
               <Select
                 value={watch("roleInfo.programId")}
                 onValueChange={(v) => {
+                   if (!v) return;
+                    console.log("PROGRAM onValueChange FIRED with: 12333333333333333", v); 
                   setValue("roleInfo.programId", v);
                   setValue("roleInfo.batchId", "");
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select Program" />
                 </SelectTrigger>
                 <SelectContent>
@@ -268,9 +346,13 @@ export default function EditStudentPage() {
               <Label>Batch</Label>
               <Select
                 value={watch("roleInfo.batchId")}
-                onValueChange={(v) => setValue("roleInfo.batchId", v)}
+                onValueChange={(v) => {
+                   if (!v) return;
+                  console.log("BATCH onValueChange FIRED with: 12333333333333333", v);
+                  setValue("roleInfo.batchId", v);
+                }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder={selectedProgram ? "Select Batch" : "Select Program first"} />
                 </SelectTrigger>
                 <SelectContent>

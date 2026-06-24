@@ -4,7 +4,7 @@ import type { TStartLiveClassInput } from "../schema/live.schema";
 import type { LiveClassFilters } from "../types";
 import { useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
-import { setTitle } from "@/store/slices/liveClass.slice";
+import { setRecordedVideoId, setTitle } from "@/store/slices/liveClass.slice";
 export const useUpcomingLiveClasses = (filters?: LiveClassFilters) => {
   return useQuery({
     queryKey: ["live-classes", "upcoming", filters],
@@ -36,6 +36,13 @@ export const useLiveClass = (id: string) => {
   });
 };
 
+export const useLiveClassStats = () => {
+  return useQuery({
+    queryKey: ["live-classes", "stats"],
+    queryFn: liveClassApi.getStats,
+  });
+};
+
 export const useLiveClassByRoomName = (roomName: string) => {
  const dispatch = useAppDispatch();
 
@@ -47,8 +54,14 @@ export const useLiveClassByRoomName = (roomName: string) => {
 
   useEffect(() => {
     const title = query.data?.title;
+    const recordedVideoId = query.data?.recordingVideoId
+    console.log( query.data," query.data classsc",query)
     if (title) {
       dispatch(setTitle(title));
+
+    }
+    if(recordedVideoId){
+      dispatch(setRecordedVideoId(recordedVideoId));
     }
   }, [query.data, dispatch]);
 

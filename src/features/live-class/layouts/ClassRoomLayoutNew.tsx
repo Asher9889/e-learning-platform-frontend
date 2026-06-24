@@ -48,6 +48,11 @@ import { useSingleSpeakerSystem } from "../hooks/useSingleSpeakerSystem";
 import { RoomEvent } from "livekit-client";
 import { ParticipantSidebar } from "../components/participants/ParticipantSidebar";
 import { setParticipantsOpen } from "@/features/live-class/store/liveClass.slice";
+import { Button } from "#components/ui/button";
+import { PhoneOff } from "lucide-react";
+import { useEndLiveClass } from "@/pages/Live-Classes/hooks/useLiveClass";
+import { sileo } from "sileo";
+import { useNavigate } from "react-router-dom";
 // ─── Types ────────────────────────────────────────────────────────────────────
 // interface Student {
 //     id: string;
@@ -199,10 +204,10 @@ export default function ClassRoomLayoutNew() {
     const isTablet = useMediaQuery("(max-width: 1024px)");
     const isMobile = useMediaQuery("(max-width: 768px)");
     const dispatch = useAppDispatch();
-
+    const classId = useAppSelector((state) => state.liveClass.classId);
     const participantsOpen = useAppSelector((state) => state.liveClass.participantsOpen);
     // const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
-
+    const navigate = useNavigate()
     // const [raisedHands, setRaisedHands] = useState<
     //     Record<string, boolean>
     // >({});
@@ -213,6 +218,9 @@ export default function ClassRoomLayoutNew() {
     const title = useAppSelector(
         (state) => state.liveClass.title
     );
+    const { mutate } = useEndLiveClass();
+
+
     const liveKitParticipants = useParticipants({
         updateOnlyOn: [
             RoomEvent.ParticipantConnected,
@@ -316,6 +324,30 @@ export default function ClassRoomLayoutNew() {
     //     const id = setInterval(() => setSeconds((s) => s + 1), 1000);
     //     return () => clearInterval(id);
     // }, []);
+
+    //     useEffect(() => {
+    //   if (!room) return;
+
+    //   const handleDisconnected = async () => {
+    //     if(!roomName) return
+    //     try {
+    //       const response = await liveClassApi.getByRoomName(roomName);
+    // console.log(response,"response158932")
+    //       if (response?.data?.status === "COMPLETED") {
+    //         sileo.success({ title: "Live Class ended" });
+    //         // navigate("/live-classes");
+    //       }
+    //     } catch (error) {
+    //       console.error(error);
+    //     }
+    //   };
+
+    //   room.on(RoomEvent.Disconnected, handleDisconnected);
+
+    //   return () => {
+    //     room.off(RoomEvent.Disconnected, handleDisconnected);
+    //   };
+    // }, [room, roomName]);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
@@ -409,10 +441,28 @@ export default function ClassRoomLayoutNew() {
             }
         };
 
+        const handleMetadata = (metadata: string) => {
+        const data = JSON.parse(metadata);
+
+        if (data.status === "ENDED") {
+            console.log("Room ended event received");
+
+            room.disconnect();
+
+            sileo.info({
+                title: "Live Class ended",
+            });
+
+            navigate("/live-classes");
+        }
+    };
+
         room.on(RoomEvent.DataReceived, handleData);
+        room.on("roomMetadataChanged", handleMetadata);
         console.log("Listener attached", "CONTROLLLLLL");
         return () => {
             room.off(RoomEvent.DataReceived, handleData);
+            room.off("roomMetadataChanged", handleMetadata);
         };
     }, [room]);
     // const formatTime = (s: number) => {
@@ -450,7 +500,22 @@ export default function ClassRoomLayoutNew() {
     //     "data-[state=active]:text-violet-600 data-[state=active]:border-b-2 " +
     //     "data-[state=active]:border-violet-500 data-[state=active]:bg-transparent " +
     //     "data-[state=active]:shadow-none";
+    const handleEndClass = () => {
+        if (!classId) return
+        console.log("awdawdawdawdad")
+        mutate(classId, {
+            onSuccess: (response) => {
+                console.log("Class ended:", response);
 
+                // toast
+                // navigate
+                // refetch list
+            },
+            onError: (error) => {
+                console.error(error);
+            },
+        });
+    };
 
     console.log(visibleStudents, "visibleStudentsvisibleStudentsvisibleStudents CONTROLLLLLL88888", liveKitParticipants, "totalSudents", totalSudents)
     return (
@@ -477,6 +542,15 @@ export default function ClassRoomLayoutNew() {
                     <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                         <LiveBadge />
                         <ConnectionIndicator />
+                        <Button
+                            onClick={handleEndClass}
+                            size="icon"
+                            
+                            className="bg-red-50 border border-red-200 text-red-600 hover:bg-red-100"
+                            title="End Meeting for Everyone"
+                        >
+                            <PhoneOff size={16} />
+                        </Button>
                         <span className="text-[11px] sm:text-xs text-slate-400 hidden sm:inline">{totalSudents?.length} students</span>
                     </div>
                 </header>

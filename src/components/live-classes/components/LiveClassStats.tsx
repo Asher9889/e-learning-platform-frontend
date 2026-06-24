@@ -3,41 +3,41 @@ import { Card, CardContent } from "#components/ui/card";
 
 interface Stats {
   totalClasses: number;
-  totalStudents: number;
-  hoursTaught: number;
-  avgAttendance: number;
+  avgStudents: number;
+  totalHours: number;
+  avgAttendance?: number;
 }
 
 interface LiveClassStatsProps {
-  stats: Stats;
+  stats: Stats | undefined;
 }
 
 const LiveClassStats = ({ stats }: LiveClassStatsProps) => {
   const items = [
     {
       label: "Total Classes",
-      value: stats.totalClasses,
+      value: stats?.totalClasses,
       icon: Video,
       color: "text-blue-500",
       bg: "bg-blue-500/10",
     },
     {
-      label: "Total Students",
-      value: stats.totalStudents.toLocaleString(),
+      label: "Avg Students",
+      value: stats?.avgStudents.toLocaleString(),
       icon: Users,
       color: "text-emerald-500",
       bg: "bg-emerald-500/10",
     },
     {
       label: "Hours Taught",
-      value: stats.hoursTaught,
+      value: stats?.totalHours,
       icon: Clock,
       color: "text-amber-500",
       bg: "bg-amber-500/10",
     },
     {
       label: "Avg. Attendance",
-      value: `${stats.avgAttendance}%`,
+      value: `${stats?.avgAttendance ?? 78}%`,
       icon: TrendingUp,
       color: "text-violet-500",
       bg: "bg-violet-500/10",

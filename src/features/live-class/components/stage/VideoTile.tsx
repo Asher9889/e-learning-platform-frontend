@@ -11,24 +11,25 @@
 
 
 import { useRef, useState, useCallback, useEffect } from "react";
-import {  ParticipantName, VideoTrack } from "@livekit/components-react";
+import { ParticipantName, VideoTrack } from "@livekit/components-react";
 import type { TrackReference } from "@livekit/components-react";
 import { cn } from "@/lib/utils";
 import { Maximize2, Minimize2 } from "lucide-react";
 import { capitalizeFirstLetter } from "@/utils/helper";
 
+
 interface ScreenStageProps {
   tracks: TrackReference[];
   className?: string;
-  isSpeaking?:boolean;
+  isSpeaking?: boolean;
   hasScreenShare?: boolean;
   type: string;
 }
-  function VideoTile({ tracks, className ,hasScreenShare,isSpeaking,type}: ScreenStageProps) {
+function VideoTile({ tracks, className,  type }: ScreenStageProps) {
+
+  console.log("vidoe1321324")
   const containerRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-console.log(hasScreenShare,"ScreenStage Rendered",isSpeaking);
-
   const toggleFullscreen = useCallback(async () => {
     if (!containerRef.current) return;
 
@@ -49,22 +50,25 @@ console.log(hasScreenShare,"ScreenStage Rendered",isSpeaking);
 
 
   useEffect(() => {
-  const handleFullscreenChange = () => {
-    setIsFullscreen(!!document.fullscreenElement);
-  };
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
 
-  document.addEventListener(
-    "fullscreenchange",
-    handleFullscreenChange
-  );
-
-  return () => {
-    document.removeEventListener(
+    document.addEventListener(
       "fullscreenchange",
       handleFullscreenChange
     );
-  };
-}, []);
+
+    return () => {
+      document.removeEventListener(
+        "fullscreenchange",
+        handleFullscreenChange
+      );
+    };
+  }, []);
+
+
+ 
   return (
     <div
       ref={containerRef}
@@ -77,11 +81,11 @@ console.log(hasScreenShare,"ScreenStage Rendered",isSpeaking);
             className="w-full h-full [&>video]:object-cover [&>video]:w-full [&>video]:h-full rounded-xl"
             
           /> */}
-          <VideoTrack trackRef={track}   className="w-full h-full [&>video]:object-cover [&>video]:w-full [&>video]:h-full rounded-xl"/>
+          <VideoTrack trackRef={track} className="w-full h-full [&>video]:object-cover [&>video]:w-full [&>video]:h-full rounded-xl" />
 
           {/* Name overlay — bottom left */}
-         {/* { !hasScreenShare &&  */}
-         <div className="absolute bottom-2 left-2 max-w-[calc(100%-3.5rem)] flex items-center gap-1.5">
+          {/* { !hasScreenShare &&  */}
+          <div className="absolute bottom-2 left-2 max-w-[calc(100%-3.5rem)] flex items-center gap-1.5">
             <div className="flex items-center gap-1 bg-black/50 backdrop-blur-sm px-2 py-0.5 rounded-md min-w-0">
               <ParticipantName
                 participant={track.participant}
@@ -91,7 +95,7 @@ console.log(hasScreenShare,"ScreenStage Rendered",isSpeaking);
                 {capitalizeFirstLetter(type)}
               </span>
             </div>
-          </div> 
+          </div>
           {/* }  */}
 
           {/* Fullscreen button — top right, appears on hover */}

@@ -32,6 +32,7 @@ const stateConfig: Record<
 
 export function ConnectionIndicator() {
   const connectionState = useConnectionState();
+  console.log(connectionState,"connectionState")
   const config = stateConfig[connectionState] ?? stateConfig[CS.Disconnected];
   const Icon = config.icon;
 

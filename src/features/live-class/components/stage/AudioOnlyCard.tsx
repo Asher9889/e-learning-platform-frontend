@@ -28,11 +28,25 @@ function AudioBars({ className = "" ,isSpeaking}: { className?: string, isSpeaki
 
 function AudioOnlyCard({ hasScreenShare = false,isSpeaking }: AudioOnlyCardProps) {
   console.log(isSpeaking ,"isSpeakingaudio AudioOnlyCard")
+  const recordedVideoId = useAppSelector((state) => state.liveClass);
 
   const teacherIdentity = useAppSelector(
     (state) => state.liveClass.teacherIdentity
   );
-
+  console.log(recordedVideoId,"recordedVideoId")
+//  if (recordedVideoId && recordedVideoId !== null) {
+//     const fileUrl = getMaterialFileUrl("materials/content_library/videos/2d1db554-1b98-4212-b107-ff9057ccf888.mp4")
+//     console.log(fileUrl,"fileUrl")
+//     return (
+//       <video
+//         controls
+//         className="max-h-[70vh] max-w-full rounded-lg"
+//       >
+//         <source src={fileUrl} type={"video/mp4"} />
+//         Your browser does not support the video element.
+//       </video>
+//     )
+//   }
   /* ── Compact version — shown as PiP over screen share ── */
   if (hasScreenShare) {
     return (

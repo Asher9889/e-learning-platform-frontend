@@ -15,7 +15,9 @@ interface LiveClassState {
   participantRole: TUserRole | null;
   participantIdentity: string | null;
   teacherIdentity: ITeacherIdentity | null;
+  recordedVideoId: string | null;
   participantCount: number;
+  classId: string | null;
 }
 
 const initialState: LiveClassState = {
@@ -31,7 +33,9 @@ const initialState: LiveClassState = {
   participantRole: null,
   participantIdentity: null,
   teacherIdentity: null,
+  recordedVideoId:null,
   participantCount: 0,
+  classId:null
 };
 
 const liveClassSlice = createSlice({
@@ -83,6 +87,15 @@ const liveClassSlice = createSlice({
     setTeacherIdentity(state, action: PayloadAction<ITeacherIdentity>) {
       state.teacherIdentity = action.payload;
     },
+
+    setRecordedVideoId(state, action: PayloadAction<string | null>) {
+      state.recordedVideoId = action.payload;
+    },
+
+    setClassId(state, action: PayloadAction<string>) {
+      state.classId = action.payload;
+    },
+
     setParticipantCount(state, action: PayloadAction<number>) {
       state.participantCount = action.payload;
     },
@@ -106,8 +119,11 @@ export const {
   setParticipantRole,
   setParticipantIdentity,
   setTeacherIdentity,
+  setClassId,
+  setRecordedVideoId,
   setParticipantCount,
   resetClassroom,
+
   setTitle
 } = liveClassSlice.actions;
 

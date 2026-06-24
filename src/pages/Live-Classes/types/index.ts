@@ -58,7 +58,7 @@ export interface ILiveSession {
   isRecordingEnabled: boolean;
   isChatEnabled: boolean;
   isScreenShareAllowed: boolean;
-
+  recordingVideoId: string | null;
   scheduledAt: string | null;
   startedAt: string | null;
   endedAt: string | null;
@@ -67,7 +67,7 @@ export interface ILiveSession {
   updatedAt: string;
 }
 
-export interface IActiveLiveSession extends ILiveSession {}
+export interface IActiveLiveSession extends ILiveSession { }
 
 
 export interface IUpcomingLiveClassesResponse {
@@ -78,6 +78,12 @@ export interface IUpcomingLiveClassesResponse {
     total: number;
     totalPages: number;
   }
+}
+
+export interface ILiveClassesStats {
+  totalClasses: number;
+  totalHours: number;
+  avgStudents: number;
 }
 
 export interface LiveClassFilters {

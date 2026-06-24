@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarPlus, Users } from "lucide-react";
@@ -27,6 +27,9 @@ import { useGetBatches } from "@/pages/Batches/hooks/useGetBatches";
 import { mapToLabelValue } from "@/utils/helper";
 import { useStartLiveClass } from "@/pages/Live-Classes/hooks/useStartLiveClass";
 import { sileo } from "sileo";
+// import { useGetMaterials } from "@/features/content/hooks/useGetMaterials";
+import { useVideoSearch } from "#hooks/use-video-search";
+// import { set } from "zod";
 
 interface Props {
   teachersOptions: Options[];
@@ -35,6 +38,8 @@ interface Props {
 }
 
 export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, programOptions }: Props) {
+  // const [open, setOpen] = useState(false);
+  const [search] = useState("");
   const {
     register,
     handleSubmit,
@@ -48,18 +53,28 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
       description: "",
       subjectId: "",
       programId: "",
+      mode: "SCHEDULED",
       batchId: "",
       teacherId: "",
       scheduledAt: new Date().toISOString(),
       durationMinutes: 60,
       maxParticipants: 50,
-      status: "SCHEDULED",
+      status: "RECORDED",
+      recordingVideoId:"",
       isRecordingEnabled: true,
       isChatEnabled: true,
       isScreenShareAllowed: true,
     },
   });
-   const {
+
+
+
+  const { data } = useVideoSearch(search);
+
+  const selectedOption = mapToLabelValue(data?.filter((materialData) => materialData?.materialType === "VIDEO"), "title", "id") || [];;
+  console.log(selectedOption, "selecteddatadatadata 00000000000000", data)
+  const selectedMode = watch("mode");
+  const {
     mutate: startLiveClassMutation,
   } = useStartLiveClass();
   const selectedProgram = watch("programId");
@@ -75,33 +90,77 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
   useEffect(() => {
     setValue("batchId", "");
   }, [selectedProgram]);
- const onSubmit = async (data: TStartLiveClassInput) => {
-     console.log(data,"awdawdawdawdawd");
-     startLiveClassMutation({...data,status:"SCHEDULED"}, {
-     onSuccess: (response) => {
-       console.log(response);
- 
-       onSuccess?.();
-     },
- 
-     onError: (error) => {
-       console.error(error);
-      sileo.error({
-        title: "Failed to Schedule",
-        description: error.message || "An error occurred while starting the live class. Please try again.",
-    })
-     },
-   });
-   };
-console.log(errors);
+  const onSubmit = async (data: TStartLiveClassInput) => {
+    console.log(data, "awdawdawdawdawd");
+    startLiveClassMutation({ ...data, status: "SCHEDULED" }, {
+      onSuccess: (response) => {
+        console.log(response);
+
+        onSuccess?.();
+      },
+
+      onError: (error) => {
+        console.error(error);
+        sileo.error({
+          title: "Failed to Schedule",
+          description: error.message || "An error occurred while starting the live class. Please try again.",
+        })
+      },
+    });
+  };
+  console.log(errors);
   return (
     <form
       onSubmit={handleSubmit(onSubmit, (errors) => {
-      console.log("Validation Failed", errors);
-      
-    })}
+        console.log("Validation Failed", errors);
+
+      })}
       className="flex flex-col gap-4 max-h-[75vh] overflow-y-auto px-1 pb-2"
     >
+      <div className={`grid grid-cols-1 ${selectedMode === "RECORDED" ? "sm:grid-cols-2" : "sm:grid-cols-1"} gap-4`}>
+        <div className="space-y-1">
+          <Label>Class Type</Label>
+          <Select
+            onValueChange={(v) => setValue("mode", v as "SCHEDULED" | "RECORDED")}
+            defaultValue="SCHEDULED"
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select class type" />
+            </SelectTrigger>
+            <SelectContent>
+              {/* <SelectItem value="LIVE">Live Class</SelectItem> */}
+              <SelectItem value="SCHEDULED">Scheduled Class</SelectItem>
+              <SelectItem value="RECORDED">Recorded Class</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {selectedMode === "RECORDED" && (
+          <div className="space-y-1">
+            <Label>Recorded Video</Label>
+
+            <Select onValueChange={(v) => {
+              // setValue("videoUrl", v)
+              console.log(v,"adgashjdashgdjhagshdgajghsd")
+              setValue("recordingVideoId", v)
+            }}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select recorded video" />
+              </SelectTrigger>
+
+              <SelectContent>
+                {selectedOption.map((v) => (
+                  <SelectItem key={v.value} value={v.value}>
+                    <span className="block max-w-[250px] truncate">
+                      {v.label}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+      </div>
 
       {/* TITLE */}
       <div className="space-y-1">
@@ -142,8 +201,8 @@ console.log(errors);
                   !selectedProgram
                     ? "Please select program first"
                     : subjectDataOptions?.length > 0
-                    ? "Select subject"
-                    : "No Subject Found"
+                      ? "Select subject"
+                      : "No Subject Found"
                 }
               />
             </SelectTrigger>
@@ -200,8 +259,8 @@ console.log(errors);
             {!selectedProgram
               ? "Select a program to choose a batch"
               : !selectedBatch
-              ? "All students enrolled in this program can join this class."
-              : `Only students in the "${selectedBatchLabel}" batch can join this class.`}
+                ? "All students enrolled in this program can join this class."
+                : `Only students in the "${selectedBatchLabel}" batch can join this class.`}
           </p>
         </div>
       </div>

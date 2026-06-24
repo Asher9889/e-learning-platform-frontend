@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { ILiveSession } from "../../../pages/Live-Classes/types";
 import { useEffect, useState } from "react";
+import { useAppSelector } from "@/store/hooks";
 
 interface LiveClassCardProps {
   liveClass: ILiveSession;
@@ -32,6 +33,7 @@ const LiveClassCard = ({
   const isLive = variant === "LIVE";
   const isUpcoming = variant === "UPCOMING";
   const [canJoin, setCanJoin] = useState(false);
+  const myIdentity = useAppSelector((state)=> state?.auth?.user)
   const scheduledAt = liveClass.scheduledAt ? new Date(liveClass.scheduledAt) : null;
   console.log(liveClass, "liveClassliveClassliveClass")
   useEffect(() => {
@@ -39,7 +41,7 @@ const LiveClassCard = ({
 
     const enableAt =
       new Date(liveClass.scheduledAt).getTime() -
-      5 * 60 * 1000;
+      30 * 60 * 1000;
 
     const checkJoin = () => {
       setCanJoin(Date.now() >= enableAt);
@@ -164,7 +166,7 @@ const LiveClassCard = ({
         <div className="w-full flex flex-col items-center justify-center gap-2">
           {isUpcoming && onStart && (
             <>
-            <Button
+            {myIdentity?.role !== "STUDENT" && <Button
               size="sm"
               className="w-full h-8 gap-1.5 text-xs font-medium cursor-pointer"
               onClick={() => {
@@ -172,11 +174,11 @@ const LiveClassCard = ({
                 console.log("start class clicked");
                 onStart(liveClass.id);
               }}
-              disabled={!canJoin}
+              // disabled={!canJoin}
             >
               <Radio className="h-3.5 w-3.5" />
               Start Class
-            </Button>
+            </Button>}
             {!canJoin && (
             <p className="text-xs  text-muted-foreground">
               Available 5 minutes before class start
@@ -195,11 +197,11 @@ const LiveClassCard = ({
               Join Room
             </Button>
           )}
-          {!isLive && !isUpcoming && (
-            <Badge variant="secondary" className="h-8 flex-1 justify-center text-xs">
-              Ended
+          {/* {!isLive && !isUpcoming && (
+            <Badge variant="secondary" className="h-8 w-full flex-1 justify-center text-xs">
+              Marked As Completed
             </Badge>
-          )}
+          )} */}
         </div>
       </CardContent>
     </Card>

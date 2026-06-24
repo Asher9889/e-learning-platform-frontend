@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import type { ILiveSession } from "@/pages/Live-Classes/types/index";
-import { useUpcomingLiveClasses, useActiveLiveClasses, useCompletedLiveClasses, useStartLiveClass } from "./hooks/useLiveClass";
+import { useUpcomingLiveClasses, useActiveLiveClasses, useCompletedLiveClasses, useStartLiveClass, useLiveClassStats } from "./hooks/useLiveClass";
 import { queryClient } from "@/config";
 import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
@@ -18,13 +18,14 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { mapToLabelValue } from "@/lib/utils";
 import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group";
 import { CalendarDays, Radio, Video } from "lucide-react";
+import { useAppSelector } from "@/store/hooks";
 
-const dummyStats = {
-  totalClasses: 24,
-  totalStudents: 342,
-  hoursTaught: 86,
-  avgAttendance: 78,
-};
+// const dummyStats = {
+//   totalClasses: 24,
+//   totalStudents: 342,
+//   hoursTaught: 86,
+//   avgAttendance: 78,
+// };
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -63,31 +64,30 @@ function ClassGrid({ sessions, variant, onStart, onJoin }: {
 export default function LiveClassPage() {
   const navigate = useNavigate();
   const startLiveClassMutation = useStartLiveClass();
-
   const { data: teachersData } = useTeachersSummary();
   const { data: programData } = useGetPrograms();
+  const myIdentity = useAppSelector((state) => state?.auth?.user);
   const teachers = teachersData?.teachers ?? [];
   const allPrograms = programData?.programs || [];
-
   const [selectedClass, setSelectedClass] = useState<ILiveSession | null>(null);
   const [open, setOpen] = useState(false);
   const [modalType, setModalType] = useState<"live" | "schedule">("live");
   const [startModalOpen, setStartModalOpen] = useState(false);
   const [tab, setTab] = useState("live");
-
   const [upcomingFilters, setUpcomingFilters] = useState({ startDate: today(), endDate: "", page: 1 });
   const [activePage, setActivePage] = useState(1);
   const [completedPage, setCompletedPage] = useState(1);
-
   const { data: upcomingData, isLoading: upcomingLoading } = useUpcomingLiveClasses({
     page: upcomingFilters.page,
     limit: 20,
     startDate: upcomingFilters.startDate || undefined,
     endDate: upcomingFilters.endDate || undefined,
   });
+  const { data: stats, isLoading: statsLoading } = useLiveClassStats();
+console.log(stats,"stats")
   const { data: activeData, isLoading: activeLoading } = useActiveLiveClasses({ page: activePage, limit: 20 });
   const { data: completedData, isLoading: completedLoading } = useCompletedLiveClasses({ page: completedPage, limit: 20 });
-
+console.log(statsLoading,"statsLoading")
   const upcomingClasses = upcomingData?.sessions ?? [];
   const upcomingPagination = upcomingData?.pagination;
   const activeClasses = activeData?.sessions ?? [];
@@ -186,7 +186,8 @@ export default function LiveClassPage() {
       </div>
 
       {/* Stats */}
-      <LiveClassStats stats={dummyStats} />
+
+      {myIdentity?.role !== "STUDENT" &&  <LiveClassStats stats={stats} />}
 
       {/* Tabs */}
       <Tabs value={tab} onValueChange={setTab}>

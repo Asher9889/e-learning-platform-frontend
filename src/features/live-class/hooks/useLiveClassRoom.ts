@@ -9,9 +9,11 @@ import {
   setRoomName,
   setTeacherIdentity,
   addMessage,
+  setClassId,
 } from "@/features/live-class/store/liveClass.slice";
 import type { ChatMessage, ITeacherIdentity, LiveKitConnectionParams } from "@/features/live-class/types";
 import type { Room } from "livekit-client";
+
 
 interface UseLiveClassRoomReturn {
   connectionParams: LiveKitConnectionParams | null;
@@ -19,6 +21,7 @@ interface UseLiveClassRoomReturn {
   error: Error | null;
   retry: () => void;
   leaveRoom: () => void;
+  status: number | undefined;
 }
 
 export function useLiveClassRoom(room: Room, teacherIdentity?: ITeacherIdentity, roomName?: string): UseLiveClassRoomReturn {
@@ -31,9 +34,15 @@ export function useLiveClassRoom(room: Room, teacherIdentity?: ITeacherIdentity,
     queryFn: () => liveClassApi.join(roomName!),
     enabled,
     retry: false,
-    staleTime: Infinity,
+    staleTime: 0,
   });
+  
+const apiError = error as (Error & { statusCode?: number }) | null;
 
+const statusCode = apiError?.statusCode;
+
+const isErrorState = !!error;
+// console.log("Join error: error020", statusCode);
   const connectionParams = useMemo<LiveKitConnectionParams | null>(() => {
     if (!data) return null;
     return {
@@ -46,10 +55,11 @@ export function useLiveClassRoom(room: Room, teacherIdentity?: ITeacherIdentity,
   useEffect(() => {
     if (!data) return;
     const { liveKit, liveClass } = data;
-
+console.log(data,"classsc")
     dispatch(setRoomName(liveKit.roomName));
     dispatch(setParticipantIdentity(liveClass.participantId));
     dispatch(setParticipantRole(liveClass.participantRole as "TEACHER" | "STUDENT" | "ADMIN"));
+    dispatch(setClassId(liveClass.id));
     if (teacherIdentity) dispatch(setTeacherIdentity(teacherIdentity));
   }, [data, dispatch, teacherIdentity]);
 
@@ -86,8 +96,10 @@ export function useLiveClassRoom(room: Room, teacherIdentity?: ITeacherIdentity,
 
   return {
     connectionParams,
-    isJoining: !enabled || isLoading || !connectionParams,
+    isJoining:
+    !enabled || isLoading || (!connectionParams && !isErrorState),
     error: error as Error | null,
+    status: statusCode,
     retry: () => refetch(),
     leaveRoom,
   };

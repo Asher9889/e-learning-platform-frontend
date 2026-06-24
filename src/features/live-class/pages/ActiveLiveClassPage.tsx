@@ -15,8 +15,8 @@ export default function ActiveLiveClassPage() {
   const { data: liveSession } = useLiveClassByRoomName(roomName ?? "");
   const teacherIdentity = liveSession?.teacher;
 
-  const { connectionParams, isJoining, error, retry } = useLiveClassRoom(room, teacherIdentity, roomName);
-
+  const { connectionParams, isJoining, error, retry,status } = useLiveClassRoom(room, teacherIdentity, roomName);
+console.log(isJoining,"isJoining error",error)
   // console.log("roomroomroomroomroom3543434354354",room)
   if (!roomName) {
     return (
@@ -36,7 +36,7 @@ export default function ActiveLiveClassPage() {
       </div>
     );
   }
-
+console.log(error,"error020")
   if (error) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-background">
@@ -44,6 +44,7 @@ export default function ActiveLiveClassPage() {
           title="Failed to join"
           message={error.message || "Could not connect to the live class. Please try again."}
           onRetry={retry}
+          statusCode={status}
         />
       </div>
     );

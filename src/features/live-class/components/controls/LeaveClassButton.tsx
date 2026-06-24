@@ -22,8 +22,17 @@ export function LeaveClassButton() {
   const room = useRoomContext();
   const dispatch = useAppDispatch();
 
-  const handleLeave = () => {
-    room.disconnect();
+  const handleLeave = async () => {
+    console.log("Room state before: checkkkking", room.state);
+
+    try {
+      await room.disconnect();
+      console.log("Disconnected successfully checkkkking");
+    } catch (err) {
+      console.error("Disconnect failed: checkkkking", err);
+    }
+
+    console.log("Room state after:checkkkking", room.state);
     dispatch(resetClassroom());
     navigate("/live-classes");
   };

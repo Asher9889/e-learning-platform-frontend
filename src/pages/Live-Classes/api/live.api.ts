@@ -1,13 +1,14 @@
 import { apiEndPoints } from "@/config";
 import type { TStartLiveClassInput } from "../schema/live.schema";
-import type { IActiveLiveSession, IJoinLiveClassResponse, ILiveSession, IUpcomingLiveClassesResponse, LiveClassFilters } from "../types";
+import type { IActiveLiveSession, IJoinLiveClassResponse, ILiveClassesStats, ILiveSession, IUpcomingLiveClassesResponse, LiveClassFilters } from "../types";
 
 import apiRequest from "@/lib/request";
 import type { Method } from "axios";
 
-const { UPCOMING, COMPLETED, START, ACTIVE, GET_BY_ROOM_NAME, JOIN } = apiEndPoints.LIVE_CLASSES; 
+const { UPCOMING, COMPLETED, START, ACTIVE, GET_BY_ROOM_NAME, JOIN ,STATS } = apiEndPoints.LIVE_CLASSES; 
 
 export const liveClassApi = {
+  getStats: () => apiRequest<ILiveClassesStats>({url: STATS.url, method: STATS.method}),
 
   getActive: (filters?: LiveClassFilters) => apiRequest<IUpcomingLiveClassesResponse>({url: ACTIVE.url, method: ACTIVE.method, params: { ...ACTIVE.params, ...filters }}),
 

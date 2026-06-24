@@ -278,7 +278,7 @@ function MainStageNew(props: MainStageNewProps) {
       </div>
     );
   }
-
+console.log("mainStageNew111111111111")
   return (
     <div
       ref={containerRef}

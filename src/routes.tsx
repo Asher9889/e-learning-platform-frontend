@@ -55,7 +55,7 @@ export const APP_ROUTES: AppRoutes = {
     element: ProgramsPage,
     showInSidebar: true,
     group: "Academics",
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
   },
 
   batches: {
@@ -65,7 +65,7 @@ export const APP_ROUTES: AppRoutes = {
     element: BatchesPage,
     showInSidebar: true,
     group: "Academics",
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
   },
 
   subjects: {
@@ -75,7 +75,7 @@ export const APP_ROUTES: AppRoutes = {
     element: SubjectsPage,
     showInSidebar: true,
     group: "Academics",
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
   },
 
   // ── People ─────────────────────────────────────────────
@@ -86,7 +86,7 @@ export const APP_ROUTES: AppRoutes = {
     element: RouteOutlet,
     showInSidebar: true,
     group: "People",
-    roles: [USER_ROLE.ADMIN],
+    roles: [USER_ROLE.ADMIN,USER_ROLE.TEACHER],
     children: [
       {
         path: undefined,
@@ -106,7 +106,7 @@ export const APP_ROUTES: AppRoutes = {
     element: RouteOutlet,
     showInSidebar: true,
     group: "People",
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
     children: [
       {
         path: undefined,

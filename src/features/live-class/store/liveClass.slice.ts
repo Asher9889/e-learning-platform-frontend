@@ -15,6 +15,7 @@ interface LiveClassState {
   participantIdentity: string | null;
   teacherIdentity: ITeacherIdentity | null;
   participantCount: number;
+  classId: string | null;
 }
 
 const initialState: LiveClassState = {
@@ -30,6 +31,7 @@ const initialState: LiveClassState = {
   participantIdentity: null,
   teacherIdentity: null,
   participantCount: 0,
+  classId: null,
 };
  
 const liveClassSlice = createSlice({
@@ -78,6 +80,9 @@ const liveClassSlice = createSlice({
     setTeacherIdentity(state, action: PayloadAction<ITeacherIdentity>) {
       state.teacherIdentity = action.payload;  
     },
+    setClassId(state, action: PayloadAction<string>) {
+      state.classId = action.payload;
+    },
     setParticipantCount(state, action: PayloadAction<number>) {
       state.participantCount = action.payload;
     },
@@ -101,6 +106,7 @@ export const {
   setParticipantRole,
   setParticipantIdentity,
   setTeacherIdentity,
+  setClassId,
   setParticipantCount,
   resetClassroom,
 } = liveClassSlice.actions;

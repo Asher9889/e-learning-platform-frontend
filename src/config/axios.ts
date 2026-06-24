@@ -1,6 +1,15 @@
 import axios, { AxiosError } from 'axios';
 import envConfig from './envConfig';
 
+
+export class ApiError extends Error {
+  statusCode: number;
+
+  constructor(message: string, statusCode: number) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
 const api = axios.create({
   baseURL: envConfig.baseURL,
   withCredentials: true, // Important
@@ -20,7 +29,7 @@ api.interceptors.response.use(
 
     // Network/server unreachable
     if (!error.response) {
-      return Promise.reject( new Error("Server is not responding"));
+      return Promise.reject(new Error("Server is not responding"));
     }
 
     // Handle auth refresh only
@@ -48,15 +57,27 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       }
 
-      
+
     }
 
     // Normalize all other errors
     const responseData = error.response.data as { message?: string, errors?: any[], success: boolean, statusCode: number };
     console.log("Error response data:", responseData);
-    const message = responseData?.message || "Something went wrong";
-
-    return Promise.reject(new Error(message));
+    // const message =  responseData?.message || "Something went wrong";
+  
+    const errorData = {
+  message: responseData?.message,
+  statusCode: responseData.statusCode,
+}
+// const dummy = new Error(errorData)
+// console.log(message, "messagemessagemessage0147101", dummy)
+// return Promise.reject(new ApiError(errorData));
+return Promise.reject(
+  new ApiError(
+    errorData.message || "Unknown error",
+    errorData.statusCode || 500
+  )
+);
   }
 )
 
