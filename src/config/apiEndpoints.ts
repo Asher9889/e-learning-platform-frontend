@@ -297,10 +297,14 @@ const apiEndpoints = {
             url: "/assessments/generate",
             method: "POST"
         },
-        PUBLISH: {
-            url: "/assessments/publish",
+        CREATE: {
+            url: "/assessments",
             method: "POST"
-        }
+        },
+        PUBLISH: (id: string) => ({
+            url: `/assessments/${id}/publish`,
+            method: "PATCH" as Method
+        })
     }
 }
 

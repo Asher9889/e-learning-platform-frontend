@@ -18,7 +18,7 @@ export interface Question {
   explanation?: string
 }
 
-export interface PublishAssessmentPayload {
+export interface CreateAssessmentPayload {
   title: string
   instructions: string
   assessmentType: AssessmentType
@@ -34,6 +34,8 @@ export interface PublishAssessmentPayload {
   batchId?: string
   allStudents: boolean
 }
+
+export interface PublishAssessmentPayload extends CreateAssessmentPayload {}
 
 export interface AssessmentPayload {
   assessmentType: AssessmentType
@@ -52,6 +54,7 @@ export interface AssessmentApiResponse {
   statusCode: number
   message: string
   data: {
+    id: string
     title: string
     instructions: string
     assessmentType: AssessmentType
@@ -112,9 +115,10 @@ export const QUESTION_TYPE_OPTIONS: {
 }[] = [
   { value: QUESTION_TYPES.MCQ, label: "MCQ" },
   { value: QUESTION_TYPES.TRUE_FALSE, label: "True / False" },
-  { value: QUESTION_TYPES.SHORT_ANSWER, label: "Short Answer" },
-  { value: QUESTION_TYPES.LONG_ANSWER, label: "Long Answer" },
-  { value: QUESTION_TYPES.CASE_STUDY, label: "Case Study" },
+  { value: QUESTION_TYPES.QUESTION_ANSWERE, label: "Question Answer" },
+  // { value: QUESTION_TYPES.SHORT_ANSWER, label: "Short Answer" },
+  // { value: QUESTION_TYPES.LONG_ANSWER, label: "Long Answer" },
+  // { value: QUESTION_TYPES.CASE_STUDY, label: "Case Study" },
 ]
 
 export const DIFFICULTIES: Difficulty[] = ["EASY", "MEDIUM", "HARD", "MIXED"]

@@ -34,6 +34,7 @@ interface Props {
     questions: Question[]
     summary: { totalQuestions: number; totalMarks: number; estimatedMinutes: number }
   }
+  onPublished?: () => void
 }
 
 export default function PublishAssessmentDialog({
@@ -44,6 +45,7 @@ export default function PublishAssessmentDialog({
   title,
   instructions,
   assessmentResult,
+  onPublished,
 }: Props) {
   const [batchId, setBatchId] = useState("")
 
@@ -76,6 +78,7 @@ export default function PublishAssessmentDialog({
         onSuccess: () => {
           onOpenChange(false)
           setBatchId("")
+          onPublished?.()
         },
       }
     )

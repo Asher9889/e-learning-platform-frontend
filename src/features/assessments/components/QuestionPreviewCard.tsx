@@ -15,8 +15,8 @@ import {
   HelpCircle,
   CheckCircle2,
   FileText,
-  AlignLeft,
-  CaseSensitive,
+  // AlignLeft,
+  // CaseSensitive,
   Save,
   X,
   Plus,
@@ -25,17 +25,19 @@ import {
 const typeIcons: Record<string, typeof HelpCircle> = {
   [QUESTION_TYPES.MCQ]: HelpCircle,
   [QUESTION_TYPES.TRUE_FALSE]: CheckCircle2,
-  [QUESTION_TYPES.SHORT_ANSWER]: FileText,
-  [QUESTION_TYPES.LONG_ANSWER]: AlignLeft,
-  [QUESTION_TYPES.CASE_STUDY]: CaseSensitive,
+  [QUESTION_TYPES.QUESTION_ANSWERE]: FileText,
+  // [QUESTION_TYPES.SHORT_ANSWER]: FileText,
+  // [QUESTION_TYPES.LONG_ANSWER]: AlignLeft,
+  // [QUESTION_TYPES.CASE_STUDY]: CaseSensitive,
 }
 
 const typeLabels: Record<string, string> = {
   [QUESTION_TYPES.MCQ]: "MCQ",
   [QUESTION_TYPES.TRUE_FALSE]: "True / False",
-  [QUESTION_TYPES.SHORT_ANSWER]: "Short Answer",
-  [QUESTION_TYPES.LONG_ANSWER]: "Long Answer",
-  [QUESTION_TYPES.CASE_STUDY]: "Case Study",
+  [QUESTION_TYPES.QUESTION_ANSWERE]: "Question Answer",
+  // [QUESTION_TYPES.SHORT_ANSWER]: "Short Answer",
+  // [QUESTION_TYPES.LONG_ANSWER]: "Long Answer",
+  // [QUESTION_TYPES.CASE_STUDY]: "Case Study",
 }
 
 const difficultyColors: Record<string, string> = {

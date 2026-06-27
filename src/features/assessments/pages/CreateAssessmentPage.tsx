@@ -9,7 +9,8 @@ import AssessmentSummary from "../components/AssessmentSummary"
 import EmptyPreviewState from "../components/EmptyPreviewState"
 import PublishAssessmentDialog from "../components/PublishAssessmentDialog"
 import { useGenerateAssessment } from "../hooks/useGenerateAssessment"
-import type { Question, AssessmentSummary as AssessmentSummaryType } from "../types/assessment.types"
+import { useCreateAssessmentDraft } from "../hooks/useCreateAssessmentDraft"
+import type { Question, AssessmentSummary as AssessmentSummaryType, CreateAssessmentPayload } from "../types/assessment.types"
 import type { AssessmentFormData } from "../schemas/assessment.schema"
 import {
   BookOpen,
@@ -33,6 +34,7 @@ export default function CreateAssessmentPage() {
   const [publishOpen, setPublishOpen] = useState(false)
 
   const { mutateAsync: generateAssessment, isPending: isGenerating } = useGenerateAssessment()
+  const { mutateAsync: saveDraft, isPending: isSavingDraft } = useCreateAssessmentDraft()
 
   const computeSummary = useCallback((questions: Question[]): AssessmentSummaryType => ({
     totalQuestions: questions.length,
@@ -127,6 +129,36 @@ export default function CreateAssessmentPage() {
     })
     setDragIndex(index)
   }, [dragIndex, computeSummary])
+
+  const clearPreview = useCallback(() => {
+    setAssessmentResult(null)
+    setLastConfig(null)
+    setGenerationError(null)
+  }, [])
+
+  const handleSaveDraft = useCallback(async () => {
+    if (!lastConfig || !assessmentResult) return
+
+    const payload: CreateAssessmentPayload = {
+      title: assessmentResult.title,
+      instructions: assessmentResult.instructions,
+      assessmentType: lastConfig.assessmentType,
+      programId: lastConfig.programId,
+      subjectId: lastConfig.subjectId,
+      topic: lastConfig.topic,
+      difficulty: lastConfig.difficulty,
+      questionTypes: lastConfig.questionTypes,
+      questionCount: lastConfig.questionCount,
+      totalMarks: lastConfig.totalMarks || assessmentResult.summary.totalMarks,
+      additionalInstructions: lastConfig.additionalInstructions,
+      questions: assessmentResult.questions,
+      batchId: undefined,
+      allStudents: false,
+    }
+
+    await saveDraft(payload)
+    clearPreview()
+  }, [lastConfig, assessmentResult, saveDraft, clearPreview])
 
   const handleDragEnd = useCallback(() => {
     setDragIndex(null)
@@ -235,9 +267,15 @@ export default function CreateAssessmentPage() {
 
               <div className="sticky bottom-0 rounded-xl border border-border bg-card p-4 shadow-lg">
                 <div className="flex flex-wrap items-center justify-center gap-3">
-                  <Button variant="outline" size="sm" className="gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                    disabled={isSavingDraft}
+                    onClick={handleSaveDraft}
+                  >
                     <Save className="size-4" />
-                    Save Draft
+                    {isSavingDraft ? "Saving..." : "Save Draft"}
                   </Button>
                   {/* <Button
                     variant="outline"
@@ -268,6 +306,7 @@ export default function CreateAssessmentPage() {
                   assessmentResult={assessmentResult}
                   title={assessmentResult.title}
                   instructions={assessmentResult.instructions}
+                  onPublished={clearPreview}
                 />
               )}
             </>
