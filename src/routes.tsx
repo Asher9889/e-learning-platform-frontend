@@ -27,6 +27,7 @@ import {
   Trash2,
   Layers,
   Book,
+  UserCheck,
 } from "lucide-react";
 import { USER_ROLE } from "@/constants/user/user.constant";
 import RouteOutlet from "./routeOutlet";
@@ -36,6 +37,7 @@ import ActiveLiveClassPage from "@/features/live-class/pages/ActiveLiveClassPage
 import DashboardPage from "./pages/Dashboard";
 import ContentPage from "./pages/Content";
 import UploadMetadataPage from "./pages/Content/UploadMetadata";
+import AdmissionsPage from "./pages/Admissions";
 
 export const APP_ROUTES: AppRoutes = {
   dashboard: {
@@ -97,6 +99,16 @@ export const APP_ROUTES: AppRoutes = {
         element: AddTeacher,
       },
     ],
+  },
+
+   admissions: {
+    title: "Admissions",
+    path: "/admissions",
+    icon: UserCheck,
+    element: AdmissionsPage,
+    showInSidebar: true,
+    group: "People",
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
   },
 
   students: {

@@ -57,7 +57,7 @@ export function StudentFilters({
           <div className="w-full sm:w-[180px] space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground">Program</label>
             <Select value={programId} onValueChange={onProgramChange}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Programs" />
               </SelectTrigger>
               <SelectContent>
@@ -71,7 +71,7 @@ export function StudentFilters({
           <div className="w-full sm:w-[180px] space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground">Batch</label>
             <Select value={batchId} onValueChange={onBatchChange} disabled={!programId}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder={programId ? "Select Batch" : "Select Program first"} />
               </SelectTrigger>
               <SelectContent>
@@ -85,7 +85,7 @@ export function StudentFilters({
           <div className="w-full sm:w-[150px] space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground">Status</label>
             <Select value={status} onValueChange={onStatusChange}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>

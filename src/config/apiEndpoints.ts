@@ -84,7 +84,7 @@ const apiEndpoints = {
             method: "GET" as Method,
             params: { status: "COMPLETED" }
         },
-        STATS : {
+        STATS: {
             url: "/live-classes/stats",
             method: "GET" as Method
         },
@@ -295,7 +295,13 @@ const apiEndpoints = {
             url: "/uploads/materials/s3/multipart/list-parts",
             method: "POST"
         }
-    }
+    },
+    ADMISSIONS: {
+        LIST: { url: "/admission", method: "GET" },
+        GET: { url: "/admissions/:id", method: "GET" },
+        UPDATE_STATUS: { url: "/admission/:id/status", method: "PATCH" },
+        ASSIGN_BATCH: { url: "/admission/assign-batch",  method: "POST" },
+    },
 }
 
 export default apiEndpoints;
