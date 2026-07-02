@@ -28,6 +28,7 @@ import {
   Layers,
   Book,
   UserCheck,
+  Group,
 } from "lucide-react";
 import { USER_ROLE } from "@/constants/user/user.constant";
 import RouteOutlet from "./routeOutlet";
@@ -38,6 +39,8 @@ import DashboardPage from "./pages/Dashboard";
 import ContentPage from "./pages/Content";
 import UploadMetadataPage from "./pages/Content/UploadMetadata";
 import AdmissionsPage from "./pages/Admissions";
+import { GroupStudyPage } from "./features/group-study";
+import { GroupStudyRoomPage } from "./features/group-study/room/GroupStudyRoomPage";
 
 export const APP_ROUTES: AppRoutes = {
   dashboard: {
@@ -162,6 +165,26 @@ export const APP_ROUTES: AppRoutes = {
       {
         path: ":roomName/class-room",
         element: ActiveLiveClassPage,
+      }
+    ]
+  },
+  groupStudy: {
+    title: "Group Study",
+    path: "/group-study",
+    icon: Group,
+    // element: GroupStudyPage ,
+    element: RouteOutlet,
+    showInSidebar: true,
+    group: "Teaching",
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+    children: [
+       {
+        path: undefined,
+        element: GroupStudyPage,
+      },
+      {
+        path: "room/:roomName",
+        element: GroupStudyRoomPage,
       }
     ]
   },

@@ -21,3 +21,15 @@ input:-webkit-autofill:active {
   transform: scale(1.03);
   box-shadow: 0 0 25px rgba(34, 197, 94, 0.25);
 }
+
+
+.excalidraw .App-menu_top .dropdown-menu-button {
+  display: none !important;
+}
+
+.excalidraw .sidebar-trigger__label-element {
+  display: none !important;
+}
+.excalidraw .layer-ui__wrapper__footer-right {
+  display: none !important;
+}

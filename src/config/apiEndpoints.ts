@@ -14,6 +14,7 @@ const apiEndpoints = {
             url: "/auth/logout",
             method: "POST"
         },
+
     },
 
     USERS: {
@@ -27,6 +28,10 @@ const apiEndpoints = {
         },
         LIST_STUDENTS: {
             url: "/users/students",
+            method: 'GET'
+        },
+        GET_PROGRAM_STUDENTS: {
+            url: "/users/students/by-batch",
             method: 'GET'
         },
         GET_STUDENT: (id: string) => ({
@@ -64,6 +69,10 @@ const apiEndpoints = {
         SUMMARY_TEACHERS: {
             url: "/users/teachers/summary",
             method: 'GET'
+        },
+        ADD_FCM_TOKEN: {
+            url: "/users/fcm-token",
+            method: 'POST'
         }
 
     },
@@ -300,8 +309,44 @@ const apiEndpoints = {
         LIST: { url: "/admission", method: "GET" },
         GET: { url: "/admissions/:id", method: "GET" },
         UPDATE_STATUS: { url: "/admission/:id/status", method: "PATCH" },
-        ASSIGN_BATCH: { url: "/admission/assign-batch",  method: "POST" },
+        ASSIGN_BATCH: { url: "/admission/assign-batch", method: "POST" },
     },
+    NOTIFICATION: {
+        GET_ALL: {
+            url: "/notification",
+            method: "GET"
+        },
+
+        GET_BY_ID: {
+            url: "/notification",
+            method: "GET"
+        },
+
+        GET_UNREAD_COUNT: {
+            url: "/notification/unread-count",
+            method: "GET"
+        },
+
+        MARK_AS_READ: {
+            url: "/notification",
+            method: "PATCH"
+        },
+
+        MARK_ALL_AS_READ: {
+            url: "/notification/read-all",
+            method: "PATCH"
+        },
+
+        DELETE: {
+            url: "/notification",
+            method: "DELETE"
+        },
+
+        DELETE_ALL: {
+            url: "/notification",
+            method: "DELETE"
+        }
+    }
 }
 
 export default apiEndpoints;

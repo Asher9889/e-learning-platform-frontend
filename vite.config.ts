@@ -12,6 +12,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+   include: ["@excalidraw/excalidraw", "es6-promise-pool"],
+  },
   server : {
     allowedHosts: ["7b0f-2401-4900-bde9-8839-c811-6bb9-e70-a6da.ngrok-free.app"]
   }

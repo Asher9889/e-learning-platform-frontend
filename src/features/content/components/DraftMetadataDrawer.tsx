@@ -77,11 +77,25 @@ export function DraftMetadataDrawer({
     onOpenChange(false);
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     if (!validate(true) || !material) return;
-    onSaveDraft(material.id, { title: title.trim(), description: description.trim() || undefined, programId, subjectId });
-    onPublish(material.id);
+    // onSaveDraft(material.id, { title: title.trim(), description: description.trim() || undefined, programId, subjectId });
+    // onPublish(material.id);
+    // onOpenChange(false);
+     try {
+  await onSaveDraft(material.id, {
+      title: title.trim(),
+      description: description.trim() || undefined,
+      programId,
+      subjectId,
+    });
+
+    await onPublish(material.id);
     onOpenChange(false);
+  } catch (error) {
+    console.error("Failed to save draft before publishing:", error);
+    // Yahan toast/error bhi dikha sakte ho
+  }
   };
 
   const handleDelete = () => {

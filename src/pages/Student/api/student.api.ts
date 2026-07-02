@@ -11,6 +11,7 @@ import type {
   StudentFilters,
   UpdateStudentStatusInput,
   BulkUpdateStatusInput,
+  ProgramStudentsListResponse,
 } from "../schema/student.schema";
 
 export async function createStudent(studentData: StudentEnrollFormOutput) {
@@ -21,6 +22,8 @@ export async function createStudent(studentData: StudentEnrollFormOutput) {
   const res = await api.request({ url, method, data: studentData });
   return res.data;
 }
+
+
 
 export async function getStudents(filters?: StudentFilters) {
   const { url, method } = apiEndPoints.USERS.LIST_STUDENTS;
@@ -37,6 +40,20 @@ export async function getStudent(id: string) {
   const res = await api.request<SingleStudentResponse>({ url, method });
   return res as unknown as SingleStudentResponse;
 }
+
+export async function getProgramStudents(batchId: string) {
+  const { url, method } = apiEndPoints.USERS.GET_PROGRAM_STUDENTS;
+
+  const res = await api.request<ProgramStudentsListResponse>({
+    url: `${url}/${batchId}`,
+    method,
+  });
+
+  console.log(res.data,"getprogram  231321321321student",res)
+  return res.data;
+}
+
+
 
 export async function updateStudent(id: string, data: Record<string, unknown>) {
   const { url, method } = apiEndPoints.USERS.UPDATE_STUDENT(id);

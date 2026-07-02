@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import {
   Search,
-  Bell,
   CalendarDays,
   Clock,
   ChevronDown,
@@ -27,6 +26,7 @@ import {
   FileText,
 } from "lucide-react";
 import { cn } from "#lib/utils";
+import NotificationPopover from "#components/notification/NotificationPopover";
 
 interface RouteNode {
   label: string;
@@ -286,15 +286,63 @@ const AppHeader = ({
         />
 
         {/* Notifications */}
-        <Button
+        {/* <Button
           variant="ghost"
           size="icon"
+          onClick={() => setShowNotification(!showNotification)}
           className="relative h-9 w-9 rounded-xl border border-transparent transition-all hover:border-border hover:bg-muted/60"
         >
           <Bell className="h-[18px] w-[18px]" />
 
           <span className="absolute right-2 top-2 h-2 w-2 animate-pulse rounded-full bg-primary ring-2 ring-background" />
-        </Button>
+        </Button> */}
+    <NotificationPopover />
+        {/* <Popover>
+  <PopoverTrigger asChild>
+    <Button
+      variant="ghost"
+      size="icon"
+      className="relative h-9 w-9 rounded-xl border border-transparent hover:border-border hover:bg-muted/60"
+    >
+      <Bell className="h-[18px] w-[18px]" />
+
+      <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary ring-2 ring-background animate-pulse" />
+    </Button>
+  </PopoverTrigger>
+
+  <PopoverContent
+    align="end"
+    className="w-96 p-0"
+  >
+    <div className="border-b p-4">
+      <h3 className="font-semibold">
+        Notifications
+      </h3>
+    </div>
+
+    <div className="max-h-96 overflow-y-auto">
+      <div className="border-b p-4">
+        <p className="font-medium">
+          Assignment Submitted
+        </p>
+
+        <p className="text-sm text-muted-foreground">
+          Rahul submitted Java Assignment.
+        </p>
+      </div>
+
+      <div className="border-b p-4">
+        <p className="font-medium">
+          New Course Added
+        </p>
+
+        <p className="text-sm text-muted-foreground">
+          React Advanced course is now available.
+        </p>
+      </div>
+    </div>
+  </PopoverContent>
+</Popover> */}
       </div>
     </header>
   );

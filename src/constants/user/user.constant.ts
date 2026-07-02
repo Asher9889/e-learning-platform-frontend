@@ -30,13 +30,14 @@ interface ITeacherRoleInfo {
   qualification: string;
   specialization: string;
   experienceYears: number;
+  batchId?: string;
   joiningDate: string;
   bio?: string;
 }
 export interface IStudentRoleInfo {
   rollNumber: string;
   programId: string;
-  batch: string;
+  batchId: string;
   admissionDate: string;
   guardianName: string;
   guardianPhoneNumber: string;

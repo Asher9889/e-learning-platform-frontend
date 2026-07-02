@@ -54,8 +54,8 @@ export default function ContentPage() {
     limit,
   });
   const { data: statsData } = useMaterialsStats();
-  const { mutate: updateMaterial } = useUpdateMaterial();
-  const { mutate: publishMaterial } = usePublishMaterial();
+  const { mutateAsync: updateMaterial } = useUpdateMaterial();
+  const { mutateAsync: publishMaterial } = usePublishMaterial();
   const { mutate: deleteMaterial } = useDeleteMaterial();
   const { mutate: restoreMaterial } = useRestoreMaterial();
 
@@ -91,11 +91,19 @@ export default function ContentPage() {
   }, []);
 
   const handleSaveDraft = useCallback(
-    (id: string, data: { title: string; description?: string; programId?: string; subjectId?: string }) => {
-      updateMaterial({ id, data });
-    },
-    [updateMaterial]
-  );
+  async (
+    id: string,
+    data: {
+      title: string;
+      description?: string;
+      programId?: string;
+      subjectId?: string;
+    }
+  ) => {
+    await updateMaterial({ id, data });
+  },
+  [updateMaterial]
+);
 
   return (
     <div className="space-y-6 p-4 md:p-6">

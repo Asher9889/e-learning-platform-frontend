@@ -4,10 +4,12 @@ import { router } from './routes';
 import { useAppSelector } from './store/hooks';
 import SplashScreen from '#components/common/SplashScreen';
 import { useBootstrap } from './bootstrap/useBootStrap';
+import { useFcm } from '#hooks/use-fcm';
 
 function App() {
 
   useBootstrap();
+    useFcm();
 
   const status = useAppSelector(state => state.auth.status);
 

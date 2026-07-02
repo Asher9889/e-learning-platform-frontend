@@ -127,6 +127,16 @@ export type StudentsListResponse = {
   };
 };
 
+export type ProgramStudentsListResponse = {
+  // success: boolean;
+  // statusCode: number;
+  // message: string;
+  // data: {
+    students: StudentDataFromApi[];
+  // };
+   
+};
+
 export type StudentStatsResponse = {
   success: boolean;
   statusCode: number;
