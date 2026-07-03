@@ -16,7 +16,6 @@ const apiEndpoints = {
         },
 
     },
-
     USERS: {
         ADD_TEACHER: {
             url: "/users/teachers",
@@ -311,6 +310,21 @@ const apiEndpoints = {
         UPDATE_STATUS: { url: "/admission/:id/status", method: "PATCH" },
         ASSIGN_BATCH: { url: "/admission/assign-batch", method: "POST" },
     },
+
+    ASSESSMENTS: {
+        GENERATE: {
+            url: "/assessments/generate",
+            method: "POST"
+        },
+        CREATE: {
+            url: "/assessments",
+            method: "POST"
+        },
+        PUBLISH: (id: string) => ({
+            url: `/assessments/${id}/publish`,
+            method: "PATCH" as Method
+        })
+    },
     NOTIFICATION: {
         GET_ALL: {
             url: "/notification",
@@ -345,7 +359,7 @@ const apiEndpoints = {
         DELETE_ALL: {
             url: "/notification",
             method: "DELETE"
-        }
+        },
     }
 }
 
