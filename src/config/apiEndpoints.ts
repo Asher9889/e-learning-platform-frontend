@@ -165,6 +165,7 @@ const apiEndpoints = {
             method: 'DELETE'
         },
     },
+
     GRADES: {
         CREATE_GRADE: {
             url: "/grades",
@@ -183,6 +184,7 @@ const apiEndpoints = {
             method: "DELETE"
         }
     },
+
     SUBJECTS: {
         LIST: {
             url: "/subjects",
@@ -205,6 +207,7 @@ const apiEndpoints = {
             method: "DELETE" as Method
         }
     },
+
     BATCHES: {
         LIST: {
             url: "/batches",
@@ -227,6 +230,7 @@ const apiEndpoints = {
             method: "DELETE" as Method
         }
     },
+
     PROGRAMS: {
         LIST: {
             url: "/programs",
@@ -249,6 +253,7 @@ const apiEndpoints = {
             method: "DELETE" as Method
         }
     },
+
     MATERIALS: {
         LIST: {
             url: "/materials",
@@ -283,6 +288,7 @@ const apiEndpoints = {
             method: "POST" as Method
         }
     },
+
     UPLOADS: {
         CREATE_MULTIPART_UPLOAD: {
             url: "/uploads/materials/s3/multipart/create",
@@ -305,12 +311,14 @@ const apiEndpoints = {
             method: "POST"
         }
     },
+
     ADMISSIONS: {
         LIST: { url: "/admission", method: "GET" },
         GET: { url: "/admissions/:id", method: "GET" },
         UPDATE_STATUS: { url: "/admission/:id/status", method: "PATCH" },
         ASSIGN_BATCH: { url: "/admission/assign-batch", method: "POST" },
     },
+
     NOTIFICATION: {
         GET_ALL: {
             url: "/notification",
@@ -346,6 +354,25 @@ const apiEndpoints = {
             url: "/notification",
             method: "DELETE"
         }
+    },
+
+    DASHBOARD :{
+        STATS: {
+            url: "/dashboard/stats",
+            method: "GET"
+        },
+        RECENT_CONTENTS: {
+            url: "/dashboard/contents",
+            method: "GET"
+        },
+        RECENT_LIVE_CLASSES: {
+            url: "/dashboard/live-classes",
+            method: "GET"
+        },
+        RECENT_GROUP_STUDIES: {
+            url: "/dashboard/group-studies",
+            method: "GET"
+        }   
     }
 }
 

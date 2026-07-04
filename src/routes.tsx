@@ -41,6 +41,7 @@ import UploadMetadataPage from "./pages/Content/UploadMetadata";
 import AdmissionsPage from "./pages/Admissions";
 import { GroupStudyPage } from "./features/group-study";
 import { GroupStudyRoomPage } from "./features/group-study/room/GroupStudyRoomPage";
+import { ProfilePage } from "./pages/Profile";
 
 export const APP_ROUTES: AppRoutes = {
   dashboard: {
@@ -112,6 +113,14 @@ export const APP_ROUTES: AppRoutes = {
     showInSidebar: true,
     group: "People",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
+  },
+   profile: {
+    title: "Profile",
+    path: "/profile",
+    icon: UserCheck,
+    element: ProfilePage,
+    showInSidebar: false,
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER ,USER_ROLE.STUDENT],
   },
 
   students: {

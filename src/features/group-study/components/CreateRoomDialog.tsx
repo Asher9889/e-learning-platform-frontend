@@ -32,7 +32,7 @@ export function CreateRoomDialog({
 }: CreateRoomDialogProps) {
   const [open, setOpen] = useState(false);
   const { mutate: createRoom, isPending } = useCreateGroupStudyRoom();
-
+console.log(studentOptions,"studentOptionsstudentOptions multiselect")
   const {
     register,
     handleSubmit,
@@ -61,7 +61,7 @@ export function CreateRoomDialog({
       },
     });
   };
-
+console.log(watch("memberIds"),"toggleOption memberIds")
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -109,9 +109,14 @@ export function CreateRoomDialog({
               options={studentOptions}
               value={watch("memberIds")}
               onChange={(value) =>
-                setValue("memberIds", value, {
+
+               {
+                console.log(value,"memberIdsmemberIdsmemberIdsmemberIdsmemberIds MultiSelect") 
+
+                 setValue("memberIds", value, {
                   shouldValidate: true,
                 })
+              }
               }
               placeholder="Select students..."
             />

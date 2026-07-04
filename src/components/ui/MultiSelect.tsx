@@ -43,6 +43,8 @@ export function MultiSelect({
   const [open, setOpen] = React.useState(false);
 
   const toggleOption = (optionValue: string) => {
+
+    console.log(optionValue,"optionValue")
     if (value.includes(optionValue)) {
       onChange(value.filter((v) => v !== optionValue));
     } else {
@@ -59,7 +61,7 @@ export function MultiSelect({
   );
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={true}>
       <PopoverTrigger asChild>
         <Button
           type="button"
@@ -73,8 +75,8 @@ export function MultiSelect({
               selectedOptions.map((option) => (
                 <Badge
                   key={option.value}
-                  variant="secondary"
-                  className="flex items-center gap-1"
+                    variant="secondary"
+                  className="flex items-center gap-1 !bg-[#000000] !text-white"
                 >
                   {option.label}
 
@@ -115,7 +117,11 @@ export function MultiSelect({
                   <CommandItem
                     key={option.value}
                     value={option.label}
-                    onSelect={() => toggleOption(option.value)}
+                    onSelect={() => {
+                      console.log("toggleOption optionValue")
+                      toggleOption(option.value)
+                    }}
+                     onClick={() => console.log(" toggleOption  clicked")}
                   >
                     <Check
                       className={cn(

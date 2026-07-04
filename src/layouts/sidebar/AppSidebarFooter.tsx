@@ -24,6 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "#components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "#lib/utils";
 import { useAppSelector } from "@/store/hooks";
+import { useNavigate } from "react-router-dom";
 
 interface AppSidebarFooterProps {
   className?: string;
@@ -31,7 +32,7 @@ interface AppSidebarFooterProps {
 }
 
 const AppSidebarFooter = ({ className, logout }: AppSidebarFooterProps) => {
-
+  const  navigate = useNavigate();
 
   // const user = {
   //   name: "Alex Morgan",
@@ -113,7 +114,7 @@ const AppSidebarFooter = ({ className, logout }: AppSidebarFooterProps) => {
                   Account
                 </DropdownMenuLabel>
                 
-                <DropdownMenuItem className="gap-2.5 rounded-lg px-2 py-2 text-sm cursor-pointer">
+                <DropdownMenuItem className="gap-2.5 rounded-lg px-2 py-2 text-sm cursor-pointer" onClick={() => navigate("/profile") }>
                   <User className="h-4 w-4 text-muted-foreground" />
                   Profile
                 </DropdownMenuItem>

@@ -60,7 +60,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
       durationMinutes: 60,
       maxParticipants: 50,
       status: "RECORDED",
-      recordingVideoId:"",
+      recordingVideoId: "",
       isRecordingEnabled: true,
       isChatEnabled: true,
       isScreenShareAllowed: true,
@@ -95,7 +95,10 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
     startLiveClassMutation({ ...data, status: "SCHEDULED" }, {
       onSuccess: (response) => {
         console.log(response);
-
+        sileo.success({
+          title: "Class created successfully",
+          description: `Your scheduled class "${response.title}" has been created successfully.`,
+        })
         onSuccess?.();
       },
 
@@ -141,7 +144,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
 
             <Select onValueChange={(v) => {
               // setValue("videoUrl", v)
-              console.log(v,"adgashjdashgdjhagshdgajghsd")
+              console.log(v, "adgashjdashgdjhagshdgajghsd")
               setValue("recordingVideoId", v)
             }}>
               <SelectTrigger className="w-full">
