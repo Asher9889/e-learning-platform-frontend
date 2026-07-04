@@ -36,19 +36,19 @@ export function TeacherInfoCard({
         value={roleInfo.qualification}
       />
 
-      <InfoRow
+     {roleInfo?.experience && <InfoRow
         label="Experience"
         value={`${roleInfo.experience} Years`}
-      />
+      />}
 
-      <InfoRow
+    {roleInfo.joiningDate &&  <InfoRow
         label="Joining Date"
         value={formatDate(roleInfo.joiningDate)}
       />
-
+}
       <InfoRow
         label="Subjects"
-        value={roleInfo.subjects.join(", ")}
+        value={roleInfo?.subjects?.join(", ")}
       />
     </SectionCard>
   );
