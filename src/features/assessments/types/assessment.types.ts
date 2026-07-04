@@ -66,7 +66,7 @@ export interface AssessmentApiResponse {
     questionCount: number
     totalMarks: number
     additionalInstructions: string
-    status: "DRAFT" | "PUBLISHED"
+    status: "DRAFT" | "PUBLISHED" | "QUESTION-PAPER"
     createdBy: string
     questions: Question[]
   }

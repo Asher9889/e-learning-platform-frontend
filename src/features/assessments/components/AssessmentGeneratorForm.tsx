@@ -73,7 +73,7 @@ export default function AssessmentGeneratorForm({
   const subjects = subjectsData?.subjects ?? []
 
   const handleFormSubmit = (data: AssessmentFormData) => {
-    console.log("Form Data:", data)
+    console.log("Form Data:000000", data)
     onSubmit(data)
   } 
 
@@ -87,12 +87,18 @@ export default function AssessmentGeneratorForm({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit,(error) => {
+          console.log("Form Errors:", error)
+        })} className="space-y-6">
 
           <div className="space-y-2">
             <AssessmentTypeSelector
               value={assessmentType}
-              onValueChange={(v) => setValue("assessmentType", v, { shouldValidate: true })}
+              onValueChange={(v) => {
+
+                console.log("Assessment Type Changed:", v)
+                setValue("assessmentType", v, { shouldValidate: true })
+              }}
               error={errors.assessmentType?.message}
             />
           </div>

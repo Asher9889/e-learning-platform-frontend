@@ -332,6 +332,28 @@ const apiEndpoints = {
             method: "PATCH" as Method
         })
     },
+    ASSIGNMENT:{
+        LIST: {
+            url: "/assignments",
+            method: "GET"
+        },
+        GET: (id: string) => ({
+            url: `/assignments/${id}`,
+            method: "GET"
+        }),
+        CREATE: {
+            url: "/assignments",
+            method: "POST"
+        },
+        UPDATE: (id: string) => ({
+            url: `/assignments/${id}`,
+            method: "PATCH"
+        }),
+        PUBLISH: (id: string) => ({
+            url: `/assignments/${id}/publish`,
+            method: "PATCH"
+        })
+    },
     NOTIFICATION: {
         GET_ALL: {
             url: "/notification",
