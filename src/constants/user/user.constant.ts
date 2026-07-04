@@ -26,7 +26,7 @@ export type TUserRole = typeof USER_ROLE[keyof typeof USER_ROLE];
 
 // Role-specific information interfaces
 // interface IAdminRoleInfo { }
-interface ITeacherRoleInfo {
+export interface ITeacherRoleInfo {
   qualification: string;
   specialization: string;
   experienceYears: number;

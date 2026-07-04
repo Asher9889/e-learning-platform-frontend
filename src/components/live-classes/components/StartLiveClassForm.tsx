@@ -50,6 +50,7 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
       subjectId: "",
       programId: "",
       batchId: "",
+      mode: "LIVE",
       teacherId: "",
       durationMinutes: 60,
       status: "LIVE",
@@ -58,11 +59,11 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
       isChatEnabled: true,
       isScreenShareAllowed: true,
     },
-    
+
   });
   const {
-  mutate: startLiveClassMutation,
-} = useStartLiveClass();
+    mutate: startLiveClassMutation,
+  } = useStartLiveClass();
   const selectedProgram = watch("programId");
   const selectedBatch = watch("batchId");
   const { data: subjectsData } = useGetSubjects(selectedProgram);
@@ -78,27 +79,33 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
   }, [selectedProgram]);
 
   const onSubmit = async (data: TStartLiveClassInput) => {
-    console.log(data);
-    startLiveClassMutation({...data,status:"LIVE"}, {
-    onSuccess: (response) => {
-      console.log(response);
+    console.log(data, "onSubmit abcdefg");
+    startLiveClassMutation({ ...data, status: "LIVE" }, {
+      onSuccess: (response) => {
+        sileo.success({
+          title: "Class created successfully",
+          description: `You can now join the ${response.title} session and start teaching.`,
+        })
+        onSuccess?.();
+      },
 
-      onSuccess?.();
-    },
-
-    onError: (error) => {
-      console.error(error);
-       sileo.error({
-        title: "Failed to Start",
-        description: error.message || "An error occurred while starting the live class. Please try again.",
-    })
-    },
-  });
+      onError: (error) => {
+        console.error(error);
+        sileo.error({
+          title: "Failed to Start",
+          description: error.message || "An error occurred while starting the live class. Please try again.",
+        })
+      },
+    });
   };
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, (errors, data) => {
+        console.log("Validation Failed abcdefg", errors);
+        console.log("Form Data data abcdefg", data);
+
+      })}
       className="flex flex-col gap-4 max-h-[75vh] overflow-y-auto px-1 pb-2"
     >
 
@@ -143,7 +150,7 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
                 placeholder={
                   !selectedProgram
                     ? "Please select program first"
-                    :  subjectDataOptions?.length > 0 ? "Select subject" :  "No Subject Found"
+                    : subjectDataOptions?.length > 0 ? "Select subject" : "No Subject Found"
                 }
               />
             </SelectTrigger>
@@ -207,8 +214,8 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
             {!selectedProgram
               ? "Select a program to choose a batch"
               : !selectedBatch
-              ? "All students enrolled in this program can join this class."
-              : `Only students in the "${selectedBatchLabel}" batch can join this class.`}
+                ? "All students enrolled in this program can join this class."
+                : `Only students in the "${selectedBatchLabel}" batch can join this class.`}
           </p>
         </div>
       </div>
