@@ -32,11 +32,6 @@ export function RaiseHandButton() {
       // fallback silently
       console.log("button clicked error",error);
     }
-
-    console.log(
-      "My Attributes:",
-      room.localParticipant.attributes
-    );
   };
 
   return (

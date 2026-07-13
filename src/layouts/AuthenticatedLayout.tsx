@@ -5,10 +5,19 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./sidebar/AppSidebar";
 import AppHeader from "./header/AppHeader";
 import { UploadManager } from "@/features/upload/components/UploadManager";
+import { useEffect } from "react";
 
 export default function AuthenticatedLayout() {
   const { pathname } = useLocation();
   const isClassRoomPage = /^\/live-classes\/[^/]+\/class-room$/.test(pathname);
+   useEffect(() => {
+  const id = setInterval(() => {
+    if (document.body.style.pointerEvents === "none") {
+      document.body.style.pointerEvents = "";
+    }
+  }, 200);
+  return () => clearInterval(id);
+}, []);
   return (
     <SidebarProvider>
       {!isClassRoomPage && <AppSidebar />}

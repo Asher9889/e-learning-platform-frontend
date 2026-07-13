@@ -140,8 +140,9 @@ console.log(subjectData,"subjectData")
                   onValueChange={(value) =>
                     setValue("programId", value, { shouldValidate: true })
                   }
+                  disabled={isEditing}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a program" />
                   </SelectTrigger>
                   <SelectContent>

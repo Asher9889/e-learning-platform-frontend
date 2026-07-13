@@ -48,7 +48,13 @@ import { GroupStudyPage } from "./features/group-study";
 import { GroupStudyRoomPage } from "./features/group-study/room/GroupStudyRoomPage";
 import { ProfilePage } from "./pages/Profile";
 
-import CreateAssessmentPage from "./pages/Assessments";
+import Assignment from "./pages/Assignment";
+import AttemptQuestionPaper from "#components/Assignment/AttemptQuestionPaper";
+import QuestionPaperResult from "#components/Assignment/QuestionPaperResult";
+import ScoreBoardPage from "./pages/ScoreBoard";
+import AssessmentsPage from "./pages/Assessments";
+import CreateAssessmentPage from "./features/assessments/pages/CreateAssessmentPage";
+
 
 
 export const APP_ROUTES: AppRoutes = {
@@ -100,7 +106,7 @@ export const APP_ROUTES: AppRoutes = {
     element: RouteOutlet,
     showInSidebar: true,
     group: "People",
-    roles: [USER_ROLE.ADMIN,USER_ROLE.TEACHER],
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
     children: [
       {
         path: undefined,
@@ -113,7 +119,7 @@ export const APP_ROUTES: AppRoutes = {
     ],
   },
 
-   admissions: {
+  admissions: {
     title: "Admissions",
     path: "/admissions",
     icon: UserCheck,
@@ -122,13 +128,13 @@ export const APP_ROUTES: AppRoutes = {
     group: "People",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
   },
-   profile: {
+  profile: {
     title: "Profile",
     path: "/profile",
     icon: UserCheck,
     element: ProfilePage,
     showInSidebar: false,
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER ,USER_ROLE.STUDENT],
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
   },
 
   students: {
@@ -175,7 +181,7 @@ export const APP_ROUTES: AppRoutes = {
     group: "Teaching",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
     children: [
-       {
+      {
         path: undefined,
         element: LiveClassPage,
       },
@@ -193,9 +199,9 @@ export const APP_ROUTES: AppRoutes = {
     element: RouteOutlet,
     showInSidebar: true,
     group: "Teaching",
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+    roles: [ USER_ROLE.STUDENT],
     children: [
-       {
+      {
         path: undefined,
         element: GroupStudyPage,
       },
@@ -205,25 +211,55 @@ export const APP_ROUTES: AppRoutes = {
       }
     ]
   },
-
-  assignments: {
-    title: "Assignments",
-    path: "/assignments",
-    icon: ClipboardCheck,
-    element: () => <div>Assignments</div>,
+ScoreBoard: {
+    title: "Score Board",
+    path: "/score-board",
+    icon: BookOpen,
+    element:ScoreBoardPage,
     showInSidebar: true,
     group: "Teaching",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
   },
+  assignments: {
+    title: "Assignments",
+    path: "/assignments",
+    icon: ClipboardCheck,
+    // element: () => <Assignment />,
+    element: RouteOutlet,
+    showInSidebar: true,
+    group: "Teaching",
+    roles: [ USER_ROLE.STUDENT],
+    children: [
+      {
+        path: undefined,
+        element: Assignment,
+      },
+      {
+        path: ":id",
+        element: AttemptQuestionPaper,
+      },
+      {
+        path: ":id/result",
+        element: QuestionPaperResult,
+      },
+
+    ]
+  },
+
+
 
   createAssessment: {
     title: "Create Assessment",
-    path: "/assessments/create",
+    path: "/assessments",
     icon: Sparkles,
-    element: CreateAssessmentPage,
+    element: RouteOutlet,
     showInSidebar: true,
     group: "Teaching",
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
+    children: [
+      { path: undefined, element: AssessmentsPage },
+      { path: "create", element: CreateAssessmentPage },
+    ],
   },
 
   // ── Learning Content ──────────────────────────────────
@@ -234,7 +270,7 @@ export const APP_ROUTES: AppRoutes = {
     element: RouteOutlet,
     showInSidebar: true,
     group: "Learning Content",
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER,USER_ROLE.STUDENT],
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
     children: [
       { path: undefined, element: ContentPage },
       { path: "upload/metadata", element: UploadMetadataPage },
@@ -248,7 +284,7 @@ export const APP_ROUTES: AppRoutes = {
     element: () => <div className="p-6"><h1 className="text-2xl font-bold">Categories</h1></div>,
     showInSidebar: true,
     group: "Learning Content",
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER,USER_ROLE.STUDENT],
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
   },
 
   contentTrash: {

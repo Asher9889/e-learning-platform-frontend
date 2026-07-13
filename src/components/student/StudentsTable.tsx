@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {  useState } from "react";
 import {
   Table,
   TableBody,
@@ -72,6 +72,8 @@ export function StudentsTable({
 
   const allSelected = students.length > 0 && selected.size === students.length;
 
+
+ 
   const toggleAll = () => {
     if (allSelected) {
       setSelected(new Set());
@@ -212,13 +214,12 @@ export function StudentsTable({
                       className="font-medium text-xs"
                     >
                       <span
-                        className={`inline-block w-1.5 h-1.5 rounded-full mr-1.5 ${
-                          student.status === "ACTIVE"
+                        className={`inline-block w-1.5 h-1.5 rounded-full mr-1.5 ${student.status === "ACTIVE"
                             ? "bg-green-400"
                             : student.status === "INACTIVE"
                               ? "bg-yellow-400"
                               : "bg-red-400"
-                        }`}
+                          }`}
                       />
                       {student.status.charAt(0) + student.status.slice(1).toLowerCase()}
                     </Badge>
@@ -231,7 +232,9 @@ export function StudentsTable({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-44">
-                        <DropdownMenuItem onClick={() => onStudentClick(student)}>
+                        <DropdownMenuItem onClick={() => {
+                         setTimeout(() => onStudentClick(student), 0);
+                        }}>
                           <Eye className="mr-2 h-4 w-4" /> View Profile
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onEditStudent(student)}>
