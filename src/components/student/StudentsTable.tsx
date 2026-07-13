@@ -69,7 +69,7 @@ export function StudentsTable({
 }: Props) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deleteTarget, setDeleteTarget] = useState<StudentDataFromApi | null>(null);
-
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const allSelected = students.length > 0 && selected.size === students.length;
 
 
@@ -225,7 +225,10 @@ export function StudentsTable({
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <DropdownMenu>
+                    <DropdownMenu open={openMenuId === student.id}
+                      onOpenChange={(isOpen) => {
+                        setOpenMenuId(isOpen ? student.id : null);
+                      }}>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon-sm">
                           <MoreHorizontal className="h-4 w-4" />

@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "#components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "#components/ui/dropdown-menu";
 import { Button } from "#components/ui/button";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
 interface Props {
   teachers: TeacherDataFromApi[];
 }
@@ -20,6 +21,7 @@ interface Props {
 export function TeachersTable({
   teachers,
 }: Props) {
+  const [openMenuId, setOpenMenuId] = useState<string | null | undefined>(null);
   return (
     <div className="rounded-lg border">
       <Table>
@@ -91,7 +93,10 @@ export function TeachersTable({
                 </Badge>
               </TableCell>
                <TableCell  >
-                <DropdownMenu >
+                <DropdownMenu  open={openMenuId === teacher.id}
+                      onOpenChange={(isOpen) => {
+                        setOpenMenuId(isOpen ? teacher.id : null);
+                      }}>
                   <DropdownMenuTrigger asChild >
                     <Button variant="ghost"  >
                       <MoreHorizontal  />

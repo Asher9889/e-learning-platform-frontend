@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 interface BatchTableProps {
   batches: Batch[];
@@ -30,6 +31,7 @@ export function BatchTable({
   onEdit,
   onDelete,
 }: BatchTableProps) {
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   if (batches.length === 0) {
     return (
       <div className="flex h-40 items-center justify-center rounded-xl border border-dashed text-sm text-muted-foreground">
@@ -86,7 +88,10 @@ export function BatchTable({
                 </Badge>
               </TableCell>
               <TableCell>
-                <DropdownMenu>
+                <DropdownMenu open={openMenuId === batch.id}
+                      onOpenChange={(isOpen) => {
+                        setOpenMenuId(isOpen ? batch.id : null);
+                      }}>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon-xs">
                       <MoreHorizontal className="h-4 w-4" />

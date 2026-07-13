@@ -135,6 +135,7 @@ export type TeacherDataFromApi = Omit<
   TeacherEnrollFormInput,
   "confirmPassword" | "personalInfo"
 > & {
+  id?:string,
   role: "TEACHER";
   createdAt: string;
   updatedAt: string;
