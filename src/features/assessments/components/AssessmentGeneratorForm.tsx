@@ -126,7 +126,7 @@ export default function AssessmentGeneratorForm({
               error={errors.assessmentType?.message}
             />
           </div>
-           <Combobox
+           {/* <Combobox
       multiple
       items={[{ label: "Select All Batches", value: "all" }, ...batches]}
       value={selectedBatches}
@@ -152,7 +152,7 @@ export default function AssessmentGeneratorForm({
           )}
         </ComboboxList>
       </ComboboxContent>
-    </Combobox>
+    </Combobox> */}
 
           {/* Program Selection */}
           <div className="space-y-2">
