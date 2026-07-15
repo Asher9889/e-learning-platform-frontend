@@ -9,7 +9,7 @@ import { useFcm } from '#hooks/use-fcm';
 function App() {
 
   useBootstrap();
-    useFcm();
+  useFcm();
 
   const status = useAppSelector(state => state.auth.status);
 
