@@ -27,40 +27,18 @@ import { QUESTION_TYPES } from "../constants/assesments.contants"
 import { useGetPrograms } from "@/pages/Programs/hooks/useGetPrograms"
 import { useGetSubjects } from "@/pages/Subjects/hooks/useGetSubjects"
 import { Sparkles } from "lucide-react"
-import {
-  Combobox,
-  ComboboxChip,
-  ComboboxChips,
-  ComboboxChipsInput,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxItem,
-  ComboboxList,
-  ComboboxValue,
-} from "@/components/ui/combobox"
-import { useState } from "react"
 
-type BatchOption = {
-  label: string
-  value: string
-}
+
+
 interface AssessmentGeneratorFormProps {
   onSubmit: (data: AssessmentFormData) => void
   isGenerating: boolean
 }
-const dummyBatches: BatchOption[] = [
-  { label: "Section A", value: "batch-001" },
-  { label: "Section B", value: "batch-002" },
-  { label: "Section C", value: "batch-003" },
-  { label: "Morning Batch", value: "batch-004" },
-  { label: "Evening Batch", value: "batch-005" },
-]
+
 export default function AssessmentGeneratorForm({
   onSubmit,
   isGenerating,
 }: AssessmentGeneratorFormProps) {
-   const [selectedBatches, setSelectedBatches] = useState<BatchOption[]>([])
-  const batches = dummyBatches
   const {
     register,
     handleSubmit,

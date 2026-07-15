@@ -24,7 +24,7 @@ import { AssessmentMobileCard } from "#components/assessment/assessment-mobile-c
 import PublishDialog from "#components/assessment/publish-dialog";
 import { useOnlyPublishAssessment } from "@/features/assessments/hooks/usePublishAssessment";
 import { AssessmentPreviewDialog } from "#components/assessment/assessment-preview-dialog";
-import { Navigate, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 10;
 
