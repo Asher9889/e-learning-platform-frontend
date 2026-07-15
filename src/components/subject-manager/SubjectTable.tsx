@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 interface SubjectTableProps {
   subjects: Subject[];
@@ -30,6 +31,7 @@ export function SubjectTable({
   onEdit,
   onDelete,
 }: SubjectTableProps) {
+   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   if (subjects.length === 0) {
     return (
       <div className="flex h-40 items-center justify-center rounded-xl border border-dashed text-sm text-muted-foreground">
@@ -82,7 +84,10 @@ export function SubjectTable({
                 </Badge>
               </TableCell>
               <TableCell>
-                <DropdownMenu>
+                <DropdownMenu open={openMenuId === subject.id}
+                      onOpenChange={(isOpen) => {
+                        setOpenMenuId(isOpen ? subject.id : null);
+                      }}>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon-xs">
                       <MoreHorizontal className="h-4 w-4" />

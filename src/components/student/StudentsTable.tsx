@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {  useState } from "react";
 import {
   Table,
   TableBody,
@@ -69,9 +69,11 @@ export function StudentsTable({
 }: Props) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deleteTarget, setDeleteTarget] = useState<StudentDataFromApi | null>(null);
-
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const allSelected = students.length > 0 && selected.size === students.length;
 
+
+ 
   const toggleAll = () => {
     if (allSelected) {
       setSelected(new Set());
@@ -212,26 +214,30 @@ export function StudentsTable({
                       className="font-medium text-xs"
                     >
                       <span
-                        className={`inline-block w-1.5 h-1.5 rounded-full mr-1.5 ${
-                          student.status === "ACTIVE"
+                        className={`inline-block w-1.5 h-1.5 rounded-full mr-1.5 ${student.status === "ACTIVE"
                             ? "bg-green-400"
                             : student.status === "INACTIVE"
                               ? "bg-yellow-400"
                               : "bg-red-400"
-                        }`}
+                          }`}
                       />
                       {student.status.charAt(0) + student.status.slice(1).toLowerCase()}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <DropdownMenu>
+                    <DropdownMenu open={openMenuId === student.id}
+                      onOpenChange={(isOpen) => {
+                        setOpenMenuId(isOpen ? student.id : null);
+                      }}>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon-sm">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-44">
-                        <DropdownMenuItem onClick={() => onStudentClick(student)}>
+                        <DropdownMenuItem onClick={() => {
+                         setTimeout(() => onStudentClick(student), 0);
+                        }}>
                           <Eye className="mr-2 h-4 w-4" /> View Profile
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onEditStudent(student)}>

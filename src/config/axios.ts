@@ -13,6 +13,9 @@ export class ApiError extends Error {
 const api = axios.create({
   baseURL: envConfig.baseURL,
   withCredentials: true, // Important
+  // headers: {
+  //   'X-Client-Type': 'mobile',
+  // },
 });
 
 
@@ -64,20 +67,20 @@ api.interceptors.response.use(
     const responseData = error.response.data as { message?: string, errors?: any[], success: boolean, statusCode: number };
     console.log("Error response data:", responseData);
     // const message =  responseData?.message || "Something went wrong";
-  
+
     const errorData = {
-  message: responseData?.message,
-  statusCode: responseData.statusCode,
-}
-// const dummy = new Error(errorData)
-// console.log(message, "messagemessagemessage0147101", dummy)
-// return Promise.reject(new ApiError(errorData));
-return Promise.reject(
-  new ApiError(
-    errorData.message || "Unknown error",
-    errorData.statusCode || 500
-  )
-);
+      message: responseData?.message,
+      statusCode: responseData.statusCode,
+    }
+    // const dummy = new Error(errorData)
+    // console.log(message, "messagemessagemessage0147101", dummy)
+    // return Promise.reject(new ApiError(errorData));
+    return Promise.reject(
+      new ApiError(
+        errorData.message || "Unknown error",
+        errorData.statusCode || 500
+      )
+    );
   }
 )
 

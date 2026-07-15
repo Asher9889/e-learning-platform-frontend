@@ -263,33 +263,6 @@ export default function ClassRoomLayoutNew() {
     //     return () => window.removeEventListener("resize", check);
     // }, []);
 
-    // useEffect(() => {
-    //     const handleData = (
-    //         payload: Uint8Array,
-    //         participant?: any
-    //     ) => {
-    //         try {
-    //             const data = JSON.parse(
-    //                 new TextDecoder().decode(payload)
-    //             );
-
-    //             if (data.type === "hand_raise") {
-    //                 setRaisedHands((prev) => ({
-    //                     ...prev,
-    //                     [participant?.identity]: data.raised,
-    //                 }));
-    //             }
-    //         } catch (err) {
-    //             console.error(err);
-    //         }
-    //     };
-
-    //     room.on(RoomEvent.DataReceived, handleData);
-
-    //     return () => {
-    //         room.off(RoomEvent.DataReceived, handleData);
-    //     };
-    // }, [room]);
 
     const participants = useMemo(() => {
         return liveKitParticipants
@@ -312,11 +285,7 @@ export default function ClassRoomLayoutNew() {
 
                 return 0;
             });
-        // .filter((p) =>
-        //     searchQuery
-        //         ? p.name.toLowerCase().includes(searchQuery.toLowerCase())
-        //         : true
-        // );
+       
     }, [liveKitParticipants, teacherIdentity, myIdentity, activeSpeaker]);
 
     // Timer

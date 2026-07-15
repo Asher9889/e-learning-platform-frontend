@@ -27,16 +27,40 @@ import { QUESTION_TYPES } from "../constants/assesments.contants"
 import { useGetPrograms } from "@/pages/Programs/hooks/useGetPrograms"
 import { useGetSubjects } from "@/pages/Subjects/hooks/useGetSubjects"
 import { Sparkles } from "lucide-react"
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
+} from "@/components/ui/combobox"
+import { useState } from "react"
 
+type BatchOption = {
+  label: string
+  value: string
+}
 interface AssessmentGeneratorFormProps {
   onSubmit: (data: AssessmentFormData) => void
   isGenerating: boolean
 }
-
+const dummyBatches: BatchOption[] = [
+  { label: "Section A", value: "batch-001" },
+  { label: "Section B", value: "batch-002" },
+  { label: "Section C", value: "batch-003" },
+  { label: "Morning Batch", value: "batch-004" },
+  { label: "Evening Batch", value: "batch-005" },
+]
 export default function AssessmentGeneratorForm({
   onSubmit,
   isGenerating,
 }: AssessmentGeneratorFormProps) {
+   const [selectedBatches, setSelectedBatches] = useState<BatchOption[]>([])
+  const batches = dummyBatches
   const {
     register,
     handleSubmit,
@@ -73,7 +97,7 @@ export default function AssessmentGeneratorForm({
   const subjects = subjectsData?.subjects ?? []
 
   const handleFormSubmit = (data: AssessmentFormData) => {
-    console.log("Form Data:", data)
+    console.log("Form Data:000000 Generating assessment with config:", data)
     onSubmit(data)
   } 
 
@@ -87,15 +111,48 @@ export default function AssessmentGeneratorForm({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit,(error) => {
+          console.log("Form Errors: Generating assessment with config:", error)
+        })} className="space-y-6">
 
           <div className="space-y-2">
             <AssessmentTypeSelector
               value={assessmentType}
-              onValueChange={(v) => setValue("assessmentType", v, { shouldValidate: true })}
+              onValueChange={(v) => {
+
+                console.log("Assessment Type Changed:", v)
+                setValue("assessmentType", v, { shouldValidate: true })
+              }}
               error={errors.assessmentType?.message}
             />
           </div>
+           <Combobox
+      multiple
+      items={[{ label: "Select All Batches", value: "all" }, ...batches]}
+      value={selectedBatches}
+      onValueChange={setSelectedBatches}
+      itemToStringValue={(batch: BatchOption) => batch.label}
+    >
+      <ComboboxChips>
+        <ComboboxValue>
+          {selectedBatches.map((item) => (
+            <ComboboxChip key={item.value}>{item.label}</ComboboxChip>
+          ))}
+        </ComboboxValue>
+        <ComboboxChipsInput placeholder="Add batch" />
+      </ComboboxChips>
+      <ComboboxContent>
+        <ComboboxEmpty>No items found.</ComboboxEmpty>
+        <ComboboxList>
+          
+          {(item: BatchOption) => (
+            <ComboboxItem key={item.value} value={item}>
+              {item?.label}
+            </ComboboxItem>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
 
           {/* Program Selection */}
           <div className="space-y-2">
@@ -280,7 +337,10 @@ export default function AssessmentGeneratorForm({
           <Button
             type="submit"
             disabled={isGenerating}
-            onClick={handleSubmit(handleFormSubmit)}
+            onClick={() => {
+              console.log("Generating assessment with config: ,onclick" )
+              handleSubmit(handleFormSubmit);
+            }}
             size="lg"
             className="w-full bg-linear-to-r from-indigo-500 to-indigo-600 text-white shadow-md transition-all hover:from-indigo-600 hover:to-indigo-700 hover:shadow-lg disabled:opacity-60"
           >

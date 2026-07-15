@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 interface ProgramTableProps {
   programs: Program[];
@@ -51,6 +52,7 @@ export function ProgramTable({
   onEdit,
   onDelete,
 }: ProgramTableProps) {
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);  
   if (programs.length === 0) {
     return (
       <div className="flex h-40 items-center justify-center rounded-xl border border-dashed text-sm text-muted-foreground">
@@ -111,7 +113,10 @@ export function ProgramTable({
                 </Badge>
               </TableCell>
               <TableCell>
-                <DropdownMenu>
+                <DropdownMenu open={openMenuId === program.id}
+                      onOpenChange={(isOpen) => {
+                        setOpenMenuId(isOpen ? program.id : null);
+                      }}>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon-xs">
                       <MoreHorizontal className="h-4 w-4" />

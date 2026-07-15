@@ -595,6 +595,7 @@ export function ProgramForm({
                       shouldValidate: true,
                     })
                   }
+                  
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select program category" />

@@ -330,7 +330,70 @@ const apiEndpoints = {
         PUBLISH: (id: string) => ({
             url: `/assessments/${id}/publish`,
             method: "PATCH" as Method
-        })
+        }),
+        LIST: {
+            url: "/assessments",
+            method: "GET"
+        }
+
+    },
+    ASSIGNMENT: {
+        LIST: {
+            url: "/assessments",
+            method: "GET"
+        },
+        GET: (id: string) => ({
+            url: `/assessments/${id}`,
+            method: "GET"
+        }),
+        CREATE: {
+            url: "/assignments",
+            method: "POST"
+        },
+        UPDATE: (id: string) => ({
+            url: `/assignments/${id}`,
+            method: "PATCH"
+        }),
+        PUBLISH: (id: string) => ({
+            url: `/assignments/${id}/publish`,
+            method: "PATCH"
+        }),
+        SUBMIT_ASSIGNMENT: {
+            url: "/assessments/submit",
+            method: "POST",
+        },
+    },
+    ASSESSMENT_RESULTS: {
+        SUBMIT: {
+            url: "/assessment-results/submit",
+            method: "POST",
+        },
+
+        GET_ALL: {
+            url: "/assessment-results",
+            method: "GET",
+        },
+
+        GET_BY_ID: (id: string) => ({
+            url: `/assessment-results/${id}`,
+            method: "GET",
+        }),
+
+        ANALYTICS: {
+            url: "/assessment-results/analytics",
+            method: "GET",
+        },
+
+        STUDENTS: {
+            url: "/assessment-results/students",
+            method: "GET",
+        },
+
+        STUDENT_HISTORY: (studentId: string) => ({
+            url: `/assessment-results/student/${studentId}`,
+            method: "GET",
+        }),
+
     },
     NOTIFICATION: {
         GET_ALL: {
@@ -369,7 +432,7 @@ const apiEndpoints = {
         }
     },
 
-    DASHBOARD :{
+    DASHBOARD: {
         STATS: {
             url: "/dashboard/stats",
             method: "GET"
@@ -385,7 +448,7 @@ const apiEndpoints = {
         RECENT_GROUP_STUDIES: {
             url: "/dashboard/group-studies",
             method: "GET"
-        }   
+        }
     }
 }
 

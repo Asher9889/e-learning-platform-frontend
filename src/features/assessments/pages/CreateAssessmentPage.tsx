@@ -48,6 +48,10 @@ export default function CreateAssessmentPage() {
   }), [])
 
   const handleGenerate = useCallback(async (formData: AssessmentFormData) => {
+
+
+    console.log("Generating assessment with config:", formData)
+    // return
     setLastConfig(formData)
     setGenerationError(null)
 
@@ -63,6 +67,7 @@ export default function CreateAssessmentPage() {
       additionalInstructions: formData.additionalInstructions,
     }
 
+    console.log("generateAssessment", payload)
     try {
       const response = await generateAssessment(payload);
       const questions = response.questions.map((q, i) => ({
@@ -309,6 +314,9 @@ export default function CreateAssessmentPage() {
                   onPublished={clearPreview}
                 />
               )}
+
+              
+
             </>
           ) : generationError ? (
             <>

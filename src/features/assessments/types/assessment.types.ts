@@ -31,11 +31,13 @@ export interface CreateAssessmentPayload {
   totalMarks: number
   additionalInstructions?: string
   questions: Question[]
-  batchId?: string
-  allStudents: boolean
+  batchId?: string[] ;
+  allStudents?: boolean
 }
 
-export interface PublishAssessmentPayload extends CreateAssessmentPayload {}
+// export interface PublishAssessmentPayload extends CreateAssessmentPayload {}
+
+export type PublishAssessmentPayload = CreateAssessmentPayload
 
 export interface AssessmentPayload {
   assessmentType: AssessmentType
@@ -66,7 +68,7 @@ export interface AssessmentApiResponse {
     questionCount: number
     totalMarks: number
     additionalInstructions: string
-    status: "DRAFT" | "PUBLISHED"
+    status: "DRAFT" | "PUBLISHED" | "QUESTION-PAPER"
     createdBy: string
     questions: Question[]
   }
