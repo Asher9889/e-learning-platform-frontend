@@ -24,10 +24,12 @@ import { AssessmentMobileCard } from "#components/assessment/assessment-mobile-c
 import PublishDialog from "#components/assessment/publish-dialog";
 import { useOnlyPublishAssessment } from "@/features/assessments/hooks/usePublishAssessment";
 import { AssessmentPreviewDialog } from "#components/assessment/assessment-preview-dialog";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function AssessmentsPage() {
+  const navigate = useNavigate();
   const [publishOpen, setPublishOpen] = useState(false);
   const [previewOpen,setPreviewOpen] = useState(false)
   const [selectedAssessment, setSelectedAssessment] = useState<any>();
@@ -146,7 +148,9 @@ export default function AssessmentsPage() {
           </p>
         </div>
 
-        <Button>
+        <Button onClick={() => {
+          navigate('create')
+        }}>
           <Plus className="mr-2 h-4 w-4" />
           Create Assessment
         </Button>
