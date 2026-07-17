@@ -54,6 +54,8 @@ export default function ProgramsPage() {
   });
 
   const handleCreate = async (data: CreateProgramInput) => {
+    console.log(data,"ProgramsProgramsPrograms create")
+
     const res = await createProgramAsync(data);
     if (res) {
       setShowForm(false);
@@ -61,6 +63,7 @@ export default function ProgramsPage() {
   };
 
   const handleUpdate = async (data: UpdateProgramInput) => {
+    console.log(data,"ProgramsProgramsPrograms")
     const res = await updateProgramAsync(data);
     if (res) {
       setEditingProgram(null);
@@ -174,6 +177,7 @@ export default function ProgramsPage() {
         onClose={closeForm}
         onSubmit={(data) => {
           if (editingProgram) {
+            
             handleUpdate(data as UpdateProgramInput);
           } else {
             handleCreate(data as CreateProgramInput);

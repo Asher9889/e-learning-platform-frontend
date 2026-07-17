@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -12,11 +12,12 @@ import StepNavigation from "./StepNavigation";
 import { teacherEnrollSchema, type TeacherEnrollFormInput, type TeacherEnrollFormOutput } from "@/pages/Teacher/schema/teacher.schema";
 import TeacherInformation from "./steps/TeacherInformation";
 import { useCreateTeacher } from "@/pages/Teacher/hooks/useCreateTeacher";
+import { useUpdateTeacher } from "@/pages/Teacher/hooks/useUpdateTeacher"; // 👈 naya hook, banana padega agar nahi hai
+import { useTeacher } from "@/pages/Teacher/hooks/useTeacherById"; // 👈 single teacher fetch hook, banana padega agar nahi hai
 import { useUploadAvatar } from "@/pages/Teacher/hooks/useUploadAvtar";
 import { sileo } from "sileo";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-// const steps = ["Account", "Personal", "Address", "Teacher", "Review"];
 const stepFields: Record<
     number,
     FieldPath<TeacherEnrollFormInput>[]
@@ -51,84 +52,122 @@ const stepFields: Record<
         "roleInfo.bio",
     ],
 };
+
 export default function TeacherEnrollForm() {
     const [currentStep, setCurrentStep] = useState(0);
     const navigate = useNavigate();
+    const { id } = useParams(); // 👈 /teachers/edit/:id se id milega
+    const isEditMode = Boolean(id);
+
     const [completedSteps, setCompletedSteps] = useState<number[]>([]);
     const steps = [
         { label: "Account", completed: completedSteps.includes(0) },
         { label: "Personal", completed: completedSteps.includes(1) },
         { label: "Address", completed: completedSteps.includes(2) },
         { label: "Teacher", completed: completedSteps.includes(3) },
-        //   { label: "Guardian", completed: completedSteps.includes(4) },
         { label: "Review", completed: false },
     ];
-    const {
 
-        mutate: handleCreateTeacher,
-    } = useCreateTeacher();
-    const {
-        uploadAvatarAsync,
-    } = useUploadAvatar();
-    // ✅ useForm ko Input type do — raw form values (phoneNumber: string)
+    const { mutate: handleCreateTeacher } = useCreateTeacher();
+    const { mutate: handleUpdateTeacher } = useUpdateTeacher(); // 👈 update mutation
+    const { uploadAvatarAsync } = useUploadAvatar();
+
+    // 👇 edit mode mein existing teacher data fetch karo
+    const { data: teacherData, isLoading: isTeacherLoading } = useTeacher(id!, {
+        enabled: isEditMode,
+    });
+
     const methods = useForm<TeacherEnrollFormInput, unknown, TeacherEnrollFormOutput>({
         resolver: zodResolver(teacherEnrollSchema),
         mode: "all",
     });
 
-    // // ✅ onSubmit ko Output type milta hai — transform ke baad (phoneNumber: string E.164)
-    // const onSubmit = (values: TeacherEnrollFormOutput) => {
-    //     console.log("form data:", values);
-    //     console.log("phoneNumber (E.164):", values.phoneNumber); // +919876543210
-    //     (
-    //         handleCreateTeacher(values)
-    //     )
-    // };
-    const onSubmit = async (
-        values: TeacherEnrollFormOutput
-    ) => {
-        let avatarUrl = "";
+    // 👇 jaise hi teacher data aaye, form ko prefill karo
+    useEffect(() => {
+        if (isEditMode && teacherData) {
+            methods.reset({
+                email: teacherData.email,
+                phoneNumber: teacherData.phoneNumber,
+                // edit mode mein password/confirmPassword required nahi honge,
+                // schema mein optional rakhna padega edit ke liye
+                personalInfo: {
+                    name: teacherData.personalInfo?.name,
+                    dateOfBirth: teacherData.personalInfo?.dateOfBirth,
+                    gender: teacherData.personalInfo?.gender,
+                    profileImage: teacherData.personalInfo?.profileImage, // existing URL string
+                    address: {
+                        line1: teacherData.personalInfo?.address?.line1,
+                        city: teacherData.personalInfo?.address?.city,
+                        state: teacherData.personalInfo?.address?.state,
+                        country: teacherData.personalInfo?.address?.country,
+                        zipCode: teacherData.personalInfo?.address?.zipCode,
+                    },
+                },
+                roleInfo: {
+                    qualification: teacherData.roleInfo?.qualification,
+                    specialization: teacherData.roleInfo?.specialization,
+                    experienceYears: teacherData.roleInfo?.experienceYears,
+                    joiningDate: teacherData.roleInfo?.joiningDate,
+                    bio: teacherData.roleInfo?.bio,
+                },
+            } as TeacherEnrollFormInput);
+        }
+    }, [isEditMode, teacherData]);
 
+    const onSubmit = async (values: TeacherEnrollFormOutput) => {
+        let avatarUrl = teacherData?.personalInfo?.profileImage ?? "";
+
+        // 👇 agar user ne nayi image select ki hai (File object), tabhi upload karo
         if (
-            values.personalInfo.profileImage
+            values.personalInfo.profileImage &&
+            values.personalInfo.profileImage instanceof File
         ) {
-            const uploadResponse =
-                await uploadAvatarAsync(
-                    values.personalInfo.profileImage
-                );
-
-            avatarUrl =
-                uploadResponse?.url;
+            const uploadResponse = await uploadAvatarAsync(
+                values.personalInfo.profileImage
+            );
+            avatarUrl = uploadResponse?.url;
         }
 
-
-        handleCreateTeacher({
+        const payload = {
             ...values,
             personalInfo: {
                 ...values.personalInfo,
-                profileImage: avatarUrl
+                profileImage: avatarUrl,
             },
-        }, {
-            onSuccess: (response) => {
-                sileo.success({
-                    title: "Student Created",
-                    description:
-                        response?.message ||
-                        "Student created successfully",
-                });
-                navigate("/teachers");
-            },
+        };
 
-            onError: (error) => {
-                sileo.error({
-                    title: "Failed to Create Student",
-                    description:
-                        error instanceof Error
-                            ? error.message
-                            : "Something went wrong",
-                });
-            },
-        });
+        const onSuccess = (response: any) => {
+            sileo.success({
+                title: isEditMode ? "Teacher Updated" : "Teacher Created",
+                description:
+                    response?.message ||
+                    (isEditMode
+                        ? "Teacher updated successfully"
+                        : "Teacher created successfully"),
+            });
+            navigate("/teachers");
+        };
+
+        const onError = (error: unknown) => {
+            sileo.error({
+                title: isEditMode
+                    ? "Failed to Update Teacher"
+                    : "Failed to Create Teacher",
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : "Something went wrong",
+            });
+        };
+
+        if (isEditMode) {
+            handleUpdateTeacher(
+                { id: id!, ...payload },
+                { onSuccess, onError }
+            );
+        } else {
+            handleCreateTeacher(payload, { onSuccess, onError });
+        }
     };
 
     const renderStep = () => {
@@ -141,6 +180,7 @@ export default function TeacherEnrollForm() {
             default: return null;
         }
     };
+
     const nextStep = async (step?: number) => {
         const fields = stepFields[currentStep];
 
@@ -148,20 +188,19 @@ export default function TeacherEnrollForm() {
 
         if (!isValid) return;
         setCompletedSteps((prev) =>
-            prev.includes(currentStep)
-                ? prev
-                : [...prev, currentStep]
+            prev.includes(currentStep) ? prev : [...prev, currentStep]
         );
+
+        // 👇 password match check sirf create mode ya jab user password change kar raha ho
         if (
             currentStep === 0 &&
-            methods.getValues("password") !==
-            methods.getValues("confirmPassword")
+            !isEditMode &&
+            methods.getValues("password") !== methods.getValues("confirmPassword")
         ) {
             methods.setError("confirmPassword", {
                 type: "manual",
                 message: "Passwords do not match",
             });
-
             return;
         }
 
@@ -169,9 +208,18 @@ export default function TeacherEnrollForm() {
             setCurrentStep(step);
         } else {
             setCurrentStep((p) => p + 1);
-
         }
     };
+
+    // 👇 edit mode mein jab tak data load ho raha hai, loader dikhao
+    if (isEditMode && isTeacherLoading) {
+        return (
+            <div className="flex h-[calc(100vh-250px)] items-center justify-center">
+                <p className="text-muted-foreground">Loading teacher details...</p>
+            </div>
+        );
+    }
+
     return (
         <FormProvider {...methods}>
             <form
@@ -198,14 +246,15 @@ export default function TeacherEnrollForm() {
                     readOnly
                 />
                 <div className="mb-6">
-                    <EnrollmentStepper currentStep={currentStep} steps={steps} onNext={(step) => nextStep(step)} onPrevious={(step) => {
-                        setCurrentStep(step)
-                    }} />
+                    <EnrollmentStepper
+                        currentStep={currentStep}
+                        steps={steps}
+                        onNext={(step) => nextStep(step)}
+                        onPrevious={(step) => setCurrentStep(step)}
+                    />
                 </div>
 
-                <div className="flex-1 overflow-y-auto">
-                    {renderStep()}
-                </div>
+                <div className="flex-1 overflow-y-auto">{renderStep()}</div>
 
                 <div className="sticky bottom-0 bg-background border-t pt-4 mt-4">
                     <StepNavigation

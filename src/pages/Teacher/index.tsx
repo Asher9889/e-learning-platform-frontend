@@ -29,7 +29,7 @@ const {data, isLoading, isError } = useTeachers();
       <TeacherHeader
         onAddStudent={() => navigate("new")}
       />
-      <TeachersTable teachers={teachers} />
+      <TeachersTable teachers={teachers}  onEdit={(id) => navigate(`edit/${id}`)}/>
     </div>
   );
 }

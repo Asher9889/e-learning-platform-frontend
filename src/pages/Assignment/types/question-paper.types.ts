@@ -1,6 +1,6 @@
 export type Difficulty = "EASY" | "MEDIUM" | "HARD" | "MIXED";
 
-export type QuestionType = "MCQ";
+export type QuestionType = "MCQ" | "QUESTION_ANSWERE";
 
 export interface Question {
   id: string;

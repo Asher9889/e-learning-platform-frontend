@@ -29,6 +29,14 @@ export async function createProgram(data: CreateProgramInput) {
 
 export async function updateProgram({ id, ...data }: UpdateProgramInput) {
   const { url, method } = apiEndPoints.PROGRAMS.UPDATE;
+//   const {benefits, ...restData} = data
+//   console.log(restData,"restData",benefits)
+//   // console.log(JSON.parse(JSON.stringify(restData)),"restData14");
+//   const values = benefits.map(item => item?.value);
+// const payload = {
+//   ...restData,
+//   benefits:values,
+// };
   const res = await api.request<Program>({
     url: url.replace(":id", id),
     method,

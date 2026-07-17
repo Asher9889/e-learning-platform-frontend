@@ -157,6 +157,17 @@ export const createProgramSchema = z.object({
     z.string().trim().min(3, "Benefit must be at least 3 characters").max(10000)
   )
   .default([]),
+  // benefits: z
+  // .array(
+  //   z.object({
+  //     value: z
+  //       .string()
+  //       .trim()
+  //       .min(3, "Benefit must be at least 3 characters")
+  //       .max(10000),
+  //   })
+  // )
+  // .default([]),
 
   isActive: z.boolean().default(true),
 });
@@ -173,3 +184,17 @@ export type ProgramListResponse = {
   programs: import("../types").Program[];
   totalPrograms: number;
 };
+
+export const programFormSchema = createProgramSchema.extend({
+  benefits: z
+    .array(
+      z.object({
+        value: z
+          .string()
+          .trim()
+          .min(3, "Benefit must be at least 3 characters")
+          .max(10000),
+      })
+    )
+    .default([]),
+});

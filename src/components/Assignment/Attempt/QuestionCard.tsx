@@ -2,6 +2,7 @@ import { Award, Hash } from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 
 import type { Question } from "@/pages/Assignment/types/question-paper.types";
 import { OptionCard } from "./OptionCard";
@@ -21,6 +22,8 @@ export function QuestionCard({
   onSelect,
   disabled = false,
 }: QuestionCardProps) {
+  const isSubjective = question.type === "QUESTION_ANSWERE";
+
   return (
     <Card className="rounded-2xl shadow-sm">
       <CardHeader className="space-y-4">
@@ -52,17 +55,27 @@ export function QuestionCard({
       </CardHeader>
 
       <CardContent>
-        <div className="space-y-3">
-          {question.options.map((option) => (
-            <OptionCard
-              key={option}
-              option={option}
-              selected={selectedAnswer === option}
-              disabled={disabled}
-              onSelect={onSelect}
-            />
-          ))}
-        </div>
+        {isSubjective ? (
+          <Textarea
+            value={selectedAnswer ?? ""}
+            onChange={(e) => onSelect(e.target.value)}
+            disabled={disabled}
+            placeholder="Apna answer yahan likhein..."
+            className="min-h-[160px] resize-y"
+          />
+        ) : (
+          <div className="space-y-3">
+            {question.options?.map((option) => (
+              <OptionCard
+                key={option}
+                option={option}
+                selected={selectedAnswer === option}
+                disabled={disabled}
+                onSelect={onSelect}
+              />
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

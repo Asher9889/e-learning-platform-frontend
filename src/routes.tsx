@@ -116,6 +116,10 @@ export const APP_ROUTES: AppRoutes = {
         path: "new",
         element: AddTeacher,
       },
+      {
+        path: "edit/:id",
+        element: AddTeacher,
+      },
     ],
   },
 
@@ -218,7 +222,7 @@ ScoreBoard: {
     element:ScoreBoardPage,
     showInSidebar: true,
     group: "Teaching",
-    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
+    roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
   },
   assignments: {
     title: "Assignments",

@@ -14,14 +14,28 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from "#components/ui/button";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useDeleteTeacher } from "@/pages/Teacher/hooks/useDeleteTeacher";
 interface Props {
   teachers: TeacherDataFromApi[];
+   onEdit: (id:string|undefined) => void;
 }
+
 
 export function TeachersTable({
   teachers,
+  onEdit
 }: Props) {
   const [openMenuId, setOpenMenuId] = useState<string | null | undefined>(null);
+   const { mutate: deleteTeacher } = useDeleteTeacher();
+
+  const handleDelete = (teacherId: string | undefined) => {
+    if (!teacherId) return;
+    deleteTeacher(teacherId, {
+      onSuccess: () => {
+        console.log("Teacher deleted successfully");
+      },
+    });
+  };
   return (
     <div className="rounded-lg border">
       <Table>
@@ -103,12 +117,15 @@ export function TeachersTable({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-32">
-                    <DropdownMenuItem onClick={() => console.log("Edit click")}>
+                    <DropdownMenuItem onClick={() => {
+                      console.log("Edit click")
+                      onEdit(teacher?.id)
+                      }}>
                       <Pencil className="mr-2 h-4 w-4" />
                       Edit
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={() => console.log("Delete click")}
+                      onClick={() => handleDelete(teacher?.id)}
                       className="text-destructive focus:text-destructive"
                     >
                       <Trash2 className="mr-2 h-4 w-4" />

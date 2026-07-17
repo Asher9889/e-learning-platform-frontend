@@ -303,7 +303,7 @@ import { FormProvider, useForm, useFieldArray, type Resolver } from "react-hook-
 
 import type { Program } from "@/pages/Programs/types";
 import {
-  createProgramSchema,
+  programFormSchema,
   PROGRAM_CATEGORIES,
   PROGRAM_MODES,
   FEE_TYPES,
@@ -420,7 +420,7 @@ export function ProgramForm({
     // isUploading,
   } = useUploadAvatar();
   const methods = useForm<ProgramFormShape>({
-    resolver: zodResolver(createProgramSchema) as unknown as Resolver<ProgramFormShape>,
+    resolver: zodResolver(programFormSchema) as unknown as Resolver<ProgramFormShape>,
     mode: "onSubmit",
     defaultValues: DEFAULT_VALUES,
   });
@@ -497,7 +497,7 @@ export function ProgramForm({
     if (!isOpen) return;
 
     setThumbnailFile(null);
-
+    console.log(programData, "programData")
     if (programData) {
       reset({
         name: programData.name ?? "",
@@ -510,7 +510,9 @@ export function ProgramForm({
         feeAmount: programData.feeAmount,
         feeType: programData.feeType,
         featured: programData.featured ?? false,
-        benefits: (programData.benefits ?? []).map((b) => ({ value: b })),
+        benefits: (programData.benefits ?? []).map((b) =>
+          typeof b === "string" ? { value: b } : b
+        ) as { value: string }[],
         isActive: programData.isActive,
       });
     } else {
@@ -543,28 +545,32 @@ export function ProgramForm({
   //   onSubmit(payload as CreateProgramInput, thumbnailFile);
   // };
   const submitHandler = (data: ProgramFormShape) => {
-    const cleanedBenefits = data.benefits
-      .map((b) => b.value.trim())
-      .filter((v) => v.length > 0);
+    const cleanedBenefits = data.benefits.map(item => item?.value);
 
     const thumbnail =
       !thumbnailFile && isEditing
         ? ((programData as any)?.thumbnail ?? data.thumbnail)
         : data.thumbnail;
-
-    const payload = { ...data, thumbnail, benefits: cleanedBenefits };
+    console.log("payload", data.benefits)
+    const editpayload = { ...data, thumbnail, benefits: cleanedBenefits };
 
     if (isEditing && programData) {
-      onSubmit({ id: programData.id, ...payload } as UpdateProgramInput, thumbnailFile);
+
+
+      onSubmit({ id: programData.id, ...editpayload } as UpdateProgramInput, thumbnailFile);
       return;
+    } else {
+      //    const values = data.benefits.map(item => item?.value);
+      // const createPayload =  { ...data, thumbnail, benefits: values };
+      onSubmit(editpayload as CreateProgramInput, thumbnailFile);
     }
-    onSubmit(payload as CreateProgramInput, thumbnailFile);
+
   };
   const handleDialogClose = () => {
     if (isLoading) return;
     onClose();
   };
-
+  console.log(errors, "errors ProgramsProgramsPrograms")
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogClose}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -595,7 +601,7 @@ export function ProgramForm({
                       shouldValidate: true,
                     })
                   }
-                  
+
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select program category" />

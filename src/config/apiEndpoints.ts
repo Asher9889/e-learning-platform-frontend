@@ -21,10 +21,23 @@ const apiEndpoints = {
             url: "/users/teachers",
             method: 'POST'
         },
+        GET_TEACHER: (id: string) => ({
+            url: `/users/teachers/${id}`,
+            method: 'GET' as Method,
+        }),
+        UPDATE_TEACHER: (id: string) => ({
+            url: `/users/teachers/${id}`,
+            method: 'PATCH' as Method,
+        }),
+        DELETE_TEACHER: (id: string) => ({
+            url: `/users/teachers/${id}`,
+            method: 'DELETE' as Method,
+        }),
         ADD_STUDENT: {
             url: "/users/students",
             method: 'POST'
         },
+
         LIST_STUDENTS: {
             url: "/users/students",
             method: 'GET'
