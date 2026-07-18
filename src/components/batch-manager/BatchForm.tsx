@@ -113,18 +113,7 @@ export function BatchForm({
 
   const handleDialogClose = () => {
     if (isLoading) return;
-  //  clearErrors();
-//  setTimeout(() => {
-//     reset({
-//       programId: "",
-//       academicSession: "",
-//       name: "",
-//       maxStudents: undefined,
-//       isActive: true,
-//     });
-//   }, 300);
     onClose();
-
   };
 
   return (
@@ -150,11 +139,12 @@ export function BatchForm({
                 </Label>
                 <Select
                   value={watch("programId") || undefined}
+                  disabled={isEditing}
                   onValueChange={(value) =>
                     setValue("programId", value)
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a program" />
                   </SelectTrigger>
                   <SelectContent>
