@@ -17,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-
 import {
   Dialog,
   DialogContent,
@@ -26,7 +25,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
 import {
   Select,
   SelectContent,
@@ -35,7 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { Loader2, Plus, X } from "lucide-react";
+import { Loader2, Plus, Trash2 } from "lucide-react";
 import { ThumbnailUpload } from "./ThumbnailUpload";
 import { useUploadAvatar } from "@/pages/Teacher/hooks/useUploadAvtar";
 import { sileo } from "sileo";
@@ -66,7 +64,6 @@ const DEFAULT_VALUES: CreateProgramInput = {
   isActive: true,
 };
 
-
 const PLACEHOLDERS: Record<ProgramType, { name: string; fullName: string }> = {
   SCHOOL: {
     name: "e.g. Class 10, Class 12",
@@ -89,11 +86,46 @@ const PLACEHOLDERS: Record<ProgramType, { name: string; fullName: string }> = {
     fullName: "e.g. Professional Certification Program",
   },
 };
-export function ProgramForm({isOpen, onClose, onSubmit, programData, isLoading = false }: ProgramFormProps) {
+
+function FormField({
+  label,
+  required,
+  error,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="grid gap-1.5 pb-4">
+      <Label>
+        {label}
+        {required && <span className="text-destructive ml-0.5">*</span>}
+      </Label>
+      <div className="relative">
+        {children}
+        {error && (
+          <p className="absolute top-full left-0 pt-1 text-xs text-destructive">
+            {error}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function ProgramForm({
+  isOpen,
+  onClose,
+  onSubmit,
+  programData,
+  isLoading = false,
+}: ProgramFormProps) {
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-
+  const [isUploading, setIsUploading] = useState(false);
   const isEditing = !!programData;
-
   const { uploadAvatarAsync } = useUploadAvatar();
 
   const methods = useForm<CreateProgramInput>({
@@ -102,22 +134,34 @@ export function ProgramForm({isOpen, onClose, onSubmit, programData, isLoading =
     defaultValues: DEFAULT_VALUES,
   });
 
-  const { register, handleSubmit, reset, setValue, watch, control, formState: { errors } } = methods;
-  const programType = watch("programType");
-  const placeholder =
-    programType ? PLACEHOLDERS[programType] : undefined;
-  const { fields: benefitFields, append: appendBenefit, remove: removeBenefit } =
-    useFieldArray({
-      control,
-      name: "benefits",
-    });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    control,
+    formState: { errors, isSubmitting },
+  } = methods;
 
+  const programType = watch("programType");
+  const placeholder = programType ? PLACEHOLDERS[programType] : undefined;
+
+  const {
+    fields: benefitFields,
+    append: appendBenefit,
+    remove: removeBenefit,
+  } = useFieldArray({
+    control,
+    name: "benefits",
+  });
 
   const handleThumbnailChange = useCallback(
     async (file: { file: File | { url: string; id: string } } | null) => {
       const uploadedFile = file?.file;
 
       if (uploadedFile instanceof File) {
+        setIsUploading(true);
         try {
           const response = await uploadAvatarAsync(uploadedFile);
           if (response?.key) {
@@ -140,6 +184,8 @@ export function ProgramForm({isOpen, onClose, onSubmit, programData, isLoading =
             err?.message ||
             "Avatar upload failed. Only JPEG, PNG, and WEBP are allowed.";
           sileo.error({ title: "Upload Failed", description: message });
+        } finally {
+          setIsUploading(false);
         }
       } else if (!file) {
         setValue("thumbnail", "", {
@@ -195,14 +241,15 @@ export function ProgramForm({isOpen, onClose, onSubmit, programData, isLoading =
 
     onSubmit(payload as CreateProgramInput, thumbnailFile);
   };
+
   const handleDialogClose = () => {
     if (isLoading) return;
     onClose();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleDialogClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+    <Dialog open={isOpen} onOpenChange={handleDialogClose} >
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto" onInteractOutside={(e) => e.preventDefault()}>
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(submitHandler)} autoComplete="off">
             <DialogHeader>
@@ -216,240 +263,201 @@ export function ProgramForm({isOpen, onClose, onSubmit, programData, isLoading =
               </DialogDescription>
             </DialogHeader>
 
-            <div className="grid gap-4 py-4">
+            <div className="grid gap-5 py-4">
+              {/* Basic Information */}
+              <div className="grid gap-4">
 
-              {/* Program Type / Category */}
-              <div className="grid gap-2">
-                <Label>
-                  Program Type <span className="text-destructive">*</span>
-                </Label>
-                <Select
-                  value={watch("programType") || undefined}
-                  onValueChange={(value) =>
-                    setValue("programType", value as any, {
-                      shouldValidate: true,
-                    })
-                  }
 
+                <div className="grid grid-cols-2 gap-4">
+
+                  <FormField
+                    label="Program Type"
+                    required
+                    error={errors.programType?.message}
+                  >
+                    <Select
+                      value={watch("programType") || undefined}
+                      onValueChange={(value) =>
+                        setValue("programType", value as any, {
+                          shouldValidate: true,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select program category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PROGRAM_TYPE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormField>
+
+
+                  <FormField
+                    label="Program Name"
+                    required
+                    error={errors.name?.message}
+                  >
+                    <Input
+                      id="name"
+                      placeholder={placeholder?.name || "e.g. B.Sc., M.Sc., MBA"}
+                      disabled={isLoading}
+                      {...register("name")}
+                    />
+                  </FormField>
+
+
+
+
+                </div>
+
+                <FormField
+                  label="Full Program Name"
+                  required
+                  error={errors.fullName?.message}
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select program category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PROGRAM_TYPE_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.programType && (
-                  <p className="text-xs text-destructive">
-                    {errors.programType.message}
-                  </p>
-                )}
-              </div>
-              {/* Name */}
-              <div className="grid gap-2">
-                <Label htmlFor="name">
-                  Program Name <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="name"
-                  placeholder={placeholder?.name || "e.g. B.Sc., M.Sc., MBA"}
-                  disabled={isLoading}
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <p className="text-xs text-destructive">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Full Name */}
-              <div className="grid gap-2">
-                <Label htmlFor="fullName">
-                  Full Program Name{" "}
-                  <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="fullName"
-                  placeholder={
-                    placeholder?.fullName ||
-                    "e.g. Bachelor of Science in Computer Science"
-                  }
-                  disabled={isLoading}
-                  {...register("fullName")}
-                />
-                {errors.fullName && (
-                  <p className="text-xs text-destructive">
-                    {errors.fullName.message}
-                  </p>
-                )}
-              </div>
-
-
-
-              {/* Thumbnail */}
-              <div className="grid gap-2">
-                <Label>Thumbnail</Label>
-                <ThumbnailUpload
-                  value={ thumbnailFile || (typeof watch("thumbnail") === "string" ? watch("thumbnail"): "")}
-                  onFileChange={handleThumbnailChange}
-                  isUploading={false}
-                />
-                {errors.thumbnail && (
-                  <p className="text-xs text-destructive">
-                    {errors.thumbnail.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Description */}
-              <div className="grid gap-2">
-                <Label htmlFor="description">
-                  Description <span className="text-destructive">*</span>
-                </Label>
-                <Textarea
-                  id="description"
-                  rows={3}
-                  placeholder="Brief description of the program... (min 20 characters)"
-                  disabled={isLoading}
-                  {...register("description")}
-                />
-                {errors.description && (
-                  <p className="text-xs text-destructive">
-                    {errors.description.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Duration + Mode */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="durationMonths">
-                    Duration <span className="text-destructive">*</span>
-                  </Label>
                   <Input
-                    id="durationMonths"
-                    type="number"
-                    min={1}
-                    placeholder="e.g. 48 months"
+                    id="fullName"
+                    placeholder={
+                      placeholder?.fullName ||
+                      "e.g. Bachelor of Science in Computer Science"
+                    }
                     disabled={isLoading}
-                    {...register("durationMonths", { valueAsNumber: true })}
+                    {...register("fullName")}
                   />
-                  {errors.durationMonths && (
-                    <p className="text-xs text-destructive">
-                      {errors.durationMonths.message}
-                    </p>
-                  )}
+                </FormField>
+
+                <FormField label="Thumbnail">
+                  <ThumbnailUpload
+                    value={
+                      thumbnailFile ||
+                      (typeof watch("thumbnail") === "string"
+                        ? watch("thumbnail")
+                        : "")
+                    }
+                    onFileChange={handleThumbnailChange}
+                    isUploading={isUploading}
+                  />
+                </FormField>
+
+                <FormField
+                  label="Description"
+                  required
+                  error={errors.description?.message}
+                >
+                  <Textarea
+                    id="description"
+                    rows={3}
+                    placeholder="Brief description of the program... (min 20 characters)"
+                    disabled={isLoading}
+                    {...register("description")}
+                  />
+                </FormField>
+              </div>
+
+              {/* Divider */}
+              <div className="h-px bg-border" />
+
+              {/* Program Details */}
+              <div className="grid gap-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    label="Duration (months)"
+                    required
+                    error={errors.durationMonths?.message}
+                  >
+                    <Input
+                      id="durationMonths"
+                      type="number"
+                      min={1}
+                      placeholder="e.g. 48"
+                      disabled={isLoading}
+                      {...register("durationMonths", { valueAsNumber: true })}
+                    />
+                  </FormField>
+
+                  <FormField
+                    label="Mode"
+                    required
+                    error={errors.mode?.message}
+                  >
+                    <Select
+                      value={watch("mode") || undefined}
+                      onValueChange={(value) =>
+                        setValue("mode", value as any, {
+                          shouldValidate: true,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select mode" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PROGRAM_MODE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormField>
                 </div>
 
-                <div className="grid gap-2">
-                  <Label>
-                    Mode <span className="text-destructive">*</span>
-                  </Label>
-                  <Select
-                    value={watch("mode") || undefined}
-                    onValueChange={(value) =>
-                      setValue("mode", value as any, {
-                        shouldValidate: true,
-                      })
-                    }
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    label="Fee Amount"
+                    required
+                    error={errors.feeAmount?.message}
                   >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select mode" />
-                    </SelectTrigger>
-                    <SelectContent >
-                      {PROGRAM_MODE_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.mode && (
-                    <p className="text-xs text-destructive">
-                      {errors.mode.message}
-                    </p>
-                  )}
+                    <Input
+                      id="feeAmount"
+                      type="number"
+                      min={1}
+                      max={500000}
+                      step="1"
+                      placeholder="e.g. 50000"
+                      disabled={isLoading}
+                      {...register("feeAmount", { valueAsNumber: true })}
+                    />
+                  </FormField>
+
+                  <FormField
+                    label="Fee Type"
+                    required
+                    error={errors.feeType?.message}
+                  >
+                    <Select
+                      value={watch("feeType") || ""}
+                      onValueChange={(value) =>
+                        setValue("feeType", value as any, {
+                          shouldValidate: true,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select fee type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PROGRAM_FEE_TYPE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormField>
                 </div>
               </div>
 
-              {/* Eligibility */}
-              {/* <div className="grid gap-2">
-                <Label htmlFor="eligibility">
-                  Eligibility <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="eligibility"
-                  placeholder="e.g. 12th pass with 50% marks"
-                  disabled={isLoading}
-                  {...register("eligibility")}
-                />
-                {errors.eligibility && (
-                  <p className="text-xs text-destructive">
-                    {errors.eligibility.message}
-                  </p>
-                )}
-              </div> */}
+              {/* Divider */}
+              <div className="h-px bg-border" />
 
-              {/* Fee Amount + Fee Type */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="feeAmount">
-                    Fee Amount <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="feeAmount"
-                    type="number"
-                    min={1}
-                    step="0.01"
-                    placeholder="e.g. 50000"
-                    disabled={isLoading}
-                    {...register("feeAmount")}
-                  />
-                  {errors.feeAmount && (
-                    <p className="text-xs text-destructive">
-                      {errors.feeAmount.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="grid gap-2">
-                  <Label>
-                    Fee Type <span className="text-destructive">*</span>
-                  </Label>
-                  <Select
-                    value={watch("feeType") || ""}
-                    onValueChange={(value) =>
-                      setValue("feeType", value as any, {
-                        shouldValidate: true,
-                      })
-                    }
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select fee type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PROGRAM_FEE_TYPE_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.feeType && (
-                    <p className="text-xs text-destructive">
-                      {errors.feeType.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Benefits - dynamic list */}
-              <div className="grid gap-2">
+              {/* Benefits */}
+              <div className="grid gap-3">
                 <Label>Benefits</Label>
                 <div className="flex flex-col gap-2">
                   {benefitFields.map((field, index) => (
@@ -459,13 +467,27 @@ export function ProgramForm({isOpen, onClose, onSubmit, programData, isLoading =
                         disabled={isLoading}
                         {...register(`benefits.${index}`)}
                       />
-                      <Button type="button" variant="ghost" size="icon" disabled={isLoading} onClick={() => removeBenefit(index)}>
-                        <X className="h-4 w-4" />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        disabled={isLoading}
+                        onClick={() => removeBenefit(index)}
+                        className="shrink-0 text-muted-foreground hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   ))}
-                  <Button type="button" variant="outline" size="sm" className="w-fit" disabled={isLoading} onClick={() => appendBenefit("")}>
-                    <Plus className="mr-2 h-4 w-4" />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="w-fit"
+                    disabled={isLoading}
+                    onClick={() => appendBenefit("")}
+                  >
+                    <Plus className="mr-1.5 h-3.5 w-3.5" />
                     Add Benefit
                   </Button>
                 </div>
@@ -477,8 +499,11 @@ export function ProgramForm({isOpen, onClose, onSubmit, programData, isLoading =
                 )}
               </div>
 
-              {/* Featured + Active toggles */}
-              <div className="flex items-center gap-6">
+              {/* Divider */}
+              <div className="h-px bg-border" />
+
+              {/* Status Toggles */}
+              <div className="flex items-center gap-8">
                 <div className="flex items-center gap-3">
                   <Switch
                     id="featured"
@@ -518,8 +543,8 @@ export function ProgramForm({isOpen, onClose, onSubmit, programData, isLoading =
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading && (
+              <Button type="submit" disabled={isLoading || isSubmitting}>
+                {(isLoading || isSubmitting) && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
                 {isEditing ? "Update Program" : "Create Program"}
