@@ -34,14 +34,16 @@ const typeBadgeVariant = (
   type: ProgramType
 ): "default" | "secondary" | "outline" | "destructive" => {
   switch (type) {
+    case "SCHOOL":
+      return "secondary";
+    case "DIPLOMA":
+      return "outline";
     case "UNDERGRADUATE":
       return "default";
     case "POSTGRADUATE":
       return "secondary";
-    case "DOCTORATE":
+    case "PROFESSIONAL":
       return "destructive";
-    case "CERTIFICATION":
-      return "outline";
     default:
       return "secondary";
   }

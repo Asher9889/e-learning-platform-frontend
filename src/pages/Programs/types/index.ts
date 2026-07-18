@@ -1,46 +1,31 @@
 export const TOTAL_PROGRAM_TYPES = {
   SCHOOL: "SCHOOL",
+  DIPLOMA: "DIPLOMA",
   UNDERGRADUATE: "UNDERGRADUATE",
   POSTGRADUATE: "POSTGRADUATE",
-  DOCTORATE: "DOCTORATE",
-  CERTIFICATION: "CERTIFICATION",
-  COACHING: "COACHING",
+  PROFESSIONAL: "PROFESSIONAL",
 } as const;
 
 export type ProgramType =
   typeof TOTAL_PROGRAM_TYPES[keyof typeof TOTAL_PROGRAM_TYPES];
-// export type ProgramType =
-//   | "SCHOOL"
-//   | "UNDERGRADUATE"
-//   | "POSTGRADUATE"
-//   | "DOCTORATE"
-//   | "CERTIFICATION"
-//   | "COACHING";
-export type PROGRAM_MODES = 
- | "Online"
-| "Offline"
-  | "Hybrid";
 
+export type ProgramMode = "ONLINE" | "OFFLINE" | "HYBRID";
 
-  export type FEE_TYPES = 
- | "One Time"
-  |"Monthly"
-  |"Quarterly"
-  |"Semester"
-  |"Yearly";
+export type FeeType = "ONE_TIME" | "MONTHLY" | "QUARTERLY" | "SEMESTER" | "YEARLY";
+
 export interface Program {
   id: string;
   name: string;
   fullName?: string;
-   thumbnail?: string;
+  thumbnail?: string;
   programType: ProgramType;
-  mode:PROGRAM_MODES;
+  mode: ProgramMode;
   feeAmount?: number;
-  feeType?: FEE_TYPES;
+  feeType?: FeeType;
   benefits?: string[];
   featured?: boolean;
   description?: string;
-  durationMonths?: number ;
+  durationMonths?: number;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -48,16 +33,8 @@ export interface Program {
 
 export const PROGRAM_TYPES: { value: ProgramType; label: string }[] = [
   { value: "SCHOOL", label: "School" },
+  { value: "DIPLOMA", label: "Diploma" },
   { value: "UNDERGRADUATE", label: "Undergraduate" },
   { value: "POSTGRADUATE", label: "Postgraduate" },
-  { value: "DOCTORATE", label: "Doctorate" },
-  { value: "CERTIFICATION", label: "Certification" },
-  { value: "COACHING", label: "Coaching" },
-];
-
-export const HIGHER_ED_TYPES: ProgramType[] = [
-  "UNDERGRADUATE",
-  "POSTGRADUATE",
-  "DOCTORATE",
-  "CERTIFICATION",
+  { value: "PROFESSIONAL", label: "Professional" },
 ];
