@@ -1,34 +1,20 @@
-import { useTracks } from "@livekit/components-react";
-import { Track } from "livekit-client";
-import { useAppSelector } from "@/store/hooks";
-import { useScreenShareTracks } from "@/features/live-class/hooks/useScreenShareTracks";
-import { useTeacherTracks } from "@/features/live-class/hooks/useTeacherTracks";
+import { usePresenter } from "@/features/live-class/hooks/usePresenter";
+import { usePresenterScreenShareTracks } from "@/features/live-class/hooks/usePresenterScreenShareTracks";
+import { usePresenterTracks } from "@/features/live-class/hooks/usePresenterTracks";
 import { ScreenShareStage } from "./ScreenShareStage";
 import { EmptyState } from "@/features/live-class/components/shared/EmptyState";
 import { User } from "lucide-react";
 
 export function MainStage() {
-  const teacherIdentity = useAppSelector(
-    (state) => state.liveClass.teacherIdentity
-  );
+  const presenter = usePresenter();
+  const presenterIdentity = presenter?.identity ?? null;
 
-  const myIdententity = useAppSelector(
-    (state) => state?.auth?.user
-  );
-  const screenShareTracks = useScreenShareTracks(teacherIdentity?.id ?? null);
-  const teacherCameraTracks = useTeacherTracks(teacherIdentity?.id ?? null);
-  const myCameraTracks = useTeacherTracks(myIdententity?.id ?? null);
-
-
-  const allCameraTracks = useTracks(
-    [{ source: Track.Source.Camera, withPlaceholder: true }],
-    { onlySubscribed: false }
-  );
+  const screenShareTracks = usePresenterScreenShareTracks(presenterIdentity);
+  const presenterCameraTracks = usePresenterTracks(presenterIdentity);
 
   const hasScreenShare = screenShareTracks.length > 0;
-  const hasTeacherCamera = teacherCameraTracks.tracks.length > 0;
-  const hasAnyCamera = allCameraTracks.length > 0;
-  console.log(teacherCameraTracks, "hasTeacherCamera123", myCameraTracks, "anubhav", hasAnyCamera, "teacherIdentity", teacherIdentity)
+  const hasPresenterCamera = presenterCameraTracks.tracks.length > 0;
+
   if (hasScreenShare) {
     return (
       <div className="w-full h-full">
@@ -37,18 +23,7 @@ export function MainStage() {
     );
   }
 
-  if (hasTeacherCamera) {
-    // return (
-    //   <div className="w-full h-full flex items-center justify-center">
-    //     <div className="w-full max-w-3xl aspect-video">
-    //       <TeacherStage
-    //         tracks={teacherCameraTracks}
-    //         className="w-full h-full"
-    //       />
-    //     </div>
-    //   </div>
-    // );
-    
+  if (hasPresenterCamera) {
     return (
       <div className="flex h-full w-full items-center justify-center p-4">
         <div className="w-full max-w-4xl aspect-video overflow-hidden rounded-xl border bg-muted">
@@ -62,19 +37,6 @@ export function MainStage() {
       </div>
     )
   }
-
-  // if (hasAnyCamera) {
-  //   return (
-  //     <div className="w-full h-full flex items-center justify-center">
-  //       <div className="w-full max-w-3xl aspect-video">
-  //         <TeacherStage
-  //           tracks={allCameraTracks.slice(0, 1)}
-  //           className="w-full h-full"
-  //         />
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="w-full h-full flex items-center justify-center">

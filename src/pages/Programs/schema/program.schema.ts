@@ -24,31 +24,6 @@ export const PROGRAM_FEE_TYPE_OPTIONS = [
   { value: "YEARLY", label: "Yearly" },
 ] as const;
 
-type ProgramMode = (typeof PROGRAM_MODE_OPTIONS)[number]["value"];
-type ProgramType = (typeof PROGRAM_TYPE_OPTIONS)[number]["value"];
-type FeeType = (typeof PROGRAM_FEE_TYPE_OPTIONS)[number]["value"];
-
-// export const PROGRAM_CATEGORIES = [
-//   "School",
-//   "Undergraduate",
-//   "Postgraduate",
-//   "Professional",
-// ] as const;
-
-// export const PROGRAM_MODES = [
-//   "Online",
-//   "Offline",
-//   "Hybrid",
-// ] as const;
-
-// export const FEE_TYPES = [
-//   "One Time",
-//   "Monthly",
-//   "Quarterly",
-//   "Semester",
-//   "Yearly",
-// ] as const;
-
 export const createProgramSchema = z.object({
   name: z.string().trim().min(2, "Program name must be at least 2 characters").max(100, "Program name cannot exceed 100 characters"),
   fullName: z.string().min(1).max(100).trim(),

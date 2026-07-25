@@ -1,4 +1,4 @@
-import type { TClassStatus } from "@/constants/live-class/live-class.constants";
+import type { TClassStatus, TDeliveryMode, TPresenterType } from "@/constants/live-class/live-class.constants";
 
 
 export interface IBaseApiResponse<TData> {
@@ -102,6 +102,8 @@ export interface IJoinLiveClassResponse {
     participantName: string,
     participantId: string,
     participantRole: string
+
+    deliveryMode: TDeliveryMode
   },
   liveKit: {
     token: string,

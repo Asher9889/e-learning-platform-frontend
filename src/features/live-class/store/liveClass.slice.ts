@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { ChatMessage, ChatTab, ITeacherIdentity } from "../types";
+import type { ChatMessage, ChatTab, ITeacherIdentity, PresenterIdentity } from "../types";
 import type { TUserRole } from "@/constants/user/user.constant";
 
 interface LiveClassState {
@@ -14,6 +14,7 @@ interface LiveClassState {
   participantRole: TUserRole | null;
   participantIdentity: string | null;
   teacherIdentity: ITeacherIdentity | null;
+  presenter: PresenterIdentity | null;
   participantCount: number;
   classId: string | null;
 }
@@ -30,6 +31,7 @@ const initialState: LiveClassState = {
   participantRole: null,
   participantIdentity: null,
   teacherIdentity: null,
+  presenter: null,
   participantCount: 0,
   classId: null,
 };
@@ -80,6 +82,12 @@ const liveClassSlice = createSlice({
     setTeacherIdentity(state, action: PayloadAction<ITeacherIdentity>) {
       state.teacherIdentity = action.payload;  
     },
+    setPresenter(state, action: PayloadAction<PresenterIdentity>) {
+      state.presenter = action.payload;
+    },
+    clearPresenter(state) {
+      state.presenter = null;
+    },
     setClassId(state, action: PayloadAction<string>) {
       state.classId = action.payload;
     },
@@ -106,6 +114,8 @@ export const {
   setParticipantRole,
   setParticipantIdentity,
   setTeacherIdentity,
+  setPresenter,
+  clearPresenter,
   setClassId,
   setParticipantCount,
   resetClassroom,

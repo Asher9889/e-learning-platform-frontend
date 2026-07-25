@@ -9,15 +9,15 @@ import { ErrorState } from "@/features/live-class/components/shared/ErrorState";
 import { useLiveClassByRoomName } from "@/pages/Live-Classes/hooks/useLiveClass";
 import "@livekit/components-styles";
 import ClassRoomLayoutNew from "../layouts/ClassRoomLayoutNew";
+
 export default function ActiveLiveClassPage() {
   const { roomName } = useParams<{ roomName: string }>();
   const [room] = useState(() => new Room());
-  const { data: liveSession } = useLiveClassByRoomName(roomName ?? "");
+  const { data: liveSession } = useLiveClassByRoomName(roomName ?? ""); // first get the room data
   const teacherIdentity = liveSession?.teacher;
 
-  const { connectionParams, isJoining, error, retry,status } = useLiveClassRoom(room, teacherIdentity, roomName);
-console.log(isJoining,"isJoining error",error)
-  // console.log("roomroomroomroomroom3543434354354",room)
+  const { connectionParams, isJoining, error, retry, status } = useLiveClassRoom(room, teacherIdentity, roomName); // using data join the room. k 
+  
   if (!roomName) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-background">
@@ -36,7 +36,7 @@ console.log(isJoining,"isJoining error",error)
       </div>
     );
   }
-console.log(error,"error020")
+
   if (error) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-background">
@@ -49,7 +49,7 @@ console.log(error,"error020")
       </div>
     );
   }
-console.log(room,"roomroomroomroomroom3543434354354")
+
   return (
     <LiveKitRoom
       token={connectionParams?.token}

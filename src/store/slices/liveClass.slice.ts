@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { ChatMessage, ChatTab, ITeacherIdentity } from "@/features/live-class/types";
+import type { ChatMessage, ChatTab, ITeacherIdentity, PresenterIdentity } from "@/features/live-class/types";
 import type { TUserRole } from "@/constants/user/user.constant";
 
 interface LiveClassState {
@@ -15,6 +15,9 @@ interface LiveClassState {
   participantRole: TUserRole | null;
   participantIdentity: string | null;
   teacherIdentity: ITeacherIdentity | null;
+  /** The participant currently occupying the main stage.
+   *  Initially always the teacher. Will support REPLAY in the future. */
+  presenter: PresenterIdentity | null;
   recordedVideoId: string | null;
   participantCount: number;
   classId: string | null;
@@ -33,9 +36,10 @@ const initialState: LiveClassState = {
   participantRole: null,
   participantIdentity: null,
   teacherIdentity: null,
-  recordedVideoId:null,
+  presenter: null,
+  recordedVideoId: null,
   participantCount: 0,
-  classId:null
+  classId: null,
 };
 
 const liveClassSlice = createSlice({
@@ -87,7 +91,12 @@ const liveClassSlice = createSlice({
     setTeacherIdentity(state, action: PayloadAction<ITeacherIdentity>) {
       state.teacherIdentity = action.payload;
     },
-
+    setPresenter(state, action: PayloadAction<PresenterIdentity>) {
+      state.presenter = action.payload;
+    },
+    clearPresenter(state) {
+      state.presenter = null;
+    },
     setRecordedVideoId(state, action: PayloadAction<string | null>) {
       state.recordedVideoId = action.payload;
     },
@@ -119,6 +128,8 @@ export const {
   setParticipantRole,
   setParticipantIdentity,
   setTeacherIdentity,
+  setPresenter,
+  clearPresenter,
   setClassId,
   setRecordedVideoId,
   setParticipantCount,

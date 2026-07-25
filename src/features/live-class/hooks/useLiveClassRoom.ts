@@ -8,6 +8,7 @@ import {
   setParticipantRole,
   setRoomName,
   setTeacherIdentity,
+  setPresenter,
   addMessage,
   setClassId,
 } from "@/features/live-class/store/liveClass.slice";
@@ -36,13 +37,12 @@ export function useLiveClassRoom(room: Room, teacherIdentity?: ITeacherIdentity,
     retry: false,
     staleTime: 0,
   });
-  
-const apiError = error as (Error & { statusCode?: number }) | null;
 
-const statusCode = apiError?.statusCode;
+  const apiError = error as (Error & { statusCode?: number }) | null;
 
-const isErrorState = !!error;
-// console.log("Join error: error020", statusCode);
+  const statusCode = apiError?.statusCode;
+
+  const isErrorState = !!error;
   const connectionParams = useMemo<LiveKitConnectionParams | null>(() => {
     if (!data) return null;
     return {
@@ -55,12 +55,20 @@ const isErrorState = !!error;
   useEffect(() => {
     if (!data) return;
     const { liveKit, liveClass } = data;
-console.log(data,"classsc")
+    console.log(data, "classsc")
     dispatch(setRoomName(liveKit.roomName));
     dispatch(setParticipantIdentity(liveClass.participantId));
     dispatch(setParticipantRole(liveClass.participantRole as "TEACHER" | "STUDENT" | "ADMIN"));
     dispatch(setClassId(liveClass.id));
-    if (teacherIdentity) dispatch(setTeacherIdentity(teacherIdentity));
+    if (teacherIdentity) {
+      dispatch(setTeacherIdentity(teacherIdentity));
+      dispatch(setPresenter({
+        identity: teacherIdentity.id,
+        type: "TEACHER",
+        name: teacherIdentity.name,
+        profileImage: teacherIdentity.profileImage,
+      }));
+    }
   }, [data, dispatch, teacherIdentity]);
 
   useEffect(() => {
@@ -97,7 +105,7 @@ console.log(data,"classsc")
   return {
     connectionParams,
     isJoining:
-    !enabled || isLoading || (!connectionParams && !isErrorState),
+      !enabled || isLoading || (!connectionParams && !isErrorState),
     error: error as Error | null,
     status: statusCode,
     retry: () => refetch(),
