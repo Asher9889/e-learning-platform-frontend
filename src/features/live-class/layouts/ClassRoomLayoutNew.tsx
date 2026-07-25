@@ -117,10 +117,7 @@ export default function ClassRoomLayoutNew() {
         });
     }, [participants]);
     useEffect(() => {
-        const handleData = async (
-            payload: Uint8Array,
-            participant: any
-        ) => {
+        const handleData = async (payload: Uint8Array, participant: any) => {
             const text = new TextDecoder().decode(payload);
 
             const data = JSON.parse(text);
@@ -212,7 +209,7 @@ export default function ClassRoomLayoutNew() {
         }
       `}</style>
 
-            <div className="flex flex-col h-[100dvh] bg-slate-100 text-slate-900 font-sans overflow-hidden">
+            <div className="flex flex-col h-dvh bg-slate-100 text-slate-900 font-sans overflow-hidden">
 
                 {/* ══════════════ HEADER ══════════════ */}
                 <header className="flex items-center justify-between px-3 sm:px-6 py-2.5 sm:py-3 bg-white border-b border-slate-200 shrink-0 gap-2">
@@ -273,11 +270,11 @@ export default function ClassRoomLayoutNew() {
                         {/* Students strip */}
 
                     </main>
-                    <aside className="hidden lg:flex w-[280px] xl:w-[300px] flex-col border-l border-slate-200 bg-white shrink-0">
+                    <aside className="hidden lg:flex w-70 xl:w-75 flex-col border-l border-slate-200 bg-white shrink-0">
                         <ChatPanel />
                     </aside>
 
-                    <aside className="hidden lg:flex w-[280px] xl:w-[300px] flex-col border-l border-slate-200 bg-white shrink-0">
+                    <aside className="hidden lg:flex w-70 xl:w-75 flex-col border-l border-slate-200 bg-white shrink-0">
                         <ParticipantSidebar />
                     </aside>
                 </div>

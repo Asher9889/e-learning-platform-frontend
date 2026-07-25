@@ -11,13 +11,20 @@ import {
   setPresenter,
   addMessage,
   setClassId,
+  resetClassroom,
 } from "@/features/live-class/store/liveClass.slice";
 import type { ChatMessage, ITeacherIdentity, LiveKitConnectionParams } from "@/features/live-class/types";
 import type { Room } from "livekit-client";
 
+export type JoinStep =
+  | "fetching_session"
+  | "fetching_token"
+  | "ready"
+  | "error";
 
 interface UseLiveClassRoomReturn {
   connectionParams: LiveKitConnectionParams | null;
+  joinStep: JoinStep;
   isJoining: boolean;
   error: Error | null;
   retry: () => void;
@@ -25,12 +32,17 @@ interface UseLiveClassRoomReturn {
   status: number | undefined;
 }
 
-export function useLiveClassRoom(room: Room, teacherIdentity?: ITeacherIdentity, roomName?: string): UseLiveClassRoomReturn {
+export function useLiveClassRoom(
+  room: Room,
+  teacherIdentity?: ITeacherIdentity,
+  roomName?: string,
+  sessionError?: Error | null,
+): UseLiveClassRoomReturn {
   const dispatch = useAppDispatch();
 
   const enabled = Boolean(roomName) && Boolean(teacherIdentity);
 
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, error, refetch } = useQuery({
     queryKey: ["live-classes", "join", roomName],
     queryFn: () => liveClassApi.join(roomName!),
     enabled,
@@ -102,11 +114,25 @@ export function useLiveClassRoom(room: Room, teacherIdentity?: ITeacherIdentity,
     dispatch(setConnected(false));
   }, [room, dispatch]);
 
+  const joinStep = useMemo<JoinStep>(() => {
+    if (isErrorState) return "error";
+    if (sessionError) return "error";
+    if (!teacherIdentity) return "fetching_session";
+    if (!connectionParams) return "fetching_token";
+    return "ready";
+  }, [teacherIdentity, connectionParams, isErrorState, sessionError]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetClassroom());
+    };
+  }, [dispatch]);
+
   return {
     connectionParams,
-    isJoining:
-      !enabled || isLoading || (!connectionParams && !isErrorState),
-    error: error as Error | null,
+    joinStep,
+    isJoining: joinStep !== "ready",
+    error: sessionError ?? (error as Error | null),
     status: statusCode,
     retry: () => refetch(),
     leaveRoom,

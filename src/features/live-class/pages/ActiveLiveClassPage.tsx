@@ -3,8 +3,7 @@ import { useParams } from "react-router-dom";
 import { Room } from "livekit-client";
 import { LiveKitRoom } from "@livekit/components-react";
 import { useLiveClassRoom } from "@/features/live-class/hooks/useLiveClassRoom";
-// import { ClassroomLayout } from "@/features/live-class/layouts/ClassroomLayout";
-import { LoadingState } from "@/features/live-class/components/shared/LoadingState";
+import { JoiningScreen } from "@/features/live-class/components/shared/JoiningScreen";
 import { ErrorState } from "@/features/live-class/components/shared/ErrorState";
 import { useLiveClassByRoomName } from "@/pages/Live-Classes/hooks/useLiveClass";
 import "@livekit/components-styles";
@@ -13,11 +12,16 @@ import ClassRoomLayoutNew from "../layouts/ClassRoomLayoutNew";
 export default function ActiveLiveClassPage() {
   const { roomName } = useParams<{ roomName: string }>();
   const [room] = useState(() => new Room());
-  const { data: liveSession } = useLiveClassByRoomName(roomName ?? ""); // first get the room data
+  const { data: liveSession, error: sessionError } = useLiveClassByRoomName(roomName ?? "");
   const teacherIdentity = liveSession?.teacher;
 
-  const { connectionParams, isJoining, error, retry, status } = useLiveClassRoom(room, teacherIdentity, roomName); // using data join the room. k 
-  
+  const { connectionParams, joinStep, error, retry, status } = useLiveClassRoom(
+    room,
+    teacherIdentity,
+    roomName,
+    sessionError,
+  );
+
   if (!roomName) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-background">
@@ -26,28 +30,24 @@ export default function ActiveLiveClassPage() {
           message="Could not connect to the live class due to invalid room name. Please try with correct room name again."
         />
       </div>
-    )
-  }
-
-  if (isJoining) {
-    return (
-      <div className="h-screen w-screen flex items-center justify-center bg-background">
-        <LoadingState message="Joining live class..." />
-      </div>
     );
   }
 
-  if (error) {
+  if (joinStep === "error") {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-background">
         <ErrorState
           title="Failed to join"
-          message={error.message || "Could not connect to the live class. Please try again."}
+          message={error?.message || "Could not connect to the live class. Please try again."}
           onRetry={retry}
           statusCode={status}
         />
       </div>
     );
+  }
+
+  if (joinStep !== "ready") {
+    return <JoiningScreen step={joinStep} />;
   }
 
   return (
@@ -61,9 +61,7 @@ export default function ActiveLiveClassPage() {
         dynacast: true,
       }}
     >
-      {/* <ClassroomLayout /> */}
-      {/* <VideoConference /> */}
-      <ClassRoomLayoutNew/>
+      <ClassRoomLayoutNew />
     </LiveKitRoom>
   );
 }
