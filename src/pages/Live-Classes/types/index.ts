@@ -49,6 +49,7 @@ export interface ILiveSession {
   createdBy: ILiveSessionCreatedBy;
 
   status: TClassStatus;
+  deliveryMode: TDeliveryMode;
 
   roomName: string | null;
 

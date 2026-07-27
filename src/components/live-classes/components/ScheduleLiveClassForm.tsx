@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarPlus, Users } from "lucide-react";
 import { Button } from "#components/ui/button";
@@ -27,7 +27,7 @@ interface Props {
 
 export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, programOptions }: Props) {
   const [search] = useState("");
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<TStartLiveClassInput>({
+  const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm<TStartLiveClassInput>({
     resolver: zodResolver(startLiveClassSchema),
     defaultValues: {
       title: "",
@@ -58,9 +58,8 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
   const selectedOption = mapToLabelValue(data?.filter((materialData) => materialData?.materialType === "VIDEO"), "title", "id") || [];
 
   const selectedMode = watch("mode");
-  const {
-    mutate: startLiveClassMutation,
-  } = useStartLiveClass();
+  const durationValue = useWatch({ control, name: "durationMinutes" });
+  const {mutate: startLiveClassMutation} = useStartLiveClass();
   const selectedProgram = watch("programId");
   const selectedBatch = watch("batchId");
   const { data: subjectsData } = useGetSubjects(selectedProgram);
@@ -81,7 +80,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
       setValue("replayMaterialId", "");
       setValue("deliveryMode", "REPLAY");
     } else {
-      setValue("durationMinutes", 60);
+      setValue("durationMinutes", 0);
     }
   }, [selectedMode]);
   const onSubmit = async (data: TStartLiveClassInput) => {
@@ -234,7 +233,10 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
         <Select
           value={selectedBatch || "__all__"}
           disabled={!selectedProgram}
-          onValueChange={(v) => setValue("batchId", v === "__all__" ? null : v)}
+          onValueChange={(v) =>{
+            console.log(v, "selectedBatch")
+            setValue("batchId", v === "__all__" ? null : v)}
+          }
         >
           <SelectTrigger className="w-full">
             <SelectValue
@@ -287,7 +289,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
           <Label>Duration (minutes)</Label>
           <Input
             type="number"
-            value={watch("durationMinutes")}
+            value={durationValue ?? ""}
             onChange={(e) => setValue("durationMinutes", Number(e.target.value))}
           />
         </div>

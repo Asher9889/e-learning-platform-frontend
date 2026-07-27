@@ -147,14 +147,7 @@ export function ProgramForm({
   const programType = watch("programType");
   const placeholder = programType ? PLACEHOLDERS[programType] : undefined;
 
-  const {
-    fields: benefitFields,
-    append: appendBenefit,
-    remove: removeBenefit,
-  } = useFieldArray({
-    control,
-    name: "benefits",
-  });
+  const {fields: benefitFields, append: appendBenefit, remove: removeBenefit } = useFieldArray({ control: control, name: "benefits" as never} as any);
 
   const handleThumbnailChange = useCallback(
     async (file: { file: File | { url: string; id: string } } | null) => {
@@ -333,8 +326,7 @@ export function ProgramForm({
 
                 <FormField label="Thumbnail">
                   <ThumbnailUpload
-                    value={ thumbnailFile || (typeof watch("thumbnail") === "string" ? watch("thumbnail"): "")
-                    }
+                    value={ thumbnailFile || (typeof watch("thumbnail") === "string" ? watch("thumbnail") : undefined)}
                     onFileChange={handleThumbnailChange}
                     isUploading={isUploading}
                   />

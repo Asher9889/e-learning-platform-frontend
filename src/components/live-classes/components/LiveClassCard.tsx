@@ -35,7 +35,6 @@ const LiveClassCard = ({
   const [canJoin, setCanJoin] = useState(false);
   const myIdentity = useAppSelector((state)=> state?.auth?.user)
   const scheduledAt = liveClass.scheduledAt ? new Date(liveClass.scheduledAt) : null;
-  console.log(liveClass, "liveClassliveClassliveClass")
   useEffect(() => {
     if (!liveClass?.scheduledAt) return;
 
@@ -170,11 +169,10 @@ const LiveClassCard = ({
               size="sm"
               className="w-full h-8 gap-1.5 text-xs font-medium cursor-pointer"
               onClick={() => {
-
                 console.log("start class clicked");
                 onStart(liveClass.id);
               }}
-              // disabled={!canJoin}
+              disabled={liveClass.deliveryMode === "REPLAY"}
             >
               <Radio className="h-3.5 w-3.5" />
               Start Class
