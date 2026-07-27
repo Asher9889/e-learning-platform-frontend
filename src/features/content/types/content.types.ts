@@ -20,6 +20,9 @@ export interface Material {
     id: string;
     name: string;
   };
+  metadata:{
+    durationMs?: number;
+  }
 }
 
 export interface MaterialsResponse {

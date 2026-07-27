@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarPlus, Users } from "lucide-react";
@@ -38,15 +38,8 @@ interface Props {
 }
 
 export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, programOptions }: Props) {
-  // const [open, setOpen] = useState(false);
   const [search] = useState("");
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<TStartLiveClassInput>({
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<TStartLiveClassInput>({
     resolver: zodResolver(startLiveClassSchema),
     defaultValues: {
       title: "",
@@ -70,9 +63,11 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
 
 
   const { data } = useVideoSearch(search);
+  const dataRef = useRef(data);
+  dataRef.current = data;
 
-  const selectedOption = mapToLabelValue(data?.filter((materialData) => materialData?.materialType === "VIDEO"), "title", "id") || [];;
-  console.log(selectedOption, "selecteddatadatadata 00000000000000", data)
+  const selectedOption = mapToLabelValue(data?.filter((materialData) => materialData?.materialType === "VIDEO"), "title", "id") || [];
+
   const selectedMode = watch("mode");
   const {
     mutate: startLiveClassMutation,
@@ -90,6 +85,15 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
   useEffect(() => {
     setValue("batchId", "");
   }, [selectedProgram]);
+
+  useEffect(() => {
+    if (selectedMode === "RECORDED") {
+      setValue("durationMinutes", 0);
+      setValue("recordingVideoId", "");
+    } else {
+      setValue("durationMinutes", 60);
+    }
+  }, [selectedMode]);
   const onSubmit = async (data: TStartLiveClassInput) => {
     console.log(data, "awdawdawdawdawd");
     startLiveClassMutation({ ...data, status: "SCHEDULED" }, {
@@ -143,9 +147,13 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
             <Label>Recorded Video</Label>
 
             <Select onValueChange={(v) => {
-              // setValue("videoUrl", v)
-              console.log(v, "adgashjdashgdjhagshdgajghsd")
               setValue("recordingVideoId", v)
+              const selectedVideo = dataRef.current.find((material: any) => material.id === v)
+              if (selectedVideo?.metadata?.durationMs) {
+                const durationInMinutes = Math.ceil(selectedVideo.metadata.durationMs / 60000)
+                console.log(durationInMinutes, "durationInMinutes")
+                setValue("durationMinutes", durationInMinutes)
+              }
             }}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select recorded video" />

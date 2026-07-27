@@ -8,10 +8,7 @@ import { Track } from "livekit-client";
  * The presenter is the participant occupying the main stage.
  * Initially always the teacher. Will support REPLAY in the future.
  */
-export function usePresenterMediaState(
-  _myIdentity?: string | null,
-  presenterIdentity?: string | null,
-) {
+export function usePresenterMediaState(_myIdentity?: string | null, presenterIdentity?: string | null) {
   const participants = useParticipants();
 
   const mediaTracks = useTracks(

@@ -17,11 +17,11 @@ interface MainStageNewProps {
 }
 
 function MainStageNew(props: MainStageNewProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const room = useRoomContext();
 
-  const presenter = useAppSelector((s) => s.liveClass.presenter);
+  const presenter = useAppSelector((s) => s.liveClass.presenter); 
   const myIdentity = useAppSelector((s) => s?.auth?.user);
   const presenterIdentity = presenter?.identity ?? null;
 
@@ -41,10 +41,10 @@ function MainStageNew(props: MainStageNewProps) {
     }
   }, []);
 
-  const handleRetry = useCallback(() => {
-    room.reconnect().catch(() => {
-      // reconnect failed — user can try again
-    });
+  const handleRetry = useCallback(async () => {
+    // await room.connect().catch(() => {
+    //   // reconnect failed — user can try again
+    // });
   }, [room]);
 
   let content: React.ReactNode;

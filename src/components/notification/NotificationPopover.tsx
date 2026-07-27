@@ -26,26 +26,21 @@ import { useAppSelector } from "@/store/hooks";
 const NotificationPopover = () => {
     const [open, setOpen] = useState(false);
 
-    const { data, isLoading } =  useNotifications(1, 20, open);
+    const { data, isLoading } = useNotifications(1, 20, open);
     const { data: unreadData } = useUnreadCount(open);
 
-    const { mutate: markAllRead, isPending } =
-        useMarkAllAsRead();
+    const { mutate: markAllRead, isPending } = useMarkAllAsRead();
 
     const { mutate: markAsRead } = useMarkAsRead();
-    const {unreadCount:count} = useAppSelector((state) =>  state.notification)
-    const notifications =
-        data?.notifications ?? [];
+    const { unreadCount: count } = useAppSelector((state) => state.notification)
+    const notifications = data?.notifications ?? [];
 
 
-        console.log("popover159")
-    const unreadCount =
-        unreadData?.unreadCount > 0 ? unreadData?.unreadCount  :  count ?? 0;
-console.log(unreadCount,"data?.data?.notifications 1233333333333333333",count)
+    console.log("popover159")
+    const unreadCount = unreadData?.unreadCount > 0 ? unreadData?.unreadCount : count ?? 0;
+    console.log(unreadCount, "data?.data?.notifications 1233333333333333333", count)
 
-    const handleNotificationClick = (
-        notification: TNotification
-    ) => {
+    const handleNotificationClick = ( notification: TNotification) => {
         if (!notification.isRead) {
             markAsRead(notification.id);
         }
@@ -99,7 +94,7 @@ console.log(unreadCount,"data?.data?.notifications 1233333333333333333",count)
                     <>
                         <ScrollArea className="max-h-[420px]">
                             {notifications.map(
-                                (notification :TNotification) => (
+                                (notification: TNotification) => (
                                     <NotificationItem
                                         key={notification.id}
                                         notification={

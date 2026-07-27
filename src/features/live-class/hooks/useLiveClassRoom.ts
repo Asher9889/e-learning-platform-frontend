@@ -32,12 +32,7 @@ interface UseLiveClassRoomReturn {
   status: number | undefined;
 }
 
-export function useLiveClassRoom(
-  room: Room,
-  teacherIdentity?: ITeacherIdentity,
-  roomName?: string,
-  sessionError?: Error | null,
-): UseLiveClassRoomReturn {
+export function useLiveClassRoom(room: Room, teacherIdentity?: ITeacherIdentity, roomName?: string, sessionError?: Error | null): UseLiveClassRoomReturn {
   const dispatch = useAppDispatch();
 
   const enabled = Boolean(roomName) && Boolean(teacherIdentity);
@@ -67,13 +62,21 @@ export function useLiveClassRoom(
   useEffect(() => {
     if (!data) return;
     const { liveKit, liveClass } = data;
-    console.log(data, "classsc")
+
     dispatch(setRoomName(liveKit.roomName));
     dispatch(setParticipantIdentity(liveClass.participantId));
     dispatch(setParticipantRole(liveClass.participantRole as "TEACHER" | "STUDENT" | "ADMIN"));
     dispatch(setClassId(liveClass.id));
     if (teacherIdentity) {
       dispatch(setTeacherIdentity(teacherIdentity));
+    }
+    if (data.liveClass.deliveryMode === "REPLAY") {
+      dispatch(setPresenter({
+        identity: null,
+        type: "REPLAY",
+        name: "Replay Session",
+      }));
+    } else if (teacherIdentity) {
       dispatch(setPresenter({
         identity: teacherIdentity.id,
         type: "TEACHER",

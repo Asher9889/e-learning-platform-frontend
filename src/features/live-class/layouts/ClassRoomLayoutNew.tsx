@@ -17,6 +17,7 @@ import { setParticipantsOpen } from "@/features/live-class/store/liveClass.slice
 import { Button } from "#components/ui/button";
 import { PhoneOff } from "lucide-react";
 import { useEndLiveClass } from "@/pages/Live-Classes/hooks/useLiveClass";
+import { useIngressParticipant } from "../hooks/useIngressParticipant";
 import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
 
@@ -29,21 +30,23 @@ function extractAvatar(metadata: string): string | undefined {
     }
 }
 export default function ClassRoomLayoutNew() {
-    const isTablet = useMediaQuery("(max-width: 1024px)");
-    const isMobile = useMediaQuery("(max-width: 768px)");
+    // const isTablet = useMediaQuery("(max-width: 1024px)");
+    // const isMobile = useMediaQuery("(max-width: 768px)");
     const dispatch = useAppDispatch();
-    const classId = useAppSelector((state) => state.liveClass.classId);
-    const participantsOpen = useAppSelector((state) => state.liveClass.participantsOpen);
-    const navigate = useNavigate()
 
-    const previousRaisedUsers = useRef(new Set<string>());
+    const navigate = useNavigate()
     const room = useRoomContext();
-    const chatOpen = useAppSelector((state) => state.liveClass.chatOpen);
-    const title = useAppSelector(
-        (state) => state.liveClass.title
-    );
+
     const { mutate } = useEndLiveClass();
 
+    useIngressParticipant(); // Watch for ingress participants and update presenter state accordingly
+
+    const classId = useAppSelector((state) => state.liveClass.classId);
+    const participantsOpen = useAppSelector((state) => state.liveClass.participantsOpen);
+    const chatOpen = useAppSelector((state) => state.liveClass.chatOpen);
+    const title = useAppSelector((state) => state.liveClass.title);
+
+    const previousRaisedUsers = useRef(new Set<string>());
 
     const liveKitParticipants = useParticipants({
         updateOnlyOn: [
@@ -179,14 +182,9 @@ export default function ClassRoomLayoutNew() {
     }, [room]);
 
 
-    const totalSudents = liveKitParticipants
-        .filter((p) => p.identity &&
-            p.identity.trim() !== "" && p.identity !== teacherIdentity?.id) || [];
-    const visibleStudents = isMobile
-        ? participants.slice(0, 3)
-        : isTablet
-            ? participants.slice(0, 4)
-            : participants;
+    const totalSudents = liveKitParticipants.filter((p) => p.identity && p.identity.trim() !== "" && p.identity !== teacherIdentity?.id) || [];
+    // const visibleStudents = isMobile ? participants.slice(0, 3) : isTablet ? participants.slice(0, 4) : participants;
+    
     const handleEndClass = () => {
         if (!classId) return
         console.log("awdawdawdawdad")
@@ -200,7 +198,6 @@ export default function ClassRoomLayoutNew() {
         });
     };
 
-    console.log(visibleStudents, "visibleStudentsvisibleStudentsvisibleStudents CONTROLLLLLL88888", liveKitParticipants, "totalSudents", totalSudents)
     return (
         <><style>{`
         @keyframes audioPulse {
@@ -219,9 +216,7 @@ export default function ClassRoomLayoutNew() {
                         {/* <p className="hidden sm:inline truncate text-xs">Class started · 10:00 AM</p> */}
 
                     </p>
-                    {/* <span className="font-mono text-[12px] sm:text-[13px] text-violet-600 font-semibold shrink-0">
-                        {formatTime(seconds)}
-                    </span> */}
+
                     <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                         <LiveBadge />
                         <ConnectionIndicator />
@@ -237,6 +232,8 @@ export default function ClassRoomLayoutNew() {
                         <span className="text-[11px] sm:text-xs text-slate-400 hidden sm:inline">{totalSudents?.length} students</span>
                     </div>
                 </header>
+
+                {/* ══════════════ Main Body ══════════════ */}
 
                 <div className="flex flex-1 overflow-hidden">
 

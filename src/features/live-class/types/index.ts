@@ -4,11 +4,11 @@ import type { TrackReference } from "@livekit/components-react";
 // The presenter is the participant currently occupying the main stage.
 // Initially only TEACHER is supported. REPLAY will be added later.
 
-export type PresenterType = "TEACHER";
+export type PresenterType = "TEACHER" | "REPLAY";
 
 export interface PresenterIdentity {
   /** LiveKit participant identity (the id used to match tracks) */
-  identity: string;
+  identity: string | null;
   /** The kind of presenter — controls stage behaviour and future extension */
   type: PresenterType;
   /** Display name shown on the stage and audio-only card */
@@ -17,10 +17,7 @@ export interface PresenterIdentity {
   profileImage?: string;
 }
 
-// ─── Participant / Role ──────────────────────────────────────────────────────
-
 export type ParticipantRole = "TEACHER" | "STUDENT";
-
 export interface ParticipantInfo {
   identity: string;
   name: string;
@@ -33,9 +30,6 @@ export interface ParticipantInfo {
   audioLevel?: number;
   isSpeaking?: boolean;
 }
-
-// ─── Chat ────────────────────────────────────────────────────────────────────
-
 export interface ChatMessage {
   id: string;
   senderId: string;

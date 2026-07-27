@@ -35,20 +35,12 @@ export function StagePlaying({ participants }: StagePlayingProps) {
       String(p.identity).trim() === String(presenterIdentity).trim(),
   );
 
-  const {
-    isCameraOn,
-    cameraTracks: presenterCameraTracks,
-    activeStudentStreams,
-  } = usePresenterMediaState(myIdentity?.id, presenterIdentity);
+  const { isCameraOn, cameraTracks: presenterCameraTracks, activeStudentStreams } = usePresenterMediaState(myIdentity?.id, presenterIdentity);
 
-  const studentActiveStream: ActiveStudentStream | undefined =
-    activeStudentStreams?.[0];
+  const studentActiveStream: ActiveStudentStream | undefined = activeStudentStreams?.[0];
 
-  const screenShareTracks =
-    usePresenterScreenShareTracks(presenterIdentity);
-  const studentScreenShareTracks = usePresenterScreenShareTracks(
-    studentActiveStream?.identity,
-  );
+  const screenShareTracks = usePresenterScreenShareTracks(presenterIdentity);
+  const studentScreenShareTracks = usePresenterScreenShareTracks(studentActiveStream?.identity);
 
   const hasScreenShare = screenShareTracks.length > 0;
 

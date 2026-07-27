@@ -12,15 +12,10 @@ import ClassRoomLayoutNew from "../layouts/ClassRoomLayoutNew";
 export default function ActiveLiveClassPage() {
   const { roomName } = useParams<{ roomName: string }>();
   const [room] = useState(() => new Room());
-  const { data: liveSession, error: sessionError } = useLiveClassByRoomName(roomName ?? "");
+  const { data: liveSession, error: sessionError } = useLiveClassByRoomName(roomName ?? ""); // Fetch live session details based on room name
   const teacherIdentity = liveSession?.teacher;
 
-  const { connectionParams, joinStep, error, retry, status } = useLiveClassRoom(
-    room,
-    teacherIdentity,
-    roomName,
-    sessionError,
-  );
+  const { connectionParams, joinStep, error, retry, status } = useLiveClassRoom(room, teacherIdentity, roomName, sessionError); // start joining to livekit room
 
   if (!roomName) {
     return (
