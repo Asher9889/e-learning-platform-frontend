@@ -2,34 +2,22 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarPlus, Users } from "lucide-react";
-
 import { Button } from "#components/ui/button";
 import { Input } from "#components/ui/input";
 import { Label } from "#components/ui/label";
 import { Textarea } from "#components/ui/textarea";
 import { Switch } from "#components/ui/switch";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "#components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "#components/ui/select";
 
-import {
-  startLiveClassSchema,
-  type TStartLiveClassInput,
-} from "@/pages/Live-Classes/schema/live.class.schema";
+import { startLiveClassSchema, type TStartLiveClassInput } from "@/pages/Live-Classes/schema/live.class.schema";
 import type { Options } from "@/pages/Teacher/schema/teacher.schema";
 import { useGetSubjects } from "@/pages/Subjects/hooks/useGetSubjects";
 import { useGetBatches } from "@/pages/Batches/hooks/useGetBatches";
 import { mapToLabelValue } from "@/utils/helper";
 import { useStartLiveClass } from "@/pages/Live-Classes/hooks/useStartLiveClass";
 import { sileo } from "sileo";
-// import { useGetMaterials } from "@/features/content/hooks/useGetMaterials";
 import { useVideoSearch } from "#hooks/use-video-search";
-// import { set } from "zod";
 
 interface Props {
   teachersOptions: Options[];
@@ -47,13 +35,14 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
       subjectId: "",
       programId: "",
       mode: "SCHEDULED",
+      deliveryMode: "LIVE",
       batchId: "",
       teacherId: "",
       scheduledAt: new Date().toISOString(),
       durationMinutes: 60,
       maxParticipants: 50,
       status: "RECORDED",
-      recordingVideoId: "",
+      replayMaterialId: "",
       isRecordingEnabled: true,
       isChatEnabled: true,
       isScreenShareAllowed: true,
@@ -89,7 +78,8 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
   useEffect(() => {
     if (selectedMode === "RECORDED") {
       setValue("durationMinutes", 0);
-      setValue("recordingVideoId", "");
+      setValue("replayMaterialId", "");
+      setValue("deliveryMode", "REPLAY");
     } else {
       setValue("durationMinutes", 60);
     }
@@ -147,7 +137,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
             <Label>Recorded Video</Label>
 
             <Select onValueChange={(v) => {
-              setValue("recordingVideoId", v)
+              setValue("replayMaterialId", v)
               const selectedVideo = dataRef.current.find((material: any) => material.id === v)
               if (selectedVideo?.metadata?.durationMs) {
                 const durationInMinutes = Math.ceil(selectedVideo.metadata.durationMs / 60000)
@@ -244,7 +234,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
         <Select
           value={selectedBatch || "__all__"}
           disabled={!selectedProgram}
-          onValueChange={(v) => setValue("batchId", v === "__all__" ? "" : v)}
+          onValueChange={(v) => setValue("batchId", v === "__all__" ? null : v)}
         >
           <SelectTrigger className="w-full">
             <SelectValue
@@ -297,7 +287,8 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
           <Label>Duration (minutes)</Label>
           <Input
             type="number"
-            {...register("durationMinutes", { valueAsNumber: true })}
+            value={watch("durationMinutes")}
+            onChange={(e) => setValue("durationMinutes", Number(e.target.value))}
           />
         </div>
       </div>
@@ -337,10 +328,11 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
           />
         </div>
         <div className="space-y-1">
-          <Label>Max students</Label>
+          <Label>Duration (minutes)</Label>
           <Input
             type="number"
-            {...register("maxParticipants", { valueAsNumber: true })}
+            value={watch("durationMinutes") || ""}
+            onChange={(e) => setValue("durationMinutes", Number(e.target.value))}
           />
         </div>
       </div> */}

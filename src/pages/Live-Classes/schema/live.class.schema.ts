@@ -1,4 +1,4 @@
-import { CLASS_STATUS } from "@/constants/live-class/live-class.constants";
+import { CLASS_STATUS, DELIVERY_MODE } from "@/constants/live-class/live-class.constants";
 import { z } from "zod";
 
 export const startLiveClassSchema = z.object({
@@ -14,22 +14,19 @@ export const startLiveClassSchema = z.object({
 
   programId: z.string().min(1, "Program is required"),
 
-  batchId: z.string().optional(),
- 
+  batchId: z.string().nullable().default(null).optional(),
+
   subjectId: z.string().min(1, "Subject is required"),
 
   teacherId: z.string().min(1, "Teacher is required"),
- scheduledAt: z.iso.datetime().optional(),
+  scheduledAt: z.iso.datetime().optional(),
   status: z.enum(Object.values(CLASS_STATUS)),
-   mode: z.enum(["SCHEDULED" ,"LIVE" , "RECORDED"]),
-   recordingVideoId:z.string().optional(),
-  durationMinutes: z
-    .number()
-    .min(1, "Duration must be at least 1 minute"),
+  mode: z.enum(["SCHEDULED", "LIVE", "RECORDED"]),
+  deliveryMode: z.enum(Object.values(DELIVERY_MODE)),
+  replayMaterialId: z.string().optional(),
+  durationMinutes: z.number().min(1, "Duration must be at least 1 minute"),
 
-  maxParticipants: z
-    .number()
-    .min(1, "Max participants must be at least 1"),
+  maxParticipants: z.number().min(1, "Max participants must be at least 1"),
 
   isRecordingEnabled: z.boolean(),
 

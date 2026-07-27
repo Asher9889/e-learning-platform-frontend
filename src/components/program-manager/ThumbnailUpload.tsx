@@ -18,11 +18,9 @@ import {
 interface AvatarUploadProps {
   maxSize?: number;
   className?: string;
-  onFileChange?: (
-    file: FileWithPreview | null
-  ) => void;
+  onFileChange?: (file: FileWithPreview | null) => void;
   defaultAvatar?: string;
-  value?: File | string;
+  value?: File | string | null;
   isUploading?: boolean;
 }
 

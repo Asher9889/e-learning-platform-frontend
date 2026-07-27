@@ -1,4 +1,4 @@
-import type { TClassStatus, TDeliveryMode, TPresenterType } from "@/constants/live-class/live-class.constants";
+import type { TClassStatus, TDeliveryMode } from "@/constants/live-class/live-class.constants";
 
 
 export interface IBaseApiResponse<TData> {
@@ -58,7 +58,7 @@ export interface ILiveSession {
   isRecordingEnabled: boolean;
   isChatEnabled: boolean;
   isScreenShareAllowed: boolean;
-  recordingVideoId: string | null;
+  replayMaterialId: string | null;
   scheduledAt: string | null;
   startedAt: string | null;
   endedAt: string | null;

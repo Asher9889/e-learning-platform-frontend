@@ -7,7 +7,6 @@ import { RoomAudioRenderer, useParticipants } from "@livekit/components-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import MainStageNew from "../components/stage/MainStageNew";
 import { ClassroomControls } from "../components/controls/ClassroomControls";
-import { useMediaQuery } from "#hooks/use-media-query";
 import { setChatOpen } from "../store/liveClass.slice";
 import { useRoomContext } from "@livekit/components-react";
 import { useSingleSpeakerSystem } from "../hooks/useSingleSpeakerSystem";
@@ -120,7 +119,7 @@ export default function ClassRoomLayoutNew() {
         });
     }, [participants]);
     useEffect(() => {
-        const handleData = async (payload: Uint8Array, participant: any) => {
+        const handleData = async (payload: Uint8Array, _participant: any) => {
             const text = new TextDecoder().decode(payload);
 
             const data = JSON.parse(text);

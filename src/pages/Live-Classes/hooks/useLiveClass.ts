@@ -54,7 +54,7 @@ export const useLiveClassByRoomName = (roomName: string) => {
 
   useEffect(() => {
     const title = query.data?.title;
-    const recordedVideoId = query.data?.recordingVideoId
+    const recordedVideoId = query.data?.replayMaterialId
     console.log( query.data," query.data classsc",query)
     if (title) {
       dispatch(setTitle(title));

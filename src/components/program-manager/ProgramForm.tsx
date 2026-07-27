@@ -333,11 +333,7 @@ export function ProgramForm({
 
                 <FormField label="Thumbnail">
                   <ThumbnailUpload
-                    value={
-                      thumbnailFile ||
-                      (typeof watch("thumbnail") === "string"
-                        ? watch("thumbnail")
-                        : "")
+                    value={ thumbnailFile || (typeof watch("thumbnail") === "string" ? watch("thumbnail"): "")
                     }
                     onFileChange={handleThumbnailChange}
                     isUploading={isUploading}
