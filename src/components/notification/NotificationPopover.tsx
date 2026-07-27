@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Bell } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -122,4 +122,4 @@ const NotificationPopover = () => {
     );
 };
 
-export default NotificationPopover;
+export default memo(NotificationPopover);
