@@ -115,7 +115,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
     >
       <div className={`grid grid-cols-1 ${selectedMode === "RECORDED" ? "sm:grid-cols-2" : "sm:grid-cols-1"} gap-4`}>
         <div className="space-y-1">
-          <Label>Class Type</Label>
+          <Label>Class Type <span className="text-destructive">*</span></Label>
           <Select
             onValueChange={(v) => setValue("mode", v as "SCHEDULED" | "RECORDED")}
             defaultValue="SCHEDULED"
@@ -164,7 +164,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
 
       {/* TITLE */}
       <div className="space-y-1">
-        <Label>Title</Label>
+        <Label>Title <span className="text-destructive">*</span></Label>
         <Input {...register("title")} placeholder="e.g. Introduction to Algebra" />
         {errors.title && (
           <p className="text-xs text-red-500">{errors.title.message}</p>
@@ -174,7 +174,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
       {/* SUBJECT + PROGRAM */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1">
-          <Label>Program</Label>
+          <Label>Program <span className="text-destructive">*</span></Label>
           <Select onValueChange={(v) => setValue("programId", v)}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select program" />
@@ -190,7 +190,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
         </div>
 
         <div className="space-y-1">
-          <Label>Subject</Label>
+          <Label>Subject <span className="text-destructive">*</span></Label>
           <Select
             disabled={!selectedProgram}
             onValueChange={(v) => setValue("subjectId", v)}
@@ -234,7 +234,6 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
           value={selectedBatch || "__all__"}
           disabled={!selectedProgram}
           onValueChange={(v) =>{
-            console.log(v, "selectedBatch")
             setValue("batchId", v === "__all__" ? null : v)}
           }
         >
@@ -271,7 +270,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
       {/* TEACHER */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
-          <Label>Teacher</Label>
+          <Label>Teacher <span className="text-destructive">*</span></Label>
           <Select onValueChange={(v) => setValue("teacherId", v)}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select teacher" />
@@ -286,7 +285,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
           </Select>
         </div>
         <div className="space-y-1">
-          <Label>Duration (minutes)</Label>
+          <Label>Duration (minutes) <span className="text-destructive">*</span></Label>
           <Input
             type="number"
             value={durationValue ?? ""}
@@ -297,7 +296,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
 
       {/* DESCRIPTION */}
       <div className="space-y-1">
-        <Label>Description</Label>
+        <Label>Description <span className="text-destructive">*</span></Label>
         <Textarea
           {...register("description")}
           placeholder="Brief about what will be covered..."
