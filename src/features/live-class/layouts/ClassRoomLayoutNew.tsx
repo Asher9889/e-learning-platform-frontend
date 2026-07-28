@@ -13,8 +13,7 @@ import { useSingleSpeakerSystem } from "../hooks/useSingleSpeakerSystem";
 import { RoomEvent } from "livekit-client";
 import { ParticipantSidebar } from "../components/participants/ParticipantSidebar";
 import { setParticipantsOpen } from "@/features/live-class/store/liveClass.slice";
-import { Button } from "#components/ui/button";
-import { PhoneOff } from "lucide-react";
+import { EndClassButton } from "../components/controls/EndClassButton";
 import { useEndLiveClass } from "@/pages/Live-Classes/hooks/useLiveClass";
 import { useIngressParticipant } from "../hooks/useIngressParticipant";
 import { sileo } from "sileo";
@@ -36,7 +35,7 @@ export default function ClassRoomLayoutNew() {
     const navigate = useNavigate()
     const room = useRoomContext();
 
-    const { mutate } = useEndLiveClass();
+    const { mutateAsync } = useEndLiveClass();
 
     useIngressParticipant(); // Watch for ingress participants and update presenter state accordingly
 
@@ -118,6 +117,8 @@ export default function ClassRoomLayoutNew() {
             }
         });
     }, [participants]);
+
+    
     useEffect(() => {
         const handleData = async (payload: Uint8Array, _participant: any) => {
             const text = new TextDecoder().decode(payload);
@@ -163,9 +164,9 @@ export default function ClassRoomLayoutNew() {
 
                 room.disconnect();
 
-                sileo.info({
-                    title: "Live Class ended",
-                });
+                // sileo.info({
+                //     title: "Ending live class",
+                // });
 
                 navigate("/live-classes");
             }
@@ -184,16 +185,17 @@ export default function ClassRoomLayoutNew() {
     const totalSudents = liveKitParticipants.filter((p) => p.identity && p.identity.trim() !== "" && p.identity !== teacherIdentity?.id) || [];
     // const visibleStudents = isMobile ? participants.slice(0, 3) : isTablet ? participants.slice(0, 4) : participants;
     
-    const handleEndClass = () => {
-        if (!classId) return
-        console.log("awdawdawdawdad")
-        mutate(classId, {
-            onSuccess: (response) => {
-                console.log("Class ended:", response);
-            },
-            onError: (error) => {
-                console.error(error);
-            },
+    const handleEndClass = async () => {
+        if (!classId) throw new Error("Class ID not found");
+        await mutateAsync(classId);
+        await room.disconnect();
+    };
+
+    const handleEndClassSuccess = () => {
+        navigate("/live-classes");
+        sileo.success({
+            title: "Live class ended successfully",
+            description: "The recording will be processed shortly.",
         });
     };
 
@@ -219,15 +221,7 @@ export default function ClassRoomLayoutNew() {
                     <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                         <LiveBadge />
                         <ConnectionIndicator />
-                        <Button
-                            onClick={handleEndClass}
-                            size="icon"
-
-                            className="bg-red-50 border border-red-200 text-red-600 hover:bg-red-100"
-                            title="End Meeting for Everyone"
-                        >
-                            <PhoneOff size={16} />
-                        </Button>
+                        <EndClassButton onConfirm={handleEndClass} onSuccess={handleEndClassSuccess} />
                         <span className="text-[11px] sm:text-xs text-slate-400 hidden sm:inline">{totalSudents?.length} students</span>
                     </div>
                 </header>

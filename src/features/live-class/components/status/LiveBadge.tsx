@@ -13,7 +13,7 @@ export function LiveBadge({ className }: LiveBadgeProps) {
         className
       )}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse font-light" />
       LIVE
     </div>
   );

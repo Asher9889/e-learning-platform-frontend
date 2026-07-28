@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { liveClassApi } from "../api/live.api";
 import type { TStartLiveClassInput } from "../schema/live.schema";
 import type { LiveClassFilters } from "../types";
@@ -44,7 +44,7 @@ export const useLiveClassStats = () => {
 };
 
 export const useLiveClassByRoomName = (roomName: string) => {
- const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const query = useQuery({
     queryKey: ["live-classes", "room", roomName],
@@ -55,12 +55,12 @@ export const useLiveClassByRoomName = (roomName: string) => {
   useEffect(() => {
     const title = query.data?.title;
     const recordedVideoId = query.data?.replayMaterialId
-    console.log( query.data," query.data classsc",query)
+    console.log(query.data, " query.data classsc", query)
     if (title) {
       dispatch(setTitle(title));
 
     }
-    if(recordedVideoId){
+    if (recordedVideoId) {
       dispatch(setRecordedVideoId(recordedVideoId));
     }
   }, [query.data, dispatch]);
@@ -88,8 +88,12 @@ export const useJoinLiveClass = () => {
 };
 
 export const useEndLiveClass = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: (id: string) =>
-      liveClassApi.end(id),
+    mutationFn: (id: string) => liveClassApi.end(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["live-classes"] });
+    },
   });
 };

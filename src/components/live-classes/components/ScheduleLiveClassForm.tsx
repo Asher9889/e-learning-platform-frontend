@@ -18,6 +18,7 @@ import { mapToLabelValue } from "@/utils/helper";
 import { useStartLiveClass } from "@/pages/Live-Classes/hooks/useStartLiveClass";
 import { sileo } from "sileo";
 import { useVideoSearch } from "#hooks/use-video-search";
+import queryClient from "@/config/queryClient";
 
 interface Props {
   teachersOptions: Options[];
@@ -84,10 +85,10 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
     }
   }, [selectedMode]);
   const onSubmit = async (data: TStartLiveClassInput) => {
-    console.log(data, "awdawdawdawdawd");
     startLiveClassMutation({ ...data, status: "SCHEDULED" }, {
       onSuccess: (response) => {
         console.log(response);
+        queryClient.invalidateQueries({ queryKey: ["live-classes"] });
         sileo.success({
           title: "Class created successfully",
           description: `Your scheduled class "${response.title}" has been created successfully.`,
