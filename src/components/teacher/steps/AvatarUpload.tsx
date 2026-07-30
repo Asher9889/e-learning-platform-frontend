@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
+  Loader2,
   UserIcon,
   XIcon,
 } from "lucide-react";
@@ -21,8 +22,7 @@ interface AvatarUploadProps {
     file: FileWithPreview | null
   ) => void;
   defaultAvatar?: string;
-
-  // NEW
+  isUploading?: boolean;
   value?: File | string;
 }
 
@@ -31,6 +31,7 @@ export function AvatarUpload({
   className,
   onFileChange,
   defaultAvatar,
+  isUploading = false,
   value,
 }: AvatarUploadProps) {
   const [formPreview, setFormPreview] = useState<string>("");
@@ -82,8 +83,8 @@ export function AvatarUpload({
   const currentFile = files[0];
 
   const previewUrl =
-    currentFile?.preview ||
     formPreview ||
+    currentFile?.preview ||
     defaultAvatar;
 
   const handleRemove = () => {
@@ -127,11 +128,20 @@ export function AvatarUpload({
             <img
               src={previewUrl}
               alt="Avatar"
-              className="h-full w-full object-cover"
+              className={cn(
+                "h-full w-full object-cover",
+                isUploading && "opacity-50"
+              )}
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
               <UserIcon className="text-muted-foreground size-6" />
+            </div>
+          )}
+
+          {isUploading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Loader2 className="size-6 animate-spin text-primary" />
             </div>
           )}
         </div>
@@ -152,9 +162,11 @@ export function AvatarUpload({
 
       <div className="space-y-0.5 text-center">
         <p className="text-sm font-medium">
-          {previewUrl
-            ? "Avatar uploaded"
-            : "Upload avatar"}
+          {isUploading
+            ? "Uploading..."
+            : previewUrl
+              ? "Avatar uploaded"
+              : "Upload avatar"}
         </p>
 
         <p className="text-muted-foreground text-xs">

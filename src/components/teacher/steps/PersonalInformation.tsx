@@ -1,8 +1,10 @@
+import { useCallback, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import type { StudentEnrollFormInput } from "@/pages/Student/schema/student.schema";
 import { AvatarUpload } from "./AvatarUpload";
 import { Label } from "#components/ui/label";
+import { sileo } from "sileo";
 import type { FileWithPreview } from "@/hooks/use-file-upload";
 
 interface PersonalInformationProps {
@@ -11,6 +13,7 @@ interface PersonalInformationProps {
 }
 
 export default function PersonalInformation({
+  uploadAvatarAsync,
   isUploading,
 }: PersonalInformationProps) {
   const {
@@ -20,37 +23,64 @@ export default function PersonalInformation({
     formState: { errors },
   } = useFormContext<StudentEnrollFormInput>();
 
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+
   const image = watch("personalInfo.profileImage");
-console.log(isUploading,"isUploading")
-  const handleFileChange = (fileWithPreview: FileWithPreview | null) => {
-    if (!fileWithPreview) {
-      setValue("personalInfo.profileImage", undefined, {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-      return;
-    }
 
-    // FileWithPreview wraps the actual File — adjust accessor if hook's shape differs
-    const actualFile =
-      fileWithPreview.file instanceof File
-        ? fileWithPreview.file
-        : (fileWithPreview.file as any)?.file ?? null;
+  const displayUrl = previewUrl || (typeof image === "string" ? image : "");
 
-    setValue("personalInfo.profileImage", actualFile, {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-  };
+  const handleFileChange = useCallback(
+    async (fileWithPreview: FileWithPreview | null) => {
+      if (!fileWithPreview) {
+        setPreviewUrl("");
+        setValue("personalInfo.profileImage", undefined, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        return;
+      }
+
+      const actualFile =
+        fileWithPreview.file instanceof File
+          ? fileWithPreview.file
+          : (fileWithPreview.file as any)?.file ?? null;
+
+      if (!actualFile) return;
+
+      setPreviewUrl(fileWithPreview.preview || "");
+
+      if (uploadAvatarAsync) {
+        try {
+          const response = await uploadAvatarAsync(actualFile);
+          setPreviewUrl(response.url);
+          setValue("personalInfo.profileImage", response.key, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+        } catch {
+          setPreviewUrl("");
+          setValue("personalInfo.profileImage", undefined, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+          sileo.error({
+            title: "Upload Failed",
+            description: "Failed to upload avatar. Please try again.",
+          });
+        }
+      }
+    },
+    [setValue, uploadAvatarAsync]
+  );
 
   return (
     <div className="grid md:grid-cols-2 gap-4">
       <div className="md:col-span-2 flex flex-col">
         <div className="md:col-span-2 flex justify-start">
           <AvatarUpload
-            value={image}
+            value={displayUrl}
             onFileChange={handleFileChange}
-            // isUploading={isUploading}
+            isUploading={isUploading}
           />
         </div>
         <p className="text-red-500 text-sm mt-2">

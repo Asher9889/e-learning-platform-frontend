@@ -70,7 +70,7 @@ export default function TeacherEnrollForm() {
 
     const { mutate: handleCreateTeacher } = useCreateTeacher();
     const { mutate: handleUpdateTeacher } = useUpdateTeacher(); // 👈 update mutation
-    const { uploadAvatarAsync } = useUploadAvatar();
+    const { uploadAvatarAsync, isUploading } = useUploadAvatar();
 
     // 👇 edit mode mein existing teacher data fetch karo
     const { data: teacherData, isLoading: isTeacherLoading } = useTeacher(id!, {
@@ -115,27 +115,6 @@ export default function TeacherEnrollForm() {
     }, [isEditMode, teacherData]);
 
     const onSubmit = async (values: TeacherEnrollFormOutput) => {
-        let avatarUrl = teacherData?.personalInfo?.profileImage ?? "";
-
-        // 👇 agar user ne nayi image select ki hai (File object), tabhi upload karo
-        if (
-            values.personalInfo.profileImage &&
-            values.personalInfo.profileImage instanceof File
-        ) {
-            const uploadResponse = await uploadAvatarAsync(
-                values.personalInfo.profileImage
-            );
-            avatarUrl = uploadResponse?.url;
-        }
-
-        const payload = {
-            ...values,
-            personalInfo: {
-                ...values.personalInfo,
-                profileImage: avatarUrl,
-            },
-        };
-
         const onSuccess = (response: any) => {
             sileo.success({
                 title: isEditMode ? "Teacher Updated" : "Teacher Created",
@@ -162,18 +141,18 @@ export default function TeacherEnrollForm() {
 
         if (isEditMode) {
             handleUpdateTeacher(
-                { id: id!, ...payload },
+                { id: id!, ...values },
                 { onSuccess, onError }
             );
         } else {
-            handleCreateTeacher(payload, { onSuccess, onError });
+            handleCreateTeacher(values, { onSuccess, onError });
         }
     };
 
     const renderStep = () => {
         switch (currentStep) {
             case 0: return <AccountInformation />;
-            case 1: return <PersonalInformation />;
+            case 1: return <PersonalInformation uploadAvatarAsync={uploadAvatarAsync} isUploading={isUploading} />;
             case 2: return <AddressInformation />;
             case 3: return <TeacherInformation />;
             case 4: return <ReviewSubmit />;
