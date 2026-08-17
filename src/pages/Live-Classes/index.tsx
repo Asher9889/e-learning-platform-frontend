@@ -84,17 +84,17 @@ export default function LiveClassPage() {
     endDate: upcomingFilters.endDate || undefined,
   });
   const { data: stats, isLoading: statsLoading } = useLiveClassStats();
-console.log(stats,"stats")
+
   const { data: activeData, isLoading: activeLoading } = useActiveLiveClasses({ page: activePage, limit: 20 });
   const { data: completedData, isLoading: completedLoading } = useCompletedLiveClasses({ page: completedPage, limit: 20 });
-console.log(statsLoading,"statsLoading")
+
   const upcomingClasses = upcomingData?.sessions ?? [];
   const upcomingPagination = upcomingData?.pagination;
   const activeClasses = activeData?.sessions ?? [];
   const activePagination = activeData?.pagination;
   const completedClasses = completedData?.sessions ?? [];
   const completedPagination = completedData?.pagination;
-// console.log(upcomingData,"upcomingData")
+  // console.log(upcomingData,"upcomingData")
   const handleStart = useCallback((liveClass: ILiveSession) => {
     setSelectedClass(liveClass);
     setStartModalOpen(true);
@@ -187,7 +187,7 @@ console.log(statsLoading,"statsLoading")
 
       {/* Stats */}
 
-      {myIdentity?.role !== "STUDENT" &&  <LiveClassStats stats={stats} />}
+      {myIdentity?.role !== "STUDENT" && <LiveClassStats stats={stats} />}
 
       {/* Tabs */}
       <Tabs value={tab} onValueChange={setTab}>
@@ -287,7 +287,6 @@ console.log(statsLoading,"statsLoading")
           open={startModalOpen}
           onOpenChange={setStartModalOpen}
           onStarted={handleLiveClassStarted}
-
         />
       )}
     </div>

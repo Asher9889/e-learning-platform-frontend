@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "#components/ui/select";
+import { Spinner } from "@/components/ui/spinner"
 
 import {
   startLiveClassSchema,
@@ -27,6 +28,7 @@ import { useGetBatches } from "@/pages/Batches/hooks/useGetBatches";
 import { mapToLabelValue } from "#lib/utils";
 import { useStartLiveClass } from "@/pages/Live-Classes/hooks/useStartLiveClass";
 import { sileo } from "sileo";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   teachersOptions: Options[];
@@ -36,13 +38,8 @@ interface Props {
 
 
 export default function StartLiveClassForm({ onSuccess, teachersOptions, programOptions }: Props) {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<TStartLiveClassInput>({
+  const navigate = useNavigate();
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<TStartLiveClassInput>({
     resolver: zodResolver(startLiveClassSchema),
     defaultValues: {
       title: "",
@@ -50,20 +47,19 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
       subjectId: "",
       programId: "",
       batchId: "",
-      mode: "LIVE",
+      status: "LIVE",
+      deliveryMode: "LIVE",
       teacherId: "",
       durationMinutes: 60,
-      status: "LIVE",
       maxParticipants: 50,
       isRecordingEnabled: true,
       isChatEnabled: true,
       isScreenShareAllowed: true,
     },
+    reValidateMode: "onChange",
 
   });
-  const {
-    mutate: startLiveClassMutation,
-  } = useStartLiveClass();
+  const { mutate: startLiveClassMutation, isPending: isLiveClassStarting } = useStartLiveClass();
   const selectedProgram = watch("programId");
   const selectedBatch = watch("batchId");
   const { data: subjectsData } = useGetSubjects(selectedProgram);
@@ -75,22 +71,22 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
   const selectedBatchLabel = batches.find((b) => b.id === selectedBatch)?.name;
 
   useEffect(() => {
-    setValue("batchId", "");
+    setValue("batchId", null, { shouldValidate: true });
   }, [selectedProgram]);
 
   const onSubmit = async (data: TStartLiveClassInput) => {
-    console.log(data, "onSubmit abcdefg");
-    startLiveClassMutation({ ...data, status: "LIVE" }, {
+    startLiveClassMutation.mutate(data, {
       onSuccess: (response) => {
+        console.log("Live class started successfully", response);
         sileo.success({
-          title: "Class created successfully",
-          description: `You can now join the ${response.title} session and start teaching.`,
-        })
+          title: "Live class started",
+          description: `You're now entering the ${response.title} classroom.`,
+        });
         onSuccess?.();
+        navigate(`/live-classes/${response.roomName}/class-room`);
       },
-
       onError: (error) => {
-        console.error(error);
+        console.error("error submitting form", error);
         sileo.error({
           title: "Failed to Start",
           description: error.message || "An error occurred while starting the live class. Please try again.",
@@ -100,14 +96,7 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit, (errors, data) => {
-        console.log("Validation Failed abcdefg", errors);
-        console.log("Form Data data abcdefg", data);
-
-      })}
-      className="flex flex-col gap-4 max-h-[75vh] overflow-y-auto px-1 pb-2"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 max-h-[75vh] overflow-y-auto px-1 pb-2">
 
       {/* TITLE */}
       <div className="space-y-1">
@@ -125,7 +114,9 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1">
           <Label>Program</Label>
-          <Select onValueChange={(v) => setValue("programId", v)}>
+          <Select onValueChange={(v) => {
+            setValue("programId", v, { shouldValidate: true }) // force validation run when program changes
+          }}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select program" />
             </SelectTrigger>
@@ -137,13 +128,18 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
               ))}
             </SelectContent>
           </Select>
+          {errors.programId && (
+            <p className="text-xs text-destructive">{errors.programId.message}</p>
+          )}
         </div>
+
+
         <div className="space-y-1">
           <Label>Subject</Label>
 
           <Select
             disabled={!selectedProgram}
-            onValueChange={(v) => setValue("subjectId", v)}
+            onValueChange={(v) => setValue("subjectId", v, { shouldValidate: true })}
           >
             <SelectTrigger className="w-full">
               <SelectValue
@@ -180,6 +176,7 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
             </p>
           )}
         </div>
+
       </div>
 
       {/* BATCH */}
@@ -208,6 +205,7 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
             ))}
           </SelectContent>
         </Select>
+
         <div className="flex items-start gap-2 mt-1.5">
           <Users className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0" />
           <p className="text-xs text-muted-foreground">
@@ -224,7 +222,7 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
           <Label>Teacher</Label>
-          <Select onValueChange={(v) => setValue("teacherId", v)}>
+          <Select onValueChange={(v) => setValue("teacherId", v, { shouldValidate: true })}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select teacher" />
             </SelectTrigger>
@@ -236,14 +234,21 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
               ))}
             </SelectContent>
           </Select>
+          {errors.teacherId && (
+            <p className="text-xs text-destructive">{errors.teacherId.message}</p>
+          )}
         </div>
 
         <div className="space-y-1">
           <Label>Duration (minutes)</Label>
           <Input
-            type="number"
+            type="text"
+            placeholder="60"
             {...register("durationMinutes", { valueAsNumber: true })}
           />
+          {errors.durationMinutes && (
+            <p className="text-xs text-destructive">{errors.durationMinutes.message}</p>
+          )}
         </div>
       </div>
 
@@ -256,6 +261,9 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
           className="resize-none"
           rows={3}
         />
+        {errors.description && (
+          <p className="text-xs text-destructive">{errors.description.message}</p>
+        )}
       </div>
 
       {/* DURATION + MAX STUDENTS */}
@@ -322,9 +330,10 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
         </div>
       </div>
 
-      <Button type="submit" className="w-full">
+      <Button disabled={isLiveClassStarting} type="submit" className="w-full">
         <Video className="mr-2 h-4 w-4" />
-        Go live
+        {isLiveClassStarting ? <Spinner /> : "Go live now"}
+        
       </Button>
     </form>
   );

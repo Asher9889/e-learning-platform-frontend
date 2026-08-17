@@ -22,8 +22,7 @@ export async function getClassSubjectsSummary(grade: string) {
 
 
 export async function startLiveClass(liveClassData: TStartLiveClassInput) {
-  const { url, method } =
-    apiEndPoints.LIVE_CLASSES.START_LIVE_CLASS;
+  const { url, method } = apiEndPoints.LIVE_CLASSES.START_LIVE_CLASS;
 
   const res = await api.request({
     url,

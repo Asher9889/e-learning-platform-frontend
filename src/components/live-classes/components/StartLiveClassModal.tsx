@@ -25,16 +25,9 @@ const StartLiveClassModal = ({liveClass, open, onOpenChange,onStarted }: StartLi
   const [isStarted, ] = useState(false);
 
 
-  
-
   const handleStart = async () => { // go live now
-    // setIsStarted(true);
-    // onStarted?.(liveClass.meetingUrl || "https://live.example.com/room-123");
-    console.log(liveClass,"selcetd class")
     if(!liveClass?.roomName) return;
     onStarted?.(liveClass?.roomName);
-
-    
   };
 
   const handleCopy = (text: string) => {

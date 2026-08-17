@@ -6,8 +6,8 @@ import type { TStartLiveClassInput } from "../schema/live.class.schema";
 import { startLiveClass } from "../api/live.classes.api";
 
 export function useStartLiveClass() {
-  return useMutation({
-    mutationFn: (data: TStartLiveClassInput) =>
-      startLiveClass(data),
+  const mutate =  useMutation({
+    mutationFn: (data: TStartLiveClassInput) => startLiveClass(data),
   });
+  return { mutate, isPending: mutate.isPending };
 }
