@@ -8,6 +8,7 @@ import { store } from '@/store/store.ts'
 import { queryClient } from '@/config'
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from "sileo";
+import ConnectToSocketIO from './ConnectToSocketIO.tsx'
 
 const toasterOptions = {
   fill: "#171717",
@@ -24,6 +25,7 @@ createRoot(document.getElementById('root')!).render(
         <TooltipProvider>
           <Toaster options={toasterOptions} theme="dark" position="top-center" />
           <App />
+          <ConnectToSocketIO />
         </TooltipProvider> 
       </QueryClientProvider>
     </Provider>
