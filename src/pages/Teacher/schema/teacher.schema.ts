@@ -59,8 +59,7 @@ const phoneNumberField = z
   });
 
 // ✅ CREATE schema — password required (aapka original schema, as-is)
-export const teacherEnrollSchema = z
-  .object({
+export const teacherEnrollSchema = z.object({
     email: emailField,
 
     phoneNumber: phoneNumberField,

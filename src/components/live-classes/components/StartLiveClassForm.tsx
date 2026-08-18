@@ -29,6 +29,7 @@ import { mapToLabelValue } from "#lib/utils";
 import { useStartLiveClass } from "@/pages/Live-Classes/hooks/useStartLiveClass";
 import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
+import { queryClient } from "@/config";
 
 interface Props {
   teachersOptions: Options[];
@@ -75,13 +76,15 @@ export default function StartLiveClassForm({ onSuccess, teachersOptions, program
   }, [selectedProgram]);
 
   const onSubmit = async (data: TStartLiveClassInput) => {
-    startLiveClassMutation.mutate(data, {
+    startLiveClassMutation(data, {
       onSuccess: (response) => {
+        queryClient.invalidateQueries({ queryKey: ["live-classes", "active"] })
         console.log("Live class started successfully", response);
         sileo.success({
           title: "Live class started",
           description: `You're now entering the ${response.title} classroom.`,
         });
+
         onSuccess?.();
         navigate(`/live-classes/${response.roomName}/class-room`);
       },

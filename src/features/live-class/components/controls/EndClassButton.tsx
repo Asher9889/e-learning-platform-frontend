@@ -11,35 +11,34 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { PhoneOff, AlertTriangle, Loader2 } from "lucide-react";
+import { PhoneOff, AlertTriangle } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 interface EndClassButtonProps {
   onConfirm: () => Promise<void>;
-  onSuccess?: () => void;
+  endingLiveClass: boolean;
 }
 
-export function EndClassButton({ onConfirm, onSuccess }: EndClassButtonProps) {
+export function EndClassButton({ onConfirm, endingLiveClass }: EndClassButtonProps) {
   const [open, setOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (isLoading) return;
+    if (endingLiveClass) return;
     setOpen(nextOpen);
     setError(null);
   };
 
-  const handleEndClass = async () => {
-    setIsLoading(true);
-    setError(null);
+  const handleEndClass = async (e: React.MouseEvent) => {
+    e.preventDefault(); // prevents AlertDialogAction from closing the dialog
     try {
+      setError(null);
       await onConfirm();
-      setOpen(false);
-      onSuccess?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to end class. Please try again.");
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
@@ -86,15 +85,15 @@ export function EndClassButton({ onConfirm, onSuccess }: EndClassButtonProps) {
           )}
 
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={endingLiveClass}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleEndClass}
-              disabled={isLoading}
+              disabled={endingLiveClass}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {isLoading ? (
+              {endingLiveClass ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Spinner />
                   Ending live class...
                 </>
               ) : (

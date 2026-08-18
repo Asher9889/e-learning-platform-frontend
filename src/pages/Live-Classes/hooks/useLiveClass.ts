@@ -1,10 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { liveClassApi } from "../api/live.api";
 import type { TStartLiveClassInput } from "../schema/live.schema";
 import type { LiveClassFilters } from "../types";
 import { useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { setRecordedVideoId, setTitle } from "@/store/slices/liveClass.slice";
+
+
 export const useUpcomingLiveClasses = (filters?: LiveClassFilters) => {
   return useQuery({
     queryKey: ["live-classes", "upcoming", filters],
@@ -55,7 +57,6 @@ export const useLiveClassByRoomName = (roomName: string) => {
   useEffect(() => {
     const title = query.data?.title;
     const recordedVideoId = query.data?.replayMaterialId
-    console.log(query.data, " query.data classsc", query)
     if (title) {
       dispatch(setTitle(title));
 
@@ -77,7 +78,7 @@ export const useCreateLiveClass = () => {
 
 export const useStartLiveClass = () => {
   return useMutation({
-    mutationFn: (id: string) => liveClassApi.start(id),
+    mutationFn: (id: string) => liveClassApi.start(id)
   });
 };
 
@@ -88,12 +89,9 @@ export const useJoinLiveClass = () => {
 };
 
 export const useEndLiveClass = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: (id: string) => liveClassApi.end(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["live-classes"] });
-    },
   });
+
+  return { mutateAsync, isPending }
 };

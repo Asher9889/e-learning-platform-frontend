@@ -1,13 +1,16 @@
-export const capitalizeFirstLetter = (
-  value: string
-): string => {
+export const capitalizeFirstLetter = (value: string): string => {
   if (!value) return "";
-
-  return (
-    value.charAt(0).toUpperCase() +
-    value.slice(1)
-  );
+  return (value.charAt(0).toUpperCase() + value.slice(1));
 };
+
+export const capitalizeEachWord = (v: string) => {
+  const words = v.split(" "); // ["saurabh", "kushwaha"]
+  const capitaledWords = words.map((v) => {
+    return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase()
+  })
+  const modifiedWords =  capitaledWords.join(" ");
+  return modifiedWords;
+}
 
 export function getInitials(fullName: string): string {
   const parts = fullName.trim().split(/\s+/);

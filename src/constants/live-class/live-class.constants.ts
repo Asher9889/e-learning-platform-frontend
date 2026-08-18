@@ -11,19 +11,13 @@ export const DELIVERY_MODE = {
   REPLAY: "REPLAY",
 } as const;
 
-export const CLASS_TYPE = {
-  LIVE: "LIVE",
-  RECORDED: "RECORDED",
-} as const;
-
-
 export const PRESENTER_TYPE = {
   TEACHER: "TEACHER",
   STUDENT_SCREEN: "STUDENT_SCREEN",
   REPLAY: "REPLAY",
 } as const;
 
-export type TClassType = typeof CLASS_TYPE[keyof typeof CLASS_TYPE];
+// export type TClassType = typeof CLASS_TYPE[keyof typeof CLASS_TYPE];
 export type TPresenterType = typeof PRESENTER_TYPE[keyof typeof PRESENTER_TYPE];
 export type TDeliveryMode = typeof DELIVERY_MODE[keyof typeof DELIVERY_MODE];
 export type TClassStatus = typeof CLASS_STATUS[keyof typeof CLASS_STATUS];

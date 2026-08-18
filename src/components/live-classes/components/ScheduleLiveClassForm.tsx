@@ -2,23 +2,24 @@ import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarPlus, Users } from "lucide-react";
-import { Button } from "#components/ui/button";
-import { Input } from "#components/ui/input";
-import { Label } from "#components/ui/label";
-import { Textarea } from "#components/ui/textarea";
-import { Switch } from "#components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "#components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { startLiveClassSchema, type TStartLiveClassInput } from "@/pages/Live-Classes/schema/live.class.schema";
+import { scheduleLiveClassSchema, type TScheduleLiveClassInput } from "@/pages/Live-Classes/schema/live.class.schema";
 import type { Options } from "@/pages/Teacher/schema/teacher.schema";
 import { useGetSubjects } from "@/pages/Subjects/hooks/useGetSubjects";
 import { useGetBatches } from "@/pages/Batches/hooks/useGetBatches";
-import { mapToLabelValue } from "@/utils/helper";
+import { capitalizeEachWord, mapToLabelValue } from "@/utils/helper";
 import { useStartLiveClass } from "@/pages/Live-Classes/hooks/useStartLiveClass";
 import { sileo } from "sileo";
-import { useVideoSearch } from "#hooks/use-video-search";
+import { useVideoSearch } from "@/hooks/use-video-search";
 import queryClient from "@/config/queryClient";
+import { DELIVERY_MODE } from "@/constants/live-class/live-class.constants";
 
 interface Props {
   teachersOptions: Options[];
@@ -28,26 +29,27 @@ interface Props {
 
 export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, programOptions }: Props) {
   const [search] = useState("");
-  const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm<TStartLiveClassInput>({
-    resolver: zodResolver(startLiveClassSchema),
+
+  const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm<TScheduleLiveClassInput>({
+    resolver: zodResolver(scheduleLiveClassSchema),
     defaultValues: {
       title: "",
       description: "",
       subjectId: "",
       programId: "",
-      mode: "SCHEDULED",
+      status: "SCHEDULED",
       deliveryMode: "LIVE",
-      batchId: "",
+      batchId: null,
       teacherId: "",
-      scheduledAt: new Date().toISOString(),
+      scheduledAt: undefined,
       durationMinutes: 60,
       maxParticipants: 50,
-      status: "RECORDED",
-      replayMaterialId: "",
+      replayMaterialId: null,
       isRecordingEnabled: true,
       isChatEnabled: true,
       isScreenShareAllowed: true,
     },
+    reValidateMode: "onChange"
   });
 
 
@@ -58,9 +60,9 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
 
   const selectedOption = mapToLabelValue(data?.filter((materialData) => materialData?.materialType === "VIDEO"), "title", "id") || [];
 
-  const selectedMode = watch("mode");
+  const classDeliveryMode = watch("deliveryMode");
   const durationValue = useWatch({ control, name: "durationMinutes" });
-  const {mutate: startLiveClassMutation} = useStartLiveClass();
+  const { mutate: startLiveClassMutation } = useStartLiveClass();
   const selectedProgram = watch("programId");
   const selectedBatch = watch("batchId");
   const { data: subjectsData } = useGetSubjects(selectedProgram);
@@ -72,20 +74,21 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
   const selectedBatchLabel = batches.find((b) => b.id === selectedBatch)?.name;
 
   useEffect(() => {
-    setValue("batchId", "");
+    setValue("batchId", null);
   }, [selectedProgram]);
 
-  useEffect(() => {
-    if (selectedMode === "RECORDED") {
-      setValue("durationMinutes", 0);
-      setValue("replayMaterialId", "");
-      setValue("deliveryMode", "REPLAY");
-    } else {
-      setValue("durationMinutes", 0);
-    }
-  }, [selectedMode]);
-  const onSubmit = async (data: TStartLiveClassInput) => {
-    startLiveClassMutation({ ...data, status: "SCHEDULED" }, {
+  // useEffect(() => {
+  //   if (classDeliveryMode === "REPLAY") {
+  //     setValue("durationMinutes", 0);
+  //     setValue("replayMaterialId", "");
+  //     setValue("deliveryMode", "REPLAY");
+  //   } else {
+  //     setValue("durationMinutes", 0);
+  //   }
+  // }, [classDeliveryMode]);
+
+  const onSubmit = async (data: TScheduleLiveClassInput) => {
+    startLiveClassMutation(data, {
       onSuccess: (response) => {
         console.log(response);
         queryClient.invalidateQueries({ queryKey: ["live-classes"] });
@@ -96,7 +99,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
         onSuccess?.();
       },
 
-      onError: (error) => {
+      onError: (error: any) => {
         console.error(error);
         sileo.error({
           title: "Failed to Schedule",
@@ -110,38 +113,42 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
     <form
       onSubmit={handleSubmit(onSubmit, (errors) => {
         console.log("Validation Failed", errors);
-
       })}
       className="flex flex-col gap-4 max-h-[75vh] overflow-y-auto px-1 pb-2"
     >
-      <div className={`grid grid-cols-1 ${selectedMode === "RECORDED" ? "sm:grid-cols-2" : "sm:grid-cols-1"} gap-4`}>
+      <div className={`grid grid-cols-1 ${classDeliveryMode === "REPLAY" ? "sm:grid-cols-2" : "sm:grid-cols-1"} gap-4`}>
         <div className="space-y-1">
           <Label>Class Type <span className="text-destructive">*</span></Label>
           <Select
-            onValueChange={(v) => setValue("mode", v as "SCHEDULED" | "RECORDED")}
-            defaultValue="SCHEDULED"
+            onValueChange={(v) => setValue("deliveryMode", v as "LIVE" | "REPLAY")}
+            defaultValue="LIVE"
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select class type" />
             </SelectTrigger>
             <SelectContent>
-              {/* <SelectItem value="LIVE">Live Class</SelectItem> */}
-              <SelectItem value="SCHEDULED">Scheduled Class</SelectItem>
-              <SelectItem value="RECORDED">Recorded Class</SelectItem>
+              {Object.values(DELIVERY_MODE).map((v, _index) => {
+                const value = capitalizeEachWord(v)
+                return <SelectItem value={v}>{value}</SelectItem>
+              })}
+
             </SelectContent>
           </Select>
+          {errors.deliveryMode && (
+            <p className="text-xs text-destructive">{errors.deliveryMode.message}</p>
+          )}
+
         </div>
 
-        {selectedMode === "RECORDED" && (
+        {classDeliveryMode === "REPLAY" && (
           <div className="space-y-1">
-            <Label>Recorded Video</Label>
+            <Label>Recorded Video <span className="text-destructive">*</span></Label>
 
             <Select onValueChange={(v) => {
               setValue("replayMaterialId", v)
               const selectedVideo = dataRef.current.find((material: any) => material.id === v)
               if (selectedVideo?.metadata?.durationMs) {
                 const durationInMinutes = Math.ceil(selectedVideo.metadata.durationMs / 60000)
-                console.log(durationInMinutes, "durationInMinutes")
                 setValue("durationMinutes", durationInMinutes)
               }
             }}>
@@ -152,13 +159,16 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
               <SelectContent>
                 {selectedOption.map((v) => (
                   <SelectItem key={v.value} value={v.value}>
-                    <span className="block max-w-[250px] truncate">
+                    <span className="block max-w-62.5 truncate">
                       {v.label}
                     </span>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {errors.replayMaterialId && (
+              <p className="text-xs text-destructive">{errors.replayMaterialId.message}</p>
+            )}
           </div>
         )}
       </div>
@@ -176,7 +186,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1">
           <Label>Program <span className="text-destructive">*</span></Label>
-          <Select onValueChange={(v) => setValue("programId", v)}>
+          <Select onValueChange={(v) => setValue("programId", v, {shouldValidate: true})}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select program" />
             </SelectTrigger>
@@ -188,13 +198,17 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
               ))}
             </SelectContent>
           </Select>
+          {errors.programId && (
+            <p className="text-xs text-destructive">{errors.programId.message}</p>
+          )}
+
         </div>
 
         <div className="space-y-1">
           <Label>Subject <span className="text-destructive">*</span></Label>
           <Select
             disabled={!selectedProgram}
-            onValueChange={(v) => setValue("subjectId", v)}
+            onValueChange={(v) => setValue("subjectId", v, {shouldValidate: true})}
           >
             <SelectTrigger className="w-full">
               <SelectValue
@@ -207,6 +221,7 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
                 }
               />
             </SelectTrigger>
+
             <SelectContent>
               {!selectedProgram ? (
                 <SelectItem value="select-program-first" disabled>
@@ -225,6 +240,9 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
               )}
             </SelectContent>
           </Select>
+           {errors.subjectId && (
+            <p className="text-xs text-destructive">{errors.subjectId.message}</p>
+          )}
         </div>
       </div>
 
@@ -234,8 +252,9 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
         <Select
           value={selectedBatch || "__all__"}
           disabled={!selectedProgram}
-          onValueChange={(v) =>{
-            setValue("batchId", v === "__all__" ? null : v)}
+          onValueChange={(v) => {
+            setValue("batchId", v === "__all__" ? null : v)
+          }
           }
         >
           <SelectTrigger className="w-full">
@@ -266,13 +285,16 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
                 : `Only students in the "${selectedBatchLabel}" batch can join this class.`}
           </p>
         </div>
+         {errors.batchId && (
+            <p className="text-xs text-destructive">{errors.batchId.message}</p>
+          )}
       </div>
 
       {/* TEACHER */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
           <Label>Teacher <span className="text-destructive">*</span></Label>
-          <Select onValueChange={(v) => setValue("teacherId", v)}>
+          <Select onValueChange={(v) => setValue("teacherId", v, { shouldValidate: true })}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select teacher" />
             </SelectTrigger>
@@ -284,14 +306,20 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
               ))}
             </SelectContent>
           </Select>
+           {errors.teacherId && (
+            <p className="text-xs text-destructive">{errors.teacherId.message}</p>
+          )}
         </div>
         <div className="space-y-1">
           <Label>Duration (minutes) <span className="text-destructive">*</span></Label>
           <Input
             type="number"
             value={durationValue ?? ""}
-            onChange={(e) => setValue("durationMinutes", Number(e.target.value))}
+            {...register("durationMinutes", { valueAsNumber: true })}
           />
+           {errors.durationMinutes && (
+            <p className="text-xs text-destructive">{errors.durationMinutes.message}</p>
+          )}
         </div>
       </div>
 
@@ -304,6 +332,9 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
           className="resize-none"
           rows={3}
         />
+         {errors.description && (
+            <p className="text-xs text-destructive">{errors.description.message}</p>
+          )}
       </div>
 
       {/* SCHEDULE TIME */}
@@ -311,9 +342,13 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
         <Label>Schedule date & time</Label>
         <Input
           type="datetime-local"
-          onChange={(e) =>
-            setValue("scheduledAt", new Date(e.target.value).toISOString())
-          }
+          onChange={(e) => {
+            if (e.target.value) {
+              setValue("scheduledAt", new Date(e.target.value).toISOString(), {shouldValidate: true});
+            } else {
+              setValue("scheduledAt", "" as any);
+            }
+          }}
         />
         {errors.scheduledAt && (
           <p className="text-xs text-red-500">{errors.scheduledAt.message}</p>

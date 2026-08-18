@@ -16,8 +16,9 @@ import { setParticipantsOpen } from "@/features/live-class/store/liveClass.slice
 import { EndClassButton } from "../components/controls/EndClassButton";
 import { useEndLiveClass } from "@/pages/Live-Classes/hooks/useLiveClass";
 import { useIngressParticipant } from "../hooks/useIngressParticipant";
-import { sileo } from "sileo";
 import { useNavigate } from "react-router-dom";
+import queryClient from "@/config/queryClient";
+import { sileo } from "sileo";
 
 function extractAvatar(metadata: string): string | undefined {
     try {
@@ -35,7 +36,7 @@ export default function ClassRoomLayoutNew() {
     const navigate = useNavigate()
     const room = useRoomContext();
 
-    const { mutateAsync } = useEndLiveClass();
+    const { mutateAsync, isPending: isLiveClassEndPending } = useEndLiveClass();
 
     useIngressParticipant(); // Watch for ingress participants and update presenter state accordingly
 
@@ -118,7 +119,7 @@ export default function ClassRoomLayoutNew() {
         });
     }, [participants]);
 
-    
+
     useEffect(() => {
         const handleData = async (payload: Uint8Array, _participant: any) => {
             const text = new TextDecoder().decode(payload);
@@ -161,13 +162,7 @@ export default function ClassRoomLayoutNew() {
 
             if (data.status === "ENDED") {
                 console.log("Room ended event received");
-
                 room.disconnect();
-
-                // sileo.info({
-                //     title: "Ending live class",
-                // });
-
                 navigate("/live-classes");
             }
         };
@@ -184,19 +179,23 @@ export default function ClassRoomLayoutNew() {
 
     const totalSudents = liveKitParticipants.filter((p) => p.identity && p.identity.trim() !== "" && p.identity !== teacherIdentity?.id) || [];
     // const visibleStudents = isMobile ? participants.slice(0, 3) : isTablet ? participants.slice(0, 4) : participants;
-    
+
     const handleEndClass = async () => {
         if (!classId) throw new Error("Class ID not found");
         await mutateAsync(classId);
         await room.disconnect();
-    };
 
-    const handleEndClassSuccess = () => {
-        navigate("/live-classes");
+        queryClient.invalidateQueries({
+            queryKey: ["live-classes"],
+        });
+
         sileo.success({
             title: "Live class ended successfully",
             description: "The recording will be processed shortly.",
         });
+
+        navigate("/live-classes");
+        // await room.disconnect();
     };
 
     return (
@@ -221,7 +220,7 @@ export default function ClassRoomLayoutNew() {
                     <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                         <LiveBadge />
                         <ConnectionIndicator />
-                        <EndClassButton onConfirm={handleEndClass} onSuccess={handleEndClassSuccess} />
+                        <EndClassButton onConfirm={handleEndClass} endingLiveClass={isLiveClassEndPending} />
                         <span className="text-[11px] sm:text-xs text-slate-400 hidden sm:inline">{totalSudents?.length} students</span>
                     </div>
                 </header>

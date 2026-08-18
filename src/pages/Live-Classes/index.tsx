@@ -33,7 +33,7 @@ function CardGridSkeleton() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="h-[200px] w-full rounded-xl bg-muted animate-pulse" />
+        <div key={i} className="h-50 w-full rounded-xl bg-muted animate-pulse" />
       ))}
     </div>
   );
@@ -83,7 +83,7 @@ export default function LiveClassPage() {
     startDate: upcomingFilters.startDate || undefined,
     endDate: upcomingFilters.endDate || undefined,
   });
-  const { data: stats, isLoading: statsLoading } = useLiveClassStats();
+  const { data: stats, isLoading: _statsLoading } = useLiveClassStats();
 
   const { data: activeData, isLoading: activeLoading } = useActiveLiveClasses({ page: activePage, limit: 20 });
   const { data: completedData, isLoading: completedLoading } = useCompletedLiveClasses({ page: completedPage, limit: 20 });
@@ -94,7 +94,7 @@ export default function LiveClassPage() {
   const activePagination = activeData?.pagination;
   const completedClasses = completedData?.sessions ?? [];
   const completedPagination = completedData?.pagination;
-  // console.log(upcomingData,"upcomingData")
+
   const handleStart = useCallback((liveClass: ILiveSession) => {
     setSelectedClass(liveClass);
     setStartModalOpen(true);
@@ -106,6 +106,7 @@ export default function LiveClassPage() {
         setStartModalOpen(false);
         await queryClient.invalidateQueries({ queryKey: ["live-classes", "upcoming"] });
         await queryClient.invalidateQueries({ queryKey: ["live-classes", "active"] });
+        await queryClient.invalidateQueries({ queryKey: ["live-classes", "live"] });
         sileo.success({
           title: "Live Class Started",
           description: "Your live class is now active. Students can join using the link.",
