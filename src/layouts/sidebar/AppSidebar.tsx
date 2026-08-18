@@ -41,7 +41,7 @@ export function AppSidebar() {
     (item) => item.showInSidebar && item.roles.includes(user.role as TUserRole)
   );
 
-  const SECTION_ORDER = ["Academics", "People", "Teaching", "Learning Content"];
+  const SECTION_ORDER = ["Academics", "People", "Teaching", "Learning Content", "AI Services"];
 
   const sections: SidebarSection[] = [];
   const grouped: Record<string, AppRoute[]> = {};

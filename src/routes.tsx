@@ -32,6 +32,18 @@ import {
   Group,
 
   Sparkles,
+   BookOpenCheck,
+ 
+  Presentation,
+  Workflow,
+  FileSearch,
+  
+  Bot,
+  PenTool,
+  Languages,
+  Webcam,
+  Compass,
+  BookOpenText 
 
 } from "lucide-react";
 import { USER_ROLE } from "@/constants/user/user.constant";
@@ -54,6 +66,19 @@ import QuestionPaperResult from "#components/Assignment/QuestionPaperResult";
 import ScoreBoardPage from "./pages/ScoreBoard";
 import AssessmentsPage from "./pages/Assessments";
 import CreateAssessmentPage from "./features/assessments/pages/CreateAssessmentPage";
+import Lesson_plan from "./pages/AI_Services/lesson_plan";
+import Ppt_creator from "./pages/AI_Services/ppt_creator";
+import Diagram_creator from "./pages/AI_Services/diagram_creator";
+import Pdf_interpreter from "./pages/AI_Services/pdf_interpreter";
+import Video_summarizer from "./pages/AI_Services/video_summarizer";
+import Curriculum_mapping from "./pages/AI_Services/curriculum_mapping";
+import Offline_board from "./pages/AI_Services/offline_board";
+import Translation from "./pages/AI_Services/translation";
+import Chatbot_assistant from "./pages/AI_Services/chatbot_assistant";
+import Camera_analytics from "./pages/AI_Services/camera_analytics";
+import BookKnowledgeEnginePage from "./pages/AI_Services/BookKnowledgeEnginePage";
+
+
 
 
 
@@ -122,6 +147,9 @@ export const APP_ROUTES: AppRoutes = {
       },
     ],
   },
+
+
+  
 
   admissions: {
     title: "Admissions",
@@ -215,6 +243,122 @@ export const APP_ROUTES: AppRoutes = {
       }
     ]
   },
+
+
+
+  // ── AI Services (Only for Teachers) ──────────────────────────────────
+  aiLessonPlan: {
+    title: "Lesson Plan Generator",
+    path: "/ai-tools/lesson-plan",
+    icon: BookOpenCheck,
+    element: Lesson_plan,
+    showInSidebar: true,
+    group: "AI Services",
+    roles: [USER_ROLE.TEACHER],
+  },
+
+  
+
+  aiPPTCreator: {
+    title: "Presentation (PPT)",
+    path: "/ai-tools/ppt-creator",
+    icon: Presentation,
+    element:Ppt_creator,
+    showInSidebar: true,
+    group: "AI Services",
+    roles: [USER_ROLE.TEACHER],
+  },
+
+  aiDiagramCreator: {
+    title: "Diagrams & Flowcharts",
+    path: "/ai-tools/diagram-creator",
+    icon: Workflow,
+    element:Diagram_creator,
+    showInSidebar: true,
+    group: "AI Services",
+    roles: [USER_ROLE.TEACHER],
+  },
+
+  aiPDFInterpreter: {
+    title: "PDF Summarizer",
+    path: "/ai-tools/pdf-interpreter",
+    icon: FileSearch,
+    element:Pdf_interpreter,
+    showInSidebar: true,
+    group: "AI Services",
+    roles: [USER_ROLE.TEACHER],
+  },
+
+  aiVideoSummarizer: {
+    title: "Video Summarizer",
+    path: "/ai-tools/video-summarizer",
+    icon: Video,
+    element:Video_summarizer,
+    showInSidebar: true,
+    group: "AI Services",
+    roles: [USER_ROLE.TEACHER],
+  },
+
+  aiChatbotAssistant: {
+    title: "AI Teaching Assistant",
+    path: "/ai-tools/chatbot-assistant",
+    icon: Bot,
+    element:Chatbot_assistant,
+    showInSidebar: true,
+    group: "AI Services",
+    roles: [USER_ROLE.TEACHER],
+  },
+
+  aiOfflineTools: {
+    title: "Smartboard AI Tools",
+    path: "/ai-tools/offline-board",
+    icon: PenTool,
+    element:Offline_board,
+    showInSidebar: true,
+    group: "AI Services",
+    roles: [USER_ROLE.TEACHER],
+  },
+
+  aiMultilingual: {
+    title: "Language Translation",
+    path: "/ai-tools/translation",
+    icon: Languages,
+    element:Translation,
+    showInSidebar: true,
+    group: "AI Services",
+    roles: [USER_ROLE.TEACHER],
+  },
+
+  aiCameraAnalytics: {
+    title: "Camera Analytics",
+    path: "/ai-tools/camera-analytics",
+    icon: Webcam,
+    element:Camera_analytics,
+    showInSidebar: true,
+    group: "AI Services",
+    roles: [USER_ROLE.TEACHER],
+  },
+
+  aiCurriculumMapping: {
+    title: "Curriculum Mapping",
+    path: "/ai-tools/curriculum-mapping",
+    icon: Compass,
+    element:Curriculum_mapping,
+    showInSidebar: true,
+    group: "AI Services",
+    roles: [USER_ROLE.TEACHER],
+  },
+
+
+  aiBookInterpreter: {
+    title: "Book & Syllabus Knowledge Engine",
+    path: "/ai-tools/book-interpreter",
+    icon: BookOpenText,
+    element: BookKnowledgeEnginePage,
+    showInSidebar: true,
+    group: "AI Services",
+    roles: [USER_ROLE.TEACHER, USER_ROLE.ADMIN, USER_ROLE.STUDENT], // जिन रोल्स को परमिशन देना चाहें
+  },
 ScoreBoard: {
     title: "Score Board",
     path: "/score-board",
@@ -301,6 +445,10 @@ ScoreBoard: {
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER],
   },
 };
+
+
+
+
 
 const buildChildRoutes = (children: ChildRoute[]) => {
   return children.map((child) => {
