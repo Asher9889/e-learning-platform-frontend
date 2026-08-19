@@ -1,7 +1,11 @@
 import { io } from "socket.io-client";
+import envConfig from "./envConfig";
 
 
-const socketIO = io("http://localhost:4506");
+const socketIO = io(envConfig.websocketURL, {
+  autoConnect: false,
+  withCredentials: true, 
+});
 
 socketIO.on("connect", () => {
   console.log("✅ Socket connected:", socketIO.id);

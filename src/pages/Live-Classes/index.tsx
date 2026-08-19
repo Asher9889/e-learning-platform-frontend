@@ -132,6 +132,8 @@ export default function LiveClassPage() {
     if (found) handleStart(found);
   }, [upcomingClasses, handleStart]);
 
+  
+
   return (
     <div className="space-y-8 p-6">
       <style>{`
