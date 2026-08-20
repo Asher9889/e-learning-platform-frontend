@@ -59,7 +59,9 @@ export function StudentStatsCards({ stats }: StatsCardsProps) {
           </div>
           <div className="min-w-0">
             <p className="text-[11px] text-muted-foreground leading-none mb-0.5">{item.label}</p>
-            <p className="text-base font-bold leading-none">{item.getValue(stats)}</p>
+            <p className="text-base font-bold leading-none text-gray-900 dark:text-gray-900">
+              {item.getValue(stats)}
+            </p>
           </div>
         </div>
       ))}

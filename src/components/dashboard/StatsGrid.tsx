@@ -108,7 +108,9 @@ export function StatsGrid({
             </div>
             <div className="min-w-0">
               <p className="text-[11px] text-muted-foreground leading-none mb-0.5">{s.title}</p>
-              <p className="text-base font-bold leading-none">{s.value}</p>
+              <p className="text-base font-bold leading-none text-gray-900 dark:text-gray-900">
+                 {s.value}
+              </p>
             </div>
           </div>
         );
