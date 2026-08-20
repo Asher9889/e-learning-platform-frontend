@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,6 +30,7 @@ import type { IStudentRoleInfo } from "@/constants/user/user.constant";
 export default function ContentPage() {
   const userData = useAppSelector((state) => state.auth.user);  
   const myRole = userData?.role;
+  const navigate = useNavigate();
 
   const [uploadOpen, setUploadOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("PUBLISHED");
@@ -89,6 +91,10 @@ export default function ContentPage() {
     setDrawerMaterial(material);
     setDrawerOpen(true);
   }, []);
+
+  const handleView = useCallback((material: Material) => {
+    navigate(`/content/${material.id}`);
+  }, [navigate]);
 
   const handleSaveDraft = useCallback(
   async (
@@ -155,6 +161,7 @@ export default function ContentPage() {
             isLoading={isLoading}
             hasFilters={hasFilters}
             onEdit={handleOpenDrawer}
+            onView={handleView}
             onPreview={setPreviewMaterial}
           />
         </TabsContent>

@@ -41,6 +41,7 @@ interface ContentCardProps {
   item: ContentCardItem
   onEdit?: (item: ContentCardItem) => void
   onPreview?: (item: ContentCardItem) => void
+  onView?: (item: ContentCardItem) => void
 }
 
 const TYPE_ICONS: Record<ContentType, LucideIcon> = {
@@ -87,13 +88,19 @@ const TYPE_STYLES: Record<ContentType, { cover: string; icon: string; badge: str
   },
 }
 
-export function ContentCard({ item, onEdit, onPreview }: ContentCardProps) {
+export function ContentCard({ item, onEdit, onPreview, onView }: ContentCardProps) {
   const Icon = TYPE_ICONS[item.type] || File
   const styles = TYPE_STYLES[item.type] || TYPE_STYLES.DOCUMENT
   const label = TYPE_LABELS[item.type]
 
   return (
-    <div className="group/card relative flex flex-col overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-foreground/20">
+    <div
+      className="group/card relative flex flex-col overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:ring-foreground/20 cursor-pointer"
+      onClick={() => onView?.(item)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onView?.(item) }}
+    >
       {/* Cover area */}
       <div className={cn("relative flex h-44 shrink-0 items-center justify-center overflow-hidden", styles.cover)}>
         {item.coverUrl ? (
@@ -109,10 +116,10 @@ export function ContentCard({ item, onEdit, onPreview }: ContentCardProps) {
 
         {/* Hover action overlay */}
         <div className="absolute inset-0 flex translate-y-1 items-center justify-center gap-1.5 bg-black/0 opacity-0 transition-all duration-200 group-hover/card:translate-y-0 group-hover/card:bg-black/[0.04] group-hover/card:opacity-100">
-          <Button variant="secondary" size="icon" className="h-8 w-8 shadow-sm" onClick={() => onPreview?.(item)}>
+          <Button variant="secondary" size="icon" className="h-8 w-8 shadow-sm" onClick={(e) => { e.stopPropagation(); onView?.(item) }}>
             <Eye className="h-3.5 w-3.5" />
           </Button>
-          <Button variant="secondary" size="icon" className="h-8 w-8 shadow-sm" onClick={() => onEdit?.(item)}>
+          <Button variant="secondary" size="icon" className="h-8 w-8 shadow-sm" onClick={(e) => { e.stopPropagation(); onEdit?.(item) }}>
             <Pencil className="h-3.5 w-3.5" />
           </Button>
           <DropdownMenu>

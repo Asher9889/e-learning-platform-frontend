@@ -41,6 +41,7 @@ import ActiveLiveClassPage from "@/features/live-class/pages/ActiveLiveClassPage
 
 import DashboardPage from "./pages/Dashboard";
 import ContentPage from "./pages/Content";
+import ContentDetailsPage from "./pages/Content/ContentDetails";
 import UploadMetadataPage from "./pages/Content/UploadMetadata";
 
 import AdmissionsPage from "./pages/Admissions";
@@ -277,6 +278,7 @@ ScoreBoard: {
     roles: [USER_ROLE.ADMIN, USER_ROLE.TEACHER, USER_ROLE.STUDENT],
     children: [
       { path: undefined, element: ContentPage },
+      { path: ":materialId", element: ContentDetailsPage },
       { path: "upload/metadata", element: UploadMetadataPage },
     ],
   },
