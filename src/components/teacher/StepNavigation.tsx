@@ -26,7 +26,7 @@ export default function StepNavigation({
 
       {currentStep === totalSteps - 1 ? (
         <Button type="submit">
-          Enroll Student
+          Enroll Teacher
         </Button>
       ) : (
         <Button
