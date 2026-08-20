@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { cn } from "#lib/utils";
 import NotificationPopover from "#components/notification/NotificationPopover";
+import { Input } from "#components/ui/input";
 
 interface RouteNode {
   label: string;
@@ -50,11 +51,11 @@ const defaultRouteTree: RouteNode[] = [
   {
     label: "Courses",
     icon: <BookOpen className="h-3.5 w-3.5" />,
-    children: [
-      { label: "All Courses", href: "/courses" },
-      { label: "My Enrollments", href: "/courses/enrolled" },
-      { label: "Bookmarks", href: "/courses/bookmarks" },
-    ],
+    // children: [
+    //   { label: "All Courses", href: "/courses" },
+    //   { label: "My Enrollments", href: "/courses/enrolled" },
+    //   { label: "Bookmarks", href: "/courses/bookmarks" },
+    // ],
   },
   {
     label: "Assignments",
@@ -226,17 +227,20 @@ const AppHeader = ({
 
       {/* Center Search */}
       <div className="hidden flex-1 items-center justify-center px-4 lg:flex">
-        <Button
-          variant="outline"
-          className="relative h-10 w-full max-w-lg xl:max-w-xl justify-start rounded-xl bg-muted/40 text-sm font-normal text-muted-foreground shadow-none"
-        >
-          <Search className="mr-2 h-4 w-4" />
-          Search students, teachers, classes...
+        <div className="hidden flex-1 items-center justify-center px-4 lg:flex">
+          <div className="relative w-full max-w-lg xl:max-w-xl">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 
-          <kbd className="absolute right-2 hidden h-5 items-center rounded border bg-background px-1.5 text-[10px] font-medium sm:flex">
-            ⌘ K
-          </kbd>
-        </Button>
+            <Input 
+            placeholder="Search students, teachers, classes..." 
+            className="h-10 rounded-xl bg-muted/40 pl-9 pr-16"
+            />
+
+    <kbd className="absolute right-2 top-1/2 hidden -translate-y-1/2 items-center rounded border bg-background px-1.5 text-[10px] font-medium sm:flex">
+      ⌘ K
+    </kbd>
+  </div>
+</div>
       </div>
 
       {/* Right */}
