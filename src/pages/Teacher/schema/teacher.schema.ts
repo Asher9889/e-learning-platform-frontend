@@ -21,7 +21,7 @@ const personalInfoSchema = z.object({
 
     country: z.string().min(2, "Country is required"),
 
-    zipCode: z.string().min(4, "Zip code is required"),
+    zipCode: z.number({ error: "Zip code is required" }).min(6, "Zip code must be at least 6 characters").max(6, "Zip code cannot exceed 6 characters"),
   }),
 });
 
