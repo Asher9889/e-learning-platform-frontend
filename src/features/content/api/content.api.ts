@@ -4,6 +4,7 @@ import type {
   MaterialsStatsResponse,
   MaterialFilters,
   UpdateMaterialPayload,
+  MaterialDetailResponse,
 } from "../types/content.types";
 
 export async function getMaterials(filters: MaterialFilters) {
@@ -17,9 +18,9 @@ export async function getMaterials(filters: MaterialFilters) {
 }
 
 export async function getMaterial(id: string) {
-  const { url, method } = apiEndPoints.MATERIALS.GET(id);
-  const res = await api.request({ url, method });
-  return res.data;
+  const { url, method } = apiEndPoints.MATERIALS.GET_BY_ID(id);
+  const res = await api.request<MaterialDetailResponse>({ url, method });
+  return res as unknown as MaterialDetailResponse;
 }
 
 export async function updateMaterial(id: string, data: UpdateMaterialPayload) {

@@ -1,9 +1,8 @@
-import type { Material } from "../types/content.types";
-import { formatSize, getSubjectName } from "../types/content.types";
+import type { MaterialDetail } from "../types/content.types";
+import { formatSize } from "../types/content.types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  Clock,
   User,
   Calendar,
   HardDrive,
@@ -12,7 +11,6 @@ import {
   Film,
   Image,
   Music,
-  Folder,
 } from "lucide-react";
 
 const TYPE_LABELS: Record<string, string> = {
@@ -31,21 +29,14 @@ const TYPE_ICONS: Record<string, typeof Film> = {
   AUDIO: Music,
 };
 
-function formatDuration(ms?: number): string {
-  if (!ms) return "--";
-  const totalSeconds = Math.floor(ms / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  if (hours > 0) return `${hours}h ${minutes}m`;
-  return `${minutes} min`;
-}
-
 interface OverviewTabProps {
-  material: Material;
+  material: MaterialDetail;
+  materialType: string;
 }
 
-export function OverviewTab({ material }: OverviewTabProps) {
-  const TypeIcon = TYPE_ICONS[material.materialType] || FileText;
+export function OverviewTab({ material, materialType }: OverviewTabProps) {
+  const TypeIcon = TYPE_ICONS[materialType] || FileText;
+  const subjectName = material.subject?.name || "--";
 
   return (
     <div className="space-y-6">
@@ -70,24 +61,14 @@ export function OverviewTab({ material }: OverviewTabProps) {
           <CardContent className="p-0">
             <div className="divide-y">
               <InfoRow
-                icon={<Folder className="h-4 w-4" />}
-                label="Program"
-                value={getSubjectName(material.subject) || "--"}
-              />
-              <InfoRow
                 icon={<BookOpen className="h-4 w-4" />}
                 label="Subject"
-                value={getSubjectName(material.subject) || "--"}
+                value={subjectName}
               />
               <InfoRow
                 icon={<User className="h-4 w-4" />}
                 label="Uploaded By"
                 value={material.createdBy.name}
-              />
-              <InfoRow
-                icon={<Clock className="h-4 w-4" />}
-                label="Duration"
-                value={formatDuration(material.metadata?.durationMs)}
               />
               <InfoRow
                 icon={<HardDrive className="h-4 w-4" />}
@@ -108,7 +89,7 @@ export function OverviewTab({ material }: OverviewTabProps) {
                 label="Content Type"
                 value={
                   <Badge variant="secondary" className="font-normal">
-                    {TYPE_LABELS[material.materialType] || material.materialType}
+                    {TYPE_LABELS[materialType] || materialType}
                   </Badge>
                 }
               />

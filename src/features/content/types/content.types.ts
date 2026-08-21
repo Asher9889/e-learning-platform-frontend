@@ -72,6 +72,37 @@ export interface UpdateMaterialPayload {
   subjectId?: string;
 }
 
+export interface MaterialDetail {
+  id: string;
+  title: string;
+  description: string | null;
+  objectKey: string;
+  file: {
+    originalFileName: string;
+    mimeType: string;
+    size: number;
+  };
+  status: MaterialStatus;
+  createdAt: string;
+  updatedAt: string;
+  subject: {
+    id: string;
+    name: string;
+  } | null;
+  createdBy: {
+    id: string;
+    name: string;
+    profileImage: string;
+  };
+}
+
+export interface MaterialDetailResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: MaterialDetail;
+}
+
 export interface UploadFile {
   id: string;
   name: string;

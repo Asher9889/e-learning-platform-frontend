@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, MoreHorizontal, Pencil, Sparkles, RefreshCw } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Pencil, Sparkles, RefreshCw, Trash2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,10 +13,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetMaterial } from "@/features/content/hooks/useGetMaterial";
-import { getMaterialFileUrl } from "@/components/material-preview/MaterialPreview";
+import { usePublishMaterial, useDeleteMaterial } from "@/features/content/hooks/useContentMutations";
 import { OverviewTab } from "@/features/content/components/OverviewTab";
 import { AISummaryTab } from "@/features/content/components/AISummaryTab";
 import { TranscriptTab } from "@/features/content/components/TranscriptTab";
+import type { MaterialDetail } from "@/features/content/types/content.types";
+
+import { MediaPlayer, MediaProvider } from '@vidstack/react';
+import '@vidstack/react/player/styles/base.css';
+
+
+
+function deriveMaterialType(mimeType: string) {
+  if (mimeType.startsWith("video/")) return "VIDEO";
+  if (mimeType.startsWith("audio/")) return "AUDIO";
+  if (mimeType === "application/pdf") return "PDF";
+  if (mimeType.startsWith("image/")) return "IMAGE";
+  return "DOCUMENT";
+}
+
+function getFileUrl(material: MaterialDetail): string {
+  if (material.objectKey.startsWith("http")) return material.objectKey;
+  return material.objectKey;
+}
 
 const TYPE_LABELS: Record<string, string> = {
   VIDEO: "Recorded Class",
@@ -33,6 +52,8 @@ export default function ContentDetailsPage() {
   const [activeTab, setActiveTab] = useState("overview");
 
   const { data, isLoading, error } = useGetMaterial(materialId || "");
+  const { mutateAsync: publishMaterial } = usePublishMaterial();
+  const { mutateAsync: deleteMaterial } = useDeleteMaterial();
 
   const material = data?.data;
 
@@ -43,7 +64,18 @@ export default function ContentDetailsPage() {
     }
   };
 
-  // Loading state
+  const handlePublish = async () => {
+    if (!material) return;
+    await publishMaterial(material.id);
+    navigate("/content");
+  };
+
+  const handleDelete = async () => {
+    if (!material) return;
+    await deleteMaterial(material.id);
+    navigate("/content");
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6 p-4 md:p-6">
@@ -63,7 +95,6 @@ export default function ContentDetailsPage() {
     );
   }
 
-  // Error / not found
   if (error || !material) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
@@ -79,7 +110,9 @@ export default function ContentDetailsPage() {
     );
   }
 
-  const fileUrl = getMaterialFileUrl(material.objectKey);
+  const materialType = deriveMaterialType(material.file.mimeType);
+  const fileUrl = getFileUrl(material);
+  const subjectName = material.subject?.name || "No subject";
 
   return (
     <div className="space-y-6 p-4 md:p-6">
@@ -95,15 +128,22 @@ export default function ContentDetailsPage() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="space-y-1">
-            <h1 className="text-xl font-bold tracking-tight md:text-2xl">
-              {material.title}
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold tracking-tight md:text-2xl">
+                {material.title}
+              </h1>
+              {material.status === "DRAFT" && (
+                <Badge variant="outline" className="border-amber-300 text-amber-700">
+                  Draft
+                </Badge>
+              )}
+            </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Badge variant="secondary" className="font-normal">
-                {TYPE_LABELS[material.materialType] || material.materialType}
+                {TYPE_LABELS[materialType] || materialType}
               </Badge>
               <span>&middot;</span>
-              <span>{material.subject || "No subject"}</span>
+              <span>{subjectName}</span>
               <span>&middot;</span>
               <span>{material.createdBy.name}</span>
             </div>
@@ -123,34 +163,67 @@ export default function ContentDetailsPage() {
               <Pencil className="mr-2 h-4 w-4" />
               Edit Details
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Regenerate AI
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Sparkles className="mr-2 h-4 w-4" />
-              AI Summary
-            </DropdownMenuItem>
+
+            {material.status === "DRAFT" && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handlePublish}>
+                  <Send className="mr-2 h-4 w-4" />
+                  Publish
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  onClick={handleDelete}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </>
+            )}
+
+            {material.status === "PUBLISHED" && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Regenerate AI
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  AI Summary
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
       {/* Media Player */}
       <div className="overflow-hidden rounded-xl bg-black">
-        {material.materialType === "VIDEO" && (
-          <video
-            ref={videoRef}
-            controls
-            className="aspect-video w-full"
+        {materialType === "VIDEO" && (
+
+          <MediaPlayer
+            title={material.title}
+            src={material.objectKey}
+            viewType="video"
+            controls={true}
+            load="eager"
+            
           >
-            <source src={fileUrl} type={material.file.mimeType} />
-            Your browser does not support the video element.
-          </video>
+            <MediaProvider />
+          </MediaPlayer>
+          // <video
+          //   ref={videoRef}
+          //   controls
+          //   className="aspect-video w-full"
+          // >
+          //   <source src={fileUrl} type={material.file.mimeType} />
+          //   Your browser does not support the video element.
+          // </video>
         )}
 
-        {material.materialType === "AUDIO" && (
-          <div className="flex aspect-[21/9] items-center justify-center bg-gradient-to-br from-zinc-900 to-zinc-800 p-8">
+        {materialType === "AUDIO" && (
+          <div className="flex aspect-21/9 items-center justify-center bg-linear-to-br from-zinc-900 to-zinc-800 p-8">
             <audio ref={videoRef as React.RefObject<HTMLAudioElement>} controls className="w-full max-w-lg">
               <source src={fileUrl} type={material.file.mimeType} />
               Your browser does not support the audio element.
@@ -158,7 +231,7 @@ export default function ContentDetailsPage() {
           </div>
         )}
 
-        {material.materialType === "PDF" && (
+        {materialType === "PDF" && (
           <iframe
             src={fileUrl}
             className="aspect-video w-full border-0"
@@ -166,7 +239,7 @@ export default function ContentDetailsPage() {
           />
         )}
 
-        {material.materialType === "IMAGE" && (
+        {materialType === "IMAGE" && (
           <div className="flex aspect-video items-center justify-center bg-zinc-900 p-4">
             <img
               src={fileUrl}
@@ -176,7 +249,7 @@ export default function ContentDetailsPage() {
           </div>
         )}
 
-        {material.materialType === "DOCUMENT" && (
+        {materialType === "DOCUMENT" && (
           <div className="flex aspect-video flex-col items-center justify-center gap-3 bg-zinc-900 text-zinc-400">
             <p className="text-sm">Preview not available for this file type.</p>
             <Button variant="outline" size="sm" asChild>
@@ -201,7 +274,7 @@ export default function ContentDetailsPage() {
 
         <div className="mt-6">
           <TabsContent value="overview" className="mt-0">
-            <OverviewTab material={material} />
+            <OverviewTab material={material} materialType={materialType} />
           </TabsContent>
 
           <TabsContent value="ai-summary" className="mt-0">

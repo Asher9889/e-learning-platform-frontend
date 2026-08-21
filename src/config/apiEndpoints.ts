@@ -271,7 +271,7 @@ const apiEndpoints = {
             url: "/materials",
             method: "GET" as Method
         },
-        GET: (id: string) => ({
+        GET_BY_ID: (id: string) => ({
             url: `/materials/${id}`,
             method: "GET" as Method,
         }),

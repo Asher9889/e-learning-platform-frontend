@@ -88,7 +88,7 @@ const TYPE_STYLES: Record<ContentType, { cover: string; icon: string; badge: str
   },
 }
 
-export function ContentCard({ item, onEdit, onPreview, onView }: ContentCardProps) {
+export function ContentCard({ item, onEdit, onPreview: _, onView }: ContentCardProps) {
   const Icon = TYPE_ICONS[item.type] || File
   const styles = TYPE_STYLES[item.type] || TYPE_STYLES.DOCUMENT
   const label = TYPE_LABELS[item.type]

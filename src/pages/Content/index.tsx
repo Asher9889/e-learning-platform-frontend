@@ -171,6 +171,7 @@ export default function ContentPage() {
             materials={materials}
             isLoading={isLoading}
             onCompleteDetails={handleOpenDrawer}
+            onView={handleView}
           />
         </TabsContent>
 
