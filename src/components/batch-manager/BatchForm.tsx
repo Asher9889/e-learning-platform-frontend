@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 
 import type { Batch } from "@/pages/Batches/types";
 import { ACADEMIC_SESSIONS } from "@/pages/Batches/types";
 import type { Program } from "@/pages/Programs/types";
+
 import {
   createBatchSchema,
   type CreateBatchInput,
@@ -34,7 +35,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { Loader2 } from "lucide-react";
+
+import {
+  Check,
+  ChevronsUpDown,
+  Loader2,
+  Search,
+} from "lucide-react";
 
 interface BatchFormProps {
   isOpen: boolean;
@@ -54,6 +61,9 @@ export function BatchForm({
   isLoading = false,
 }: BatchFormProps) {
   const isEditing = !!batchData;
+
+  const [programOpen, setProgramOpen] = useState(false);
+  const [programSearch, setProgramSearch] = useState("");
 
   const methods = useForm<BatchFormValues>({
     resolver: zodResolver(createBatchSchema),
@@ -94,37 +104,66 @@ export function BatchForm({
         isActive: true,
       });
     }
+
+    setProgramSearch("");
   }, [batchData, reset]);
 
   const submitHandler = (data: BatchFormValues) => {
     if (isEditing && batchData) {
-      onSubmit({ id: batchData.id, ...data } as CreateBatchInput);
+      onSubmit({
+        id: batchData.id,
+        ...data,
+      } as CreateBatchInput);
+
       return;
     }
+
     onSubmit(data as CreateBatchInput);
+
     reset({
-        programId: "",
-        academicSession: "",
-        name: "",
-        maxStudents: undefined,
-        isActive: true,
-      });
+      programId: "",
+      academicSession: "",
+      name: "",
+      maxStudents: undefined,
+      isActive: true,
+    });
+
+    setProgramSearch("");
   };
 
   const handleDialogClose = () => {
     if (isLoading) return;
+
+    setProgramOpen(false);
+    setProgramSearch("");
     onClose();
   };
+
+  const selectedProgram = programs.find(
+    (program) => program.id === watch("programId")
+  );
+
+  const filteredPrograms = programs.filter((program) => {
+    const programName = program.fullName || program.name;
+
+    return programName
+      .toLowerCase()
+      .includes(programSearch.toLowerCase());
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogClose}>
       <DialogContent className="sm:max-w-lg">
         <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(submitHandler)} autoComplete="off">
+          <form
+            onSubmit={handleSubmit(submitHandler)}
+            autoComplete="off"
+          >
             <DialogHeader>
               <DialogTitle>
                 {isEditing ? "Edit Batch" : "Create New Batch"}
               </DialogTitle>
+
               <DialogDescription>
                 {isEditing
                   ? "Update the batch information below."
@@ -133,28 +172,105 @@ export function BatchForm({
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
+              {/* Program */}
               <div className="grid gap-2">
                 <Label>
                   Program <span className="text-destructive">*</span>
                 </Label>
-                <Select
-                  value={watch("programId") || undefined}
-                  disabled={isEditing}
-                  onValueChange={(value) =>
-                    setValue("programId", value)
-                  }
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a program" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {programs.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.fullName || p.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+
+                <div className="relative">
+                  {/* Program Selector */}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={programOpen}
+                    disabled={isEditing || isLoading}
+                    className="w-full justify-between font-normal"
+                    onClick={() => {
+                      setProgramOpen((prev) => !prev);
+                      setProgramSearch("");
+                    }}
+                  >
+                    <span className="truncate">
+                      {selectedProgram
+                        ? selectedProgram.fullName || selectedProgram.name
+                        : "Select a program"}
+                    </span>
+
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+
+                  {/* Program Dropdown */}
+                  {programOpen && !isEditing && (
+                    <div className="absolute left-0 right-0 top-full z-[100] mt-1 rounded-md border bg-background p-2 shadow-lg">
+
+                      {/* Search Input */}
+                      <div className="relative mb-2">
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
+                        <Input
+                          type="text"
+                          value={programSearch}
+                          onChange={(event) => {
+                            setProgramSearch(event.target.value);
+                          }}
+                          placeholder="Search programs..."
+                          className="pl-9"
+                          autoComplete="off"
+                        />
+                      </div>
+
+                      {/* Program List */}
+                      <div className="max-h-60 overflow-y-auto">
+                        {filteredPrograms.length === 0 ? (
+                          <div className="py-6 text-center text-sm text-muted-foreground">
+                            No program found.
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            {filteredPrograms.map((program) => {
+                              const programName =
+                                program.fullName || program.name;
+
+                              const isSelected =
+                                watch("programId") === program.id;
+
+                              return (
+                                <button
+                                  key={program.id}
+                                  type="button"
+                                  onClick={() => {
+                                    setValue("programId", program.id, {
+                                      shouldValidate: true,
+                                      shouldDirty: true,
+                                    });
+
+                                    setProgramOpen(false);
+                                    setProgramSearch("");
+                                  }}
+                                  className="flex w-full items-center rounded-md px-2 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground"
+                                >
+                                  <Check
+                                    className={`mr-2 h-4 w-4 shrink-0 ${isSelected
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                      }`}
+                                  />
+
+                                  <span className="truncate">
+                                    {programName}
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {errors.programId && (
                   <p className="text-xs text-destructive">
                     {errors.programId.message}
@@ -162,29 +278,38 @@ export function BatchForm({
                 )}
               </div>
 
+              {/* Academic Session + Max Students */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label>
                     Academic Session{" "}
                     <span className="text-destructive">*</span>
                   </Label>
+
                   <Select
                     value={watch("academicSession") || undefined}
                     onValueChange={(value) =>
-                      setValue("academicSession", value)
+                      setValue("academicSession", value, {
+                        shouldValidate: true,
+                      })
                     }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select session" />
                     </SelectTrigger>
+
                     <SelectContent>
                       {ACADEMIC_SESSIONS.map((session) => (
-                        <SelectItem key={session} value={session}>
+                        <SelectItem
+                          key={session}
+                          value={session}
+                        >
                           {session}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+
                   {errors.academicSession && (
                     <p className="text-xs text-destructive">
                       {errors.academicSession.message}
@@ -193,7 +318,10 @@ export function BatchForm({
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="maxStudents">Max Students</Label>
+                  <Label htmlFor="maxStudents">
+                    Max Students
+                  </Label>
+
                   <Input
                     id="maxStudents"
                     type="number"
@@ -202,6 +330,7 @@ export function BatchForm({
                     disabled={isLoading}
                     {...register("maxStudents")}
                   />
+
                   {errors.maxStudents && (
                     <p className="text-xs text-destructive">
                       {errors.maxStudents.message}
@@ -210,16 +339,20 @@ export function BatchForm({
                 </div>
               </div>
 
+              {/* Batch Name */}
               <div className="grid gap-2">
                 <Label htmlFor="name">
-                  Batch Name <span className="text-destructive">*</span>
+                  Batch Name{" "}
+                  <span className="text-destructive">*</span>
                 </Label>
+
                 <Input
                   id="name"
                   placeholder="e.g. Batch A, Morning Batch"
                   disabled={isLoading}
                   {...register("name")}
                 />
+
                 {errors.name && (
                   <p className="text-xs text-destructive">
                     {errors.name.message}
@@ -227,19 +360,27 @@ export function BatchForm({
                 )}
               </div>
 
+              {/* Active */}
               <div className="flex items-center gap-3">
                 <Switch
                   id="isActive"
                   checked={watch("isActive")}
                   onCheckedChange={(checked) =>
-                    setValue("isActive", checked, { shouldValidate: true })
+                    setValue("isActive", checked, {
+                      shouldValidate: true,
+                    })
                   }
                   disabled={isLoading}
                 />
-                <Label htmlFor="isActive" className="cursor-pointer">
+
+                <Label
+                  htmlFor="isActive"
+                  className="cursor-pointer"
+                >
                   Active
                 </Label>
               </div>
+
               {errors.isActive && (
                 <p className="text-xs text-destructive">
                   {errors.isActive.message}
@@ -256,10 +397,12 @@ export function BatchForm({
               >
                 Cancel
               </Button>
+
               <Button type="submit" disabled={isLoading}>
                 {isLoading && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
+
                 {isEditing ? "Update Batch" : "Create Batch"}
               </Button>
             </DialogFooter>
