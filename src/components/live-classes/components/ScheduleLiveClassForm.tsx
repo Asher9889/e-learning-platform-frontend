@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarPlus, Users } from "lucide-react";
+import { CalendarPlus, ChevronDown, Users, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,6 +30,19 @@ interface Props {
 export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, programOptions }: Props) {
   const [search] = useState("");
 
+  const [programSearchOpen, setProgramSearchOpen] = useState(false);
+  const [programSearch, setProgramSearch] = useState("");
+
+  const [subjectSearchOpen, setSubjectSearchOpen] = useState(false);
+  const [subjectSearch, setSubjectSearch] = useState("");
+
+  const [teacherSearchOpen, setTeacherSearchOpen] = useState(false);
+  const [teacherSearch, setTeacherSearch] = useState("");
+
+  const programRef = useRef<HTMLDivElement>(null);
+  const subjectRef = useRef<HTMLDivElement>(null);
+  const teacherRef = useRef<HTMLDivElement>(null);
+
   const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm<TScheduleLiveClassInput>({
     resolver: zodResolver(scheduleLiveClassSchema),
     defaultValues: {
@@ -52,6 +65,45 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
     reValidateMode: "onChange"
   });
 
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      if (
+        programRef.current &&
+        !programRef.current.contains(target)
+      ) {
+        setProgramSearchOpen(false);
+        setProgramSearch("");
+      }
+
+      if (
+        subjectRef.current &&
+        !subjectRef.current.contains(target)
+      ) {
+        setSubjectSearchOpen(false);
+        setSubjectSearch("");
+      }
+
+      if (
+        teacherRef.current &&
+        !teacherRef.current.contains(target)
+      ) {
+        setTeacherSearchOpen(false);
+        setTeacherSearch("");
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+    };
+  }, []);
+
 
 
   const { data } = useVideoSearch(search);
@@ -68,6 +120,25 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
   const { data: subjectsData } = useGetSubjects(selectedProgram);
   const subjects = subjectsData?.subjects || [];
   const subjectDataOptions = mapToLabelValue(subjects, "name", "id") || [];
+
+  const filteredPrograms = programOptions.filter((program) =>
+    program.label
+      .toLowerCase()
+      .includes(programSearch.toLowerCase())
+  );
+
+  const filteredSubjects = subjectDataOptions.filter((subject) =>
+    subject.label
+      .toLowerCase()
+      .includes(subjectSearch.toLowerCase())
+  );
+
+  const filteredTeachers = teachersOptions.filter((teacher) =>
+    teacher.label
+      .toLowerCase()
+      .includes(teacherSearch.toLowerCase())
+  );
+
   const { data: batchesData } = useGetBatches(selectedProgram);
   const batches = batchesData?.batches || [];
   const batchOptions = mapToLabelValue(batches, "name", "id") || [];
@@ -185,63 +256,163 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
       {/* SUBJECT + PROGRAM */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1">
-          <Label>Program <span className="text-destructive">*</span></Label>
-          <Select onValueChange={(v) => setValue("programId", v, {shouldValidate: true})}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select program" />
-            </SelectTrigger>
-            <SelectContent>
-              {programOptions.map((p) => (
-                <SelectItem key={p.value} value={p.value}>
-                  {p.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.programId && (
-            <p className="text-xs text-destructive">{errors.programId.message}</p>
-          )}
+          <Label>
+            Program <span className="text-destructive">*</span>
+          </Label>
 
+          <div ref={programRef} className="relative">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full justify-between font-normal"
+              onClick={() => {
+                setProgramSearchOpen((prev) => !prev);
+                setProgramSearch("");
+              }}
+            >
+              <span className="truncate">
+                {programOptions.find(
+                  (p) => p.value === selectedProgram
+                )?.label || "Select program"}
+              </span>
+
+              {/* <span className="text-muted-foreground">⌄</span> */}
+              <ChevronDown className="ml-2 h-4 w-4 shrink-0 text-muted-foreground" />
+            </Button>
+
+            {programSearchOpen && (
+              <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-md border bg-background p-2 shadow-lg">
+                <div className="relative mb-2">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
+                  <Input
+                    type="text"
+                    value={programSearch}
+                    onChange={(e) => setProgramSearch(e.target.value)}
+                    placeholder="Search programs..."
+                    className="pl-9"
+                    autoComplete="off"
+                  />
+                </div>
+
+                <div className="max-h-52 overflow-y-auto">
+                  {filteredPrograms.length === 0 ? (
+                    <p className="py-4 text-center text-sm text-muted-foreground">
+                      No program found.
+                    </p>
+                  ) : (
+                    filteredPrograms.map((program) => (
+                      <button
+                        key={program.value}
+                        type="button"
+                        className="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-accent"
+                        onClick={() => {
+                          setValue("programId", program.value, {
+                            shouldValidate: true,
+                          });
+
+                          setProgramSearchOpen(false);
+                          setProgramSearch("");
+                          setValue("subjectId", "");
+                          setValue("batchId", null);
+                          setSubjectSearch("");
+                        }}
+                      >
+                        {program.label}
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {errors.programId && (
+            <p className="text-xs text-destructive">
+              {errors.programId.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-1">
-          <Label>Subject <span className="text-destructive">*</span></Label>
-          <Select
-            disabled={!selectedProgram}
-            onValueChange={(v) => setValue("subjectId", v, {shouldValidate: true})}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue
-                placeholder={
-                  !selectedProgram
-                    ? "Please select program first"
-                    : subjectDataOptions?.length > 0
-                      ? "Select subject"
-                      : "No Subject Found"
-                }
-              />
-            </SelectTrigger>
+          <Label>
+            Subject <span className="text-destructive">*</span>
+          </Label>
 
-            <SelectContent>
-              {!selectedProgram ? (
-                <SelectItem value="select-program-first" disabled>
-                  Please select program first
-                </SelectItem>
-              ) : subjectDataOptions?.length > 0 ? (
-                subjectDataOptions.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>
-                    {s.label}
-                  </SelectItem>
-                ))
-              ) : (
-                <SelectItem value="no-subject-found" disabled>
-                  No Subject Found
-                </SelectItem>
-              )}
-            </SelectContent>
-          </Select>
-           {errors.subjectId && (
-            <p className="text-xs text-destructive">{errors.subjectId.message}</p>
+          <div ref={subjectRef} className="relative">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={!selectedProgram}
+              className="w-full justify-between font-normal"
+              onClick={() => {
+                setSubjectSearchOpen((prev) => !prev);
+                setSubjectSearch("");
+              }}
+            >
+              <span className="truncate">
+                {subjectDataOptions.find(
+                  (subject) => subject.value === watch("subjectId")
+                )?.label ||
+                  (!selectedProgram
+                    ? "Please select program first"
+                    : subjectDataOptions.length > 0
+                      ? "Select subject"
+                      : "No Subject Found")}
+              </span>
+
+              {/* <span className="text-muted-foreground">⌄</span> */}
+              <ChevronDown className="ml-2 h-4 w-4 shrink-0 text-muted-foreground" />
+            </Button>
+
+            {subjectSearchOpen && selectedProgram && (
+              <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-md border bg-background p-2 shadow-lg">
+                <div className="relative mb-2">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
+                  <Input
+                    type="text"
+                    value={subjectSearch}
+                    onChange={(e) => setSubjectSearch(e.target.value)}
+                    placeholder="Search subjects..."
+                    className="pl-9"
+                    autoComplete="off"
+                  />
+                </div>
+
+                <div className="max-h-52 overflow-y-auto">
+                  {filteredSubjects.length === 0 ? (
+                    <p className="py-4 text-center text-sm text-muted-foreground">
+                      No subject found.
+                    </p>
+                  ) : (
+                    filteredSubjects.map((subject) => (
+                      <button
+                        key={subject.value}
+                        type="button"
+                        className="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-accent"
+                        onClick={() => {
+                          setValue("subjectId", subject.value, {
+                            shouldValidate: true,
+                          });
+
+                          setSubjectSearchOpen(false);
+                          setSubjectSearch("");
+                        }}
+                      >
+                        {subject.label}
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {errors.subjectId && (
+            <p className="text-xs text-destructive">
+              {errors.subjectId.message}
+            </p>
           )}
         </div>
       </div>
@@ -293,21 +464,78 @@ export default function ScheduleLiveClassForm({ onSuccess, teachersOptions, prog
       {/* TEACHER */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
-          <Label>Teacher <span className="text-destructive">*</span></Label>
-          <Select onValueChange={(v) => setValue("teacherId", v, { shouldValidate: true })}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select teacher" />
-            </SelectTrigger>
-            <SelectContent>
-              {teachersOptions?.length > 0 && teachersOptions.map((t) => (
-                <SelectItem key={t.value} value={t.value}>
-                  {t.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-           {errors.teacherId && (
-            <p className="text-xs text-destructive">{errors.teacherId.message}</p>
+          <Label>
+            Teacher <span className="text-destructive">*</span>
+          </Label>
+
+          <div ref={teacherRef} className="relative">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full justify-between font-normal"
+              onClick={() => {
+                setTeacherSearchOpen((prev) => !prev);
+                setTeacherSearch("");
+              }}
+            >
+              <span className="truncate">
+                {teachersOptions.find(
+                  (teacher) => teacher.value === watch("teacherId")
+                )?.label || "Select teacher"}
+              </span>
+
+              {/* <span className="text-muted-foreground">⌄</span> */}
+              <ChevronDown className="ml-2 h-4 w-4 shrink-0 text-muted-foreground" />
+            </Button>
+
+            {teacherSearchOpen && (
+              <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-md border bg-background p-2 shadow-lg">
+                <div className="relative mb-2">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
+                  <Input
+                    type="text"
+                    value={teacherSearch}
+                    onChange={(e) => setTeacherSearch(e.target.value)}
+                    placeholder="Search teachers..."
+                    className="pl-9"
+                    autoComplete="off"
+                  />
+                </div>
+
+                <div className="max-h-52 overflow-y-auto">
+                  {filteredTeachers.length === 0 ? (
+                    <p className="py-4 text-center text-sm text-muted-foreground">
+                      No teacher found.
+                    </p>
+                  ) : (
+                    filteredTeachers.map((teacher) => (
+                      <button
+                        key={teacher.value}
+                        type="button"
+                        className="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-accent"
+                        onClick={() => {
+                          setValue("teacherId", teacher.value, {
+                            shouldValidate: true,
+                          });
+
+                          setTeacherSearchOpen(false);
+                          setTeacherSearch("");
+                        }}
+                      >
+                        {teacher.label}
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {errors.teacherId && (
+            <p className="text-xs text-destructive">
+              {errors.teacherId.message}
+            </p>
           )}
         </div>
         <div className="space-y-1">
