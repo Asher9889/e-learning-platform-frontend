@@ -18,10 +18,7 @@ import { useUploadAvatar } from "@/pages/Teacher/hooks/useUploadAvtar";
 import { sileo } from "sileo";
 import { useNavigate, useParams } from "react-router-dom";
 
-const stepFields: Record<
-    number,
-    FieldPath<TeacherEnrollFormInput>[]
-> = {
+const stepFields: Record<number, FieldPath<TeacherEnrollFormInput>[]> = {
     0: [
         "email",
         "phoneNumber",

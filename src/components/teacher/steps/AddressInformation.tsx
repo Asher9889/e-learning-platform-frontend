@@ -19,7 +19,7 @@ export default function AddressInformation() {
           )}
         />
       </div>
-       <div className="space-y-2">
+      <div className="space-y-2">
         <Label htmlFor="City">City</Label>
         <Input
           placeholder="City"
@@ -43,7 +43,7 @@ export default function AddressInformation() {
           {errors.personalInfo?.address?.state?.message}
         </p>
       </div>
-       <div className="space-y-2">
+      <div className="space-y-2">
         <Label htmlFor="Country">Country</Label>
         <Input
           placeholder="Country"
@@ -55,13 +55,15 @@ export default function AddressInformation() {
           {errors.personalInfo?.address?.country?.message}
         </p>
       </div>
-       <div className="space-y-2">
+      <div className="space-y-2">
         <Label htmlFor="ZipCode">Zip Code</Label>
         <Input
+          id="ZipCode"
+          type="text"
+          inputMode="numeric"
+          maxLength={6}
           placeholder="Zip Code"
-          {...register(
-            "personalInfo.address.zipCode"
-          )}
+          {...register("personalInfo.address.zipCode")}
         />
         <p className="text-red-500 text-sm">
           {errors.personalInfo?.address?.zipCode?.message}

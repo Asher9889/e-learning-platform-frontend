@@ -26,14 +26,14 @@ export default function EditStudentPage() {
   const navigate = useNavigate();
   const { data: fetchRes, isLoading: loadingStudent } = useGetStudent(id!);
   const { mutate: update, isPending: saving } = useUpdateStudent();
-const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string>("");
+  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string>("");
   const {
     uploadAvatarAsync,
     isUploading,
   } = useUploadAvatar();
   const student = fetchRes?.data;
 
-  const { register, handleSubmit, reset, setValue, watch ,formState: { errors },} = useForm({
+  const { register, handleSubmit, reset, setValue, watch, formState: { errors }, } = useForm({
     defaultValues: {
       email: "",
       phoneNumber: "",
@@ -66,16 +66,16 @@ const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string>("");
 
   const selectedProgram = watch("roleInfo.programId");
 
-  console.log(selectedProgram,"selectedProgram0125487",student)
+  console.log(selectedProgram, "selectedProgram0125487", student)
   const { data: batchesData } = useGetBatches(selectedProgram);
   const batches = batchesData?.batches || [];
   useEffect(() => {
     console.log("useEggect")
 
-   console.log("useEffect RUNNING - student.id: 12333333333333333", student?.id);
+    console.log("useEffect RUNNING - student.id: 12333333333333333", student?.id);
     if (!student) return;
     console.log("RESETTING with programId: 12333333333333333", student.roleInfo?.programId);
-    console.log(student.roleInfo?.programId,"useEggect")
+    console.log(student.roleInfo?.programId, "useEggect")
 
     setAvatarPreviewUrl(student.personalInfo?.profileImage || "");
     reset({
@@ -96,7 +96,7 @@ const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string>("");
       },
       roleInfo: {
         programId: student.roleInfo?.programId || "",
-        batchId:  student.roleInfo?.batchId || "",
+        batchId: student.roleInfo?.batchId || "",
         rollNumber: student.roleInfo?.rollNumber || "",
         admissionDate: student.roleInfo?.admissionDate
           ? student.roleInfo.admissionDate.split("T")[0]
@@ -116,11 +116,11 @@ const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string>("");
   //   if (!student || !selectedProgram || batches.length === 0) return;
   //   setValue("roleInfo.batchId", student.roleInfo?.batchId || "");
   // }, [student, selectedProgram, batches, setValue]);
-const image = watch("personalInfo.profileImage");
+  const image = watch("personalInfo.profileImage");
   const onSubmit = (formData: Record<string, any>) => {
-    console.log(formData,"formDataformDataformData")
+    console.log(formData, "formDataformDataformData")
     const payload: Record<string, unknown> = {
-      
+
       email: formData.email,
       phoneNumber: formData.phoneNumber,
       personalInfo: {
@@ -155,43 +155,43 @@ const image = watch("personalInfo.profileImage");
   };
 
   const handleFileChange = useCallback(
-      async (file: { file: File | { url: string; id: string } } | null) => {
-        const uploadedFile = file?.file;
-  
-        if (uploadedFile instanceof File) {
-          try {
-            const response = await uploadAvatarAsync(uploadedFile);
-            if (response?.key) {
-              setValue("personalInfo.profileImage", response.key, {
-                shouldDirty: true,
-                shouldValidate: true,
-              });
-            }
-            if (response?.url) {
-              setAvatarPreviewUrl(response.url);
-            }
-          } catch (err: any) {
-            setValue("personalInfo.profileImage", "", {
+    async (file: { file: File | { url: string; id: string } } | null) => {
+      const uploadedFile = file?.file;
+
+      if (uploadedFile instanceof File) {
+        try {
+          const response = await uploadAvatarAsync(uploadedFile);
+          if (response?.key) {
+            setValue("personalInfo.profileImage", response.key, {
               shouldDirty: true,
               shouldValidate: true,
             });
-            setAvatarPreviewUrl("");
-            const message =
-              err?.response?.data?.message ||
-              err?.message ||
-              "Avatar upload failed. Only JPEG, PNG, and WEBP are allowed.";
-            sileo.error({ title: "Upload Failed", description: message });
           }
-        } else if (!file) {
+          if (response?.url) {
+            setAvatarPreviewUrl(response.url);
+          }
+        } catch (err: any) {
           setValue("personalInfo.profileImage", "", {
             shouldDirty: true,
             shouldValidate: true,
           });
           setAvatarPreviewUrl("");
+          const message =
+            err?.response?.data?.message ||
+            err?.message ||
+            "Avatar upload failed. Only JPEG, PNG, and WEBP are allowed.";
+          sileo.error({ title: "Upload Failed", description: message });
         }
-      },
-      [uploadAvatarAsync, setValue]
-    );
+      } else if (!file) {
+        setValue("personalInfo.profileImage", "", {
+          shouldDirty: true,
+          shouldValidate: true,
+        });
+        setAvatarPreviewUrl("");
+      }
+    },
+    [uploadAvatarAsync, setValue]
+  );
 
   if (loadingStudent) {
     return (
@@ -212,8 +212,8 @@ const image = watch("personalInfo.profileImage");
   }
 
 
-  console.log(student,"programs list: debugginggggggggggg", programs);
-console.log("current programId value: debugginggggggggggg", watch("roleInfo.programId"));
+  console.log(student, "programs list: debugginggggggggggg", programs);
+  console.log("current programId value: debugginggggggggggg", watch("roleInfo.programId"));
   return (
     <div className="flex flex-col h-screen">
       <div className="sticky top-0 z-10 bg-background border-b">
@@ -237,163 +237,163 @@ console.log("current programId value: debugginggggggggggg", watch("roleInfo.prog
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
             <div className="md:col-span-2 flex flex-col">
-                    <div className="md:col-span-2 flex justify-start">
-                      <AvatarUpload
-                        value={avatarPreviewUrl || (typeof image === "string" ? image : "")}
-                        onFileChange={handleFileChange}
-                        isUploading={isUploading}
-                      />
-                    </div>
-                    <p className="text-red-500 text-sm mt-2">
-                      {errors?.personalInfo?.profileImage?.message as string}
-                    </p>
-                  </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Account</CardTitle>
-          </CardHeader>
-          <CardContent className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" {...register("email")} />
+              <div className="md:col-span-2 flex justify-start">
+                <AvatarUpload
+                  value={avatarPreviewUrl || (typeof image === "string" ? image : "")}
+                  onFileChange={handleFileChange}
+                  isUploading={isUploading}
+                />
+              </div>
+              <p className="text-red-500 text-sm mt-2">
+                {errors?.personalInfo?.profileImage?.message as string}
+              </p>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input id="phone" {...register("phoneNumber")} />
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Account</CardTitle>
+              </CardHeader>
+              <CardContent className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" {...register("email")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input id="phone" {...register("phoneNumber")} />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-          </CardHeader>
-          <CardContent className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input id="name" {...register("personalInfo.name")} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="dob">Date of Birth</Label>
-              <Input id="dob" type="date" {...register("personalInfo.dateOfBirth")} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="gender">Gender</Label>
-              <select
-                id="gender"
-                className="border w-full rounded-md px-3 h-9 text-sm"
-                {...register("personalInfo.gender")}
-              >
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
-                <option value="OTHER">Other</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
-              <Input id="address" {...register("personalInfoAddress.line1")} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
-              <Input id="city" {...register("personalInfoAddress.city")} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="state">State</Label>
-              <Input id="state" {...register("personalInfoAddress.state")} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="country">Country</Label>
-              <Input id="country" {...register("personalInfoAddress.country")} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="zip">Zip Code</Label>
-              <Input id="zip" {...register("personalInfoAddress.zipCode")} />
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Personal Information</CardTitle>
+              </CardHeader>
+              <CardContent className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input id="name" {...register("personalInfo.name")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dob">Date of Birth</Label>
+                  <Input id="dob" type="date" {...register("personalInfo.dateOfBirth")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gender">Gender</Label>
+                  <select
+                    id="gender"
+                    className="border w-full rounded-md px-3 h-9 text-sm"
+                    {...register("personalInfo.gender")}
+                  >
+                    <option value="MALE">Male</option>
+                    <option value="FEMALE">Female</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address</Label>
+                  <Input id="address" {...register("personalInfoAddress.line1")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city">City</Label>
+                  <Input id="city" {...register("personalInfoAddress.city")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="state">State</Label>
+                  <Input id="state" {...register("personalInfoAddress.state")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="country">Country</Label>
+                  <Input id="country" {...register("personalInfoAddress.country")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="zip">Zip Code</Label>
+                  <Input id="zip" {...register("personalInfoAddress.zipCode")} />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Academic Information</CardTitle>
-          </CardHeader>
-          <CardContent className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Program</Label>
-              <Select
-                value={watch("roleInfo.programId")}
-                onValueChange={(v) => {
-                   if (!v) return;
-                    console.log("PROGRAM onValueChange FIRED with: 12333333333333333", v); 
-                  setValue("roleInfo.programId", v);
-                  setValue("roleInfo.batchId", "");
-                }}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select Program" />
-                </SelectTrigger>
-                <SelectContent>
-                  {programs.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="roll">Roll Number</Label>
-              <Input id="roll" {...register("roleInfo.rollNumber")} />
-            </div>
-            <div className="space-y-2">
-              <Label>Batch</Label>
-              <Select
-                value={watch("roleInfo.batchId")}
-                onValueChange={(v) => {
-                   if (!v) return;
-                  console.log("BATCH onValueChange FIRED with: 12333333333333333", v);
-                  setValue("roleInfo.batchId", v);
-                }}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={selectedProgram ? "Select Batch" : "Select Program first"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {batches.map((b) => (
-                    <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="admission">Admission Date</Label>
-              <Input id="admission" type="date" {...register("roleInfo.admissionDate")} />
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Academic Information</CardTitle>
+              </CardHeader>
+              <CardContent className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Program</Label>
+                  <Select
+                    value={watch("roleInfo.programId")}
+                    onValueChange={(v) => {
+                      if (!v) return;
+                      console.log("PROGRAM onValueChange FIRED with: 12333333333333333", v);
+                      setValue("roleInfo.programId", v);
+                      setValue("roleInfo.batchId", "");
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Program" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {programs.map((p) => (
+                        <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="roll">Roll Number</Label>
+                  <Input id="roll" {...register("roleInfo.rollNumber")} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Batch</Label>
+                  <Select
+                    value={watch("roleInfo.batchId")}
+                    onValueChange={(v) => {
+                      if (!v) return;
+                      console.log("BATCH onValueChange FIRED with: 12333333333333333", v);
+                      setValue("roleInfo.batchId", v);
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={selectedProgram ? "Select Batch" : "Select Program first"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {batches.map((b) => (
+                        <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="admission">Admission Date</Label>
+                  <Input id="admission" type="date" {...register("roleInfo.admissionDate")} />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Guardian Information</CardTitle>
-          </CardHeader>
-          <CardContent className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="guardian">Guardian Name</Label>
-              <Input id="guardian" {...register("roleInfo.guardianName")} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="guardianPhone">Guardian Phone</Label>
-              <Input id="guardianPhone" {...register("roleInfo.guardianPhoneNumber")} />
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Guardian Information</CardTitle>
+              </CardHeader>
+              <CardContent className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="guardian">Guardian Name</Label>
+                  <Input id="guardian" {...register("roleInfo.guardianName")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="guardianPhone">Guardian Phone</Label>
+                  <Input id="guardianPhone" {...register("roleInfo.guardianPhoneNumber")} />
+                </div>
+              </CardContent>
+            </Card>
 
-        <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline" onClick={() => navigate(-1 as any)}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={saving}>
-            {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-            Save Changes
-          </Button>
-        </div>
+            <div className="flex justify-end gap-3">
+              <Button type="button" variant="outline" onClick={() => navigate(-1 as any)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={saving}>
+                {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                Save Changes
+              </Button>
+            </div>
           </form>
         </div>
       </div>

@@ -26,7 +26,7 @@ export default function AddTeacher() {
           </h1>
 
           <p className="text-muted-foreground mt-2">
-            Create a new student account and
+            Create a new Teacher account and
             assign academic details.
           </p>
         </div>
